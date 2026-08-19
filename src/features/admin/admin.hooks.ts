@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useServerFn } from '@tanstack/react-start'
 
-import { jinisKeys } from '#/features/jinis/jinis.queries'
+import { refetchJinisLists } from '#/features/jinis/jinis.queries'
 import {
+  deleteAllJinis,
   exportData,
   importJinis,
   revokeSession,
@@ -85,7 +86,7 @@ export function useImportJinis() {
         type: 'success',
       })
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: jinisKeys.lists() }),
+        refetchJinisLists(queryClient),
         refetchAdminOverview(queryClient),
       ])
     },
@@ -93,6 +94,36 @@ export function useImportJinis() {
       toast.add({
         title: 'Could not import Jinis',
         description: 'Please check the preview and try again.',
+        type: 'error',
+      })
+    },
+  })
+}
+
+export function useDeleteAllJinis() {
+  const queryClient = useQueryClient()
+  const deleteAllJinisFn = useServerFn(deleteAllJinis)
+
+  return useMutation({
+    mutationFn: () => deleteAllJinisFn({ data: {} }),
+    onSuccess: async (result) => {
+      toast.add({
+        title: 'Jinis deleted',
+        description:
+          result.paymentsDeleted > 0
+            ? `${result.deleted} Jinis removed, including ${result.paymentsDeleted} linked payments.`
+            : `${result.deleted} Jinis removed.`,
+        type: 'success',
+      })
+      await Promise.all([
+        refetchJinisLists(queryClient),
+        refetchAdminOverview(queryClient),
+      ])
+    },
+    onError: () => {
+      toast.add({
+        title: 'Could not delete Jinis',
+        description: 'Please try again.',
         type: 'error',
       })
     },

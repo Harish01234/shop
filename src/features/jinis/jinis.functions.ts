@@ -16,6 +16,7 @@ import {
   getJinisRecord,
   listJinisRecords,
   settleJinisRecord,
+  sumActiveJinisCredit,
   updateJinisRecord,
 } from './jinis.server'
 
@@ -36,6 +37,13 @@ export const listJinis = createServerFn({ method: 'GET' })
     await requireUser()
     return listJinisRecords(data)
   })
+
+export const getActiveJinisTotal = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    await requireUser()
+    return sumActiveJinisCredit()
+  },
+)
 
 export const getJinis = createServerFn({ method: 'GET' })
   .validator(jinisIdSchema)

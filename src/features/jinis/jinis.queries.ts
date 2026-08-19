@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions, type QueryClient } from '@tanstack/react-query'
 
-import { listJinis } from './jinis.functions'
+import { getActiveJinisTotal, listJinis } from './jinis.functions'
 import {
   toListJinisInput,
   type JinisFilterValues,
@@ -11,6 +11,7 @@ export const jinisKeys = {
   all: ['jinis'] as const,
   lists: () => [...jinisKeys.all, 'list'] as const,
   list: (input: ListJinisInput) => [...jinisKeys.lists(), input] as const,
+  activeTotal: () => [...jinisKeys.all, 'activeTotal'] as const,
 }
 
 export function jinisListQueryOptions(
@@ -26,6 +27,13 @@ export function jinisListQueryOptions(
   })
 }
 
+export function activeJinisTotalQueryOptions() {
+  return queryOptions({
+    queryKey: jinisKeys.activeTotal(),
+    queryFn: () => getActiveJinisTotal() as Promise<number>,
+  })
+}
+
 export function refetchJinisLists(queryClient: QueryClient) {
-  return queryClient.invalidateQueries({ queryKey: jinisKeys.lists() })
+  return queryClient.invalidateQueries({ queryKey: jinisKeys.all })
 }

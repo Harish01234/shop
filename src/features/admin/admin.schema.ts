@@ -17,8 +17,14 @@ export const adminExportSchema = z.object({
 
 export const adminJinisImportRowSchema = z.object({
   slNo: z.number().int().positive(),
-  name: z.string().trim().min(1),
-  fatherName: z.string().trim().min(1),
+  name: z
+    .string()
+    .trim()
+    .transform((value) => value || '-'),
+  fatherName: z
+    .string()
+    .trim()
+    .transform((value) => value || '-'),
   date: z.coerce.date(),
   credit: z.number().int().positive(),
   phoneNo: z.string().trim().min(1).default('-'),
@@ -27,3 +33,5 @@ export const adminJinisImportRowSchema = z.object({
 export const adminJinisImportSchema = z.object({
   rows: z.array(adminJinisImportRowSchema).min(1).max(5000),
 })
+
+export const adminDeleteAllJinisSchema = z.object({})

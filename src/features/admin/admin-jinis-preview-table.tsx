@@ -28,7 +28,7 @@ export function AdminJinisPreviewTable({
         <EmptyHeader>
           <EmptyTitle>No rows found</EmptyTitle>
           <EmptyDescription>
-            Upload a CSV with Sl no, NAME, Father's Name, Date, and credit.
+            Upload a CSV with Sl no and credit.
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
@@ -57,9 +57,9 @@ export function AdminJinisPreviewTable({
               <TableCell>{record.name || '—'}</TableCell>
               <TableCell>{record.fatherName || '—'}</TableCell>
               <TableCell>
-                {record.date && !record.error?.includes('Date')
-                  ? format(new Date(record.date), 'dd MMM yyyy')
-                  : record.date || '—'}
+                {record.date && record.date !== '1970-01-01'
+                  ? format(new Date(`${record.date}T00:00:00`), 'dd MMM yyyy')
+                  : '—'}
               </TableCell>
               <TableCell>
                 {record.credit

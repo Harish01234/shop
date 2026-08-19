@@ -3,7 +3,8 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { AdminJinisPreviewTable } from '#/features/admin/admin-jinis-preview-table'
 import { parseJinisCsv, type CsvJinisPreviewRow } from '#/features/admin/admin.csv'
-import { useImportJinis } from '#/features/admin/admin.hooks'
+import { useAdminOverview, useDeleteAllJinis, useImportJinis } from '#/features/admin/admin.hooks'
+import { adminOverviewQueryOptions } from '#/features/admin/admin.queries'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -28,18 +29,24 @@ import { cn } from '@/lib/utils'
 import { AlertCircleIcon } from 'lucide-react'
 
 export const Route = createFileRoute('/admin/migration')({
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(adminOverviewQueryOptions()),
   component: AdminMigrationPage,
 })
 
 function AdminMigrationPage() {
+  const overviewQuery = useAdminOverview()
   const importJinisMutation = useImportJinis()
+  const deleteAllJinisMutation = useDeleteAllJinis()
   const [fileName, setFileName] = useState<string | null>(null)
   const [rows, setRows] = useState<CsvJinisPreviewRow[]>([])
   const [parseError, setParseError] = useState<string | null>(null)
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
 
   const validRows = rows.filter((row) => !row.error)
   const errorCount = rows.length - validRows.length
+  const jinisCount = overviewQuery.data?.jinisCount ?? 0
 
   async function handleFile(file: File | undefined) {
     setParseError(null)
@@ -82,6 +89,11 @@ function AdminMigrationPage() {
       .catch(() => {})
   }
 
+  async function confirmDeleteAll() {
+    setDeleteOpen(false)
+    await deleteAllJinisMutation.mutateAsync().catch(() => {})
+  }
+
   return (
     <main className="flex flex-1 flex-col gap-6 p-4 md:p-6">
       <div>
@@ -97,8 +109,8 @@ function AdminMigrationPage() {
         <CardHeader>
           <CardTitle>Upload CSV</CardTitle>
           <CardDescription>
-            Header row can sit below totals. Needed columns: Sl no, NAME,
-            Father's Name, Date, credit.
+            Header row can sit below totals. Needed columns: Sl no and
+            credit. Name, Father's Name, and Date are optional.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
@@ -113,6 +125,27 @@ function AdminMigrationPage() {
           {fileName ? (
             <p className="text-sm text-muted-foreground">{fileName}</p>
           ) : null}
+        </CardContent>
+      </Card>
+
+      <Card className="max-w-xl">
+        <CardHeader>
+          <CardTitle>Delete all Jinis</CardTitle>
+          <CardDescription>
+            Remove every Jinis record in one go, including items and linked
+            payments. Use this before a fresh import.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button
+            type="button"
+            variant="destructive"
+            disabled={jinisCount === 0 || deleteAllJinisMutation.isPending}
+            onClick={() => setDeleteOpen(true)}
+          >
+            {deleteAllJinisMutation.isPending ? <Spinner /> : null}
+            Delete all {jinisCount} Jinis
+          </Button>
         </CardContent>
       </Card>
 
@@ -149,8 +182,9 @@ function AdminMigrationPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Import these Jinis?</AlertDialogTitle>
             <AlertDialogDescription>
-              {validRows.length} rows will be added. Rows with errors are
-              skipped. Existing serial numbers are not imported again.
+              {validRows.length} rows will be added if they have a serial
+              number and credit. Existing serial numbers are not imported
+              again.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -169,6 +203,45 @@ function AdminMigrationPage() {
             >
               {importJinisMutation.isPending ? <Spinner /> : null}
               Import
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={deleteOpen}
+        onOpenChange={(open) => {
+          if (!open && !deleteAllJinisMutation.isPending) {
+            setDeleteOpen(false)
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete all Jinis?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {jinisCount} Jinis will be removed permanently, including items
+              and linked payments. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className={cn(
+                buttonVariants({ variant: 'outline' }),
+                'bg-background',
+              )}
+              disabled={deleteAllJinisMutation.isPending}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={deleteAllJinisMutation.isPending}
+              onClick={() => void confirmDeleteAll()}
+            >
+              {deleteAllJinisMutation.isPending ? <Spinner /> : null}
+              Delete all
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -5,11 +5,13 @@ import { getRequestHeaders } from '@tanstack/react-start/server'
 import { auth } from '#/lib/auth'
 import { isAdminRole } from '#/lib/admin-role'
 import {
+  adminDeleteAllJinisSchema,
   adminExportSchema,
   adminJinisImportSchema,
   adminSessionIdSchema,
 } from './admin.schema'
 import {
+  deleteAllJinisRecords,
   exportAdminData,
   getAdminOverview,
   importJinisCsv,
@@ -64,6 +66,13 @@ export const importJinis = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const session = await requireAdmin()
     return importJinisCsv(data, session.user.id)
+  })
+
+export const deleteAllJinis = createServerFn({ method: 'POST' })
+  .validator(adminDeleteAllJinisSchema)
+  .handler(async () => {
+    await requireAdmin()
+    return deleteAllJinisRecords()
   })
 
 export const exportData = createServerFn({ method: 'POST' })

@@ -192,3 +192,12 @@ export async function settleJinisRecord(data: SettleJinisInput) {
     include: { items: true },
   })
 }
+
+export async function sumActiveJinisCredit() {
+  const result = await prisma.jinis.aggregate({
+    where: { active: true },
+    _sum: { credit: true },
+  })
+
+  return result._sum.credit ?? 0
+}

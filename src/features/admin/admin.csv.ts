@@ -104,17 +104,28 @@ function parseDate(value: string) {
   if (!trimmed) return null
 
   if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) {
-    const date = new Date(trimmed)
+    const date = new Date(`${trimmed.slice(0, 10)}T00:00:00`)
     return Number.isNaN(date.getTime()) ? null : date
   }
 
   const slash = trimmed.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$/)
   if (slash) {
-    const month = Number(slash[1])
-    const day = Number(slash[2])
+    const first = Number(slash[1])
+    const second = Number(slash[2])
     const year = Number(slash[3].length === 2 ? `20${slash[3]}` : slash[3])
+    const dayFirst = first > 12 || second <= 12
+    const day = dayFirst ? first : second
+    const month = dayFirst ? second : first
     const date = new Date(year, month - 1, day)
-    return Number.isNaN(date.getTime()) ? null : date
+    if (
+      Number.isNaN(date.getTime()) ||
+      date.getFullYear() !== year ||
+      date.getMonth() !== month - 1 ||
+      date.getDate() !== day
+    ) {
+      return null
+    }
+    return date
   }
 
   const serial = Number(trimmed)
@@ -133,19 +144,21 @@ function toDateInput(date: Date) {
   return `${year}-${month}-${day}`
 }
 
+const unknownDate = '1970-01-01'
+
 export function parseJinisCsv(text: string): CsvJinisPreviewRow[] {
   const table = parseCsvTable(text)
   const headerRowIndex = table.findIndex((row) => {
     const headers = row.map(normalizeHeader)
     return (
       headerIndex(headers, ['sl no', 'slno', 's no', 'serial no', 'serial']) >= 0 &&
-      headerIndex(headers, ['name']) >= 0
+      headerIndex(headers, ['credit']) >= 0
     )
   })
 
   if (headerRowIndex < 0) {
     throw new Error(
-      'Could not find the header row. Use columns: Sl no, NAME, Father\'s Name, Date, credit.',
+      'Could not find the header row. Use columns: Sl no and credit.',
     )
   }
 
@@ -161,22 +174,21 @@ export function parseJinisCsv(text: string): CsvJinisPreviewRow[] {
   const creditIndex = headerIndex(headers, ['credit'])
   const phoneIndex = headerIndex(headers, ['phone no', 'phone', 'phoneno', 'mobile'])
 
-  if (slNoIndex < 0 || nameIndex < 0 || fatherIndex < 0 || dateIndex < 0 || creditIndex < 0) {
-    throw new Error(
-      'CSV must include Sl no, NAME, Father\'s Name, Date, and credit.',
-    )
+  if (slNoIndex < 0 || creditIndex < 0) {
+    throw new Error('CSV must include Sl no and credit.')
   }
 
   return table.slice(headerRowIndex + 1).flatMap((row, offset) => {
     const rowNumber = headerRowIndex + offset + 2
     const slNoRaw = row[slNoIndex] ?? ''
-    const name = (row[nameIndex] ?? '').trim()
-    const fatherName = (row[fatherIndex] ?? '').trim()
-    const dateRaw = row[dateIndex] ?? ''
+    const name = (nameIndex >= 0 ? row[nameIndex] : '')?.trim() || '-'
+    const fatherName =
+      (fatherIndex >= 0 ? row[fatherIndex] : '')?.trim() || '-'
+    const dateRaw = dateIndex >= 0 ? (row[dateIndex] ?? '') : ''
     const creditRaw = row[creditIndex] ?? ''
     const phoneNo = (phoneIndex >= 0 ? row[phoneIndex] : '')?.trim() || '-'
 
-    if (!slNoRaw && !name && !fatherName && !dateRaw && !creditRaw) {
+    if (!slNoRaw && !creditRaw) {
       return []
     }
 
@@ -186,9 +198,6 @@ export function parseJinisCsv(text: string): CsvJinisPreviewRow[] {
     const errors: string[] = []
 
     if (!Number.isInteger(slNo) || slNo <= 0) errors.push('Serial no is missing')
-    if (!name) errors.push('Name is missing')
-    if (!fatherName) errors.push('Father name is missing')
-    if (!date) errors.push('Date is invalid')
     if (!credit) errors.push('Credit is invalid')
 
     return [
@@ -197,7 +206,7 @@ export function parseJinisCsv(text: string): CsvJinisPreviewRow[] {
         slNo: Number.isInteger(slNo) && slNo > 0 ? slNo : null,
         name,
         fatherName,
-        date: date ? toDateInput(date) : dateRaw,
+        date: date ? toDateInput(date) : unknownDate,
         credit,
         phoneNo,
         error: errors.length ? errors.join('. ') : null,

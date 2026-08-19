@@ -142,6 +142,20 @@ export async function importJinisCsv(
   }
 }
 
+export async function deleteAllJinisRecords() {
+  return prisma.$transaction(async (tx) => {
+    const payments = await tx.interest.deleteMany({
+      where: { jinisId: { not: null } },
+    })
+    const jinis = await tx.jinis.deleteMany()
+
+    return {
+      deleted: jinis.count,
+      paymentsDeleted: payments.count,
+    }
+  })
+}
+
 function csvEscape(value: unknown) {
   const text = value == null ? '' : String(value)
   if (/[",\n]/.test(text)) {

@@ -2,12 +2,16 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import {
   DatabaseIcon,
   DownloadIcon,
+  IndianRupeeIcon,
   MonitorIcon,
   UsersIcon,
 } from 'lucide-react'
 
 import { useAdminOverview } from '#/features/admin/admin.hooks'
 import { adminOverviewQueryOptions } from '#/features/admin/admin.queries'
+import { useActiveJinisTotal } from '#/features/jinis/jinis.hooks'
+import { activeJinisTotalQueryOptions } from '#/features/jinis/jinis.queries'
+import { formatJinisCredit } from '#/features/jinis/jinis.utils'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import {
@@ -22,12 +26,16 @@ import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/admin/')({
   loader: ({ context }) =>
-    context.queryClient.ensureQueryData(adminOverviewQueryOptions()),
+    Promise.all([
+      context.queryClient.ensureQueryData(adminOverviewQueryOptions()),
+      context.queryClient.ensureQueryData(activeJinisTotalQueryOptions()),
+    ]),
   component: AdminDashboardPage,
 })
 
 function AdminDashboardPage() {
   const overviewQuery = useAdminOverview()
+  const activeTotalQuery = useActiveJinisTotal()
   const data = overviewQuery.data
 
   return (
@@ -41,7 +49,7 @@ function AdminDashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Users"
           value={data?.userCount}
@@ -59,6 +67,13 @@ function AdminDashboardPage() {
           value={data?.jinisCount}
           icon={DatabaseIcon}
           loading={overviewQuery.isPending}
+        />
+        <StatCard
+          title="Total Active Credit"
+          value={activeTotalQuery.data}
+          icon={IndianRupeeIcon}
+          loading={activeTotalQuery.isPending}
+          format="inr"
         />
       </div>
 
@@ -139,12 +154,19 @@ function StatCard({
   value,
   icon: Icon,
   loading,
+  format = 'integer',
 }: {
   title: string
   value?: number
   icon: typeof UsersIcon
   loading: boolean
+  format?: 'integer' | 'inr'
 }) {
+  const display =
+    format === 'inr'
+      ? formatJinisCredit(value ?? 0)
+      : String(value ?? 0)
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -155,7 +177,7 @@ function StatCard({
         {loading ? (
           <Skeleton className="h-8 w-16" />
         ) : (
-          <p className="font-heading text-2xl font-medium">{value ?? 0}</p>
+          <p className="font-heading text-2xl font-medium">{display}</p>
         )}
       </CardContent>
     </Card>

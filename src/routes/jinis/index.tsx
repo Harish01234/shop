@@ -92,7 +92,7 @@ function JinisListError({
         <Button
           type="button"
           onClick={() => {
-            void queryClient.invalidateQueries({ queryKey: jinisKeys.lists() })
+            void queryClient.invalidateQueries({ queryKey: jinisKeys.all })
             reset()
           }}
         >

@@ -7,6 +7,7 @@ import {
   updateJinis,
 } from './jinis.functions'
 import {
+  activeJinisTotalQueryOptions,
   jinisListQueryOptions,
   refetchJinisLists,
 } from './jinis.queries'
@@ -24,6 +25,10 @@ export function useJinisList(
   filters: JinisFilterValues = {},
 ) {
   return useQuery(jinisListQueryOptions(view, filters))
+}
+
+export function useActiveJinisTotal() {
+  return useQuery(activeJinisTotalQueryOptions())
 }
 
 export function useCreateJinis() {
