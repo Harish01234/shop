@@ -10,7 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as JinisRouteImport } from './routes/jinis'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as JinisIndexRouteImport } from './routes/jinis/index'
+import { Route as JinisNewRouteImport } from './routes/jinis/new'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -18,10 +22,30 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JinisRoute = JinisRouteImport.update({
+  id: '/jinis',
+  path: '/jinis',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
   getParentRoute: () => rootRouteImport,
+} as any)
+const JinisIndexRoute = JinisIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => JinisRoute,
+} as any)
+const JinisNewRoute = JinisNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => JinisRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -31,30 +55,58 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/jinis': typeof JinisRouteWithChildren
   '/signin': typeof SigninRoute
+  '/jinis/new': typeof JinisNewRoute
+  '/jinis/': typeof JinisIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/signin': typeof SigninRoute
+  '/jinis/new': typeof JinisNewRoute
+  '/jinis': typeof JinisIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/jinis': typeof JinisRouteWithChildren
   '/signin': typeof SigninRoute
+  '/jinis/new': typeof JinisNewRoute
+  '/jinis/': typeof JinisIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/signin' | '/api/auth/$'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/jinis'
+    | '/signin'
+    | '/jinis/new'
+    | '/jinis/'
+    | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/signin' | '/api/auth/$'
-  id: '__root__' | '/' | '/signin' | '/api/auth/$'
+  to: '/' | '/admin' | '/signin' | '/jinis/new' | '/jinis' | '/api/auth/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/jinis'
+    | '/signin'
+    | '/jinis/new'
+    | '/jinis/'
+    | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  JinisRoute: typeof JinisRouteWithChildren
   SigninRoute: typeof SigninRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
@@ -68,12 +120,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jinis': {
+      id: '/jinis'
+      path: '/jinis'
+      fullPath: '/jinis'
+      preLoaderRoute: typeof JinisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signin': {
       id: '/signin'
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof SigninRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/jinis/': {
+      id: '/jinis/'
+      path: '/'
+      fullPath: '/jinis/'
+      preLoaderRoute: typeof JinisIndexRouteImport
+      parentRoute: typeof JinisRoute
+    }
+    '/jinis/new': {
+      id: '/jinis/new'
+      path: '/new'
+      fullPath: '/jinis/new'
+      preLoaderRoute: typeof JinisNewRouteImport
+      parentRoute: typeof JinisRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -85,8 +165,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface JinisRouteChildren {
+  JinisNewRoute: typeof JinisNewRoute
+  JinisIndexRoute: typeof JinisIndexRoute
+}
+
+const JinisRouteChildren: JinisRouteChildren = {
+  JinisNewRoute: JinisNewRoute,
+  JinisIndexRoute: JinisIndexRoute,
+}
+
+const JinisRouteWithChildren = JinisRoute._addFileChildren(JinisRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  JinisRoute: JinisRouteWithChildren,
   SigninRoute: SigninRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }

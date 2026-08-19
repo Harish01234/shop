@@ -8,11 +8,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model Todo {
-  id        Int      @id @default(autoincrement())
-  title     String
-  createdAt DateTime @default(now())
-}
 
 model User {
   id            String    @id
@@ -28,6 +23,9 @@ model User {
   banExpires    DateTime?
   sessions      Session[]
   accounts      Account[]
+  jinis         Jinis[]
+  jinisCharas   JinisChara[]
+  interests     Interest[]
 
   @@unique([email])
   @@map("user")
@@ -82,4 +80,105 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+enum JinisType {
+  GOLD
+  SILVER
+  BOTH
+  UNKNOWN
+}
+
+enum JinisItemType {
+  GOLD
+  SILVER
+}
+
+model Jinis {
+  id           String      @id @default(cuid())
+  slNo         Int
+  name         String
+  fatherName   String
+  phoneNo      String
+  credit       Int
+  type         JinisType
+  /// Sum of items.wet where type is GOLD
+  goldWeight   Float       @default(0)
+  /// Sum of items.wet where type is SILVER
+  silverWeight Float       @default(0)
+  date         DateTime
+  active       Boolean     @default(true)
+  settledAt    DateTime?
+  createdById  String
+  createdBy    User        @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  items        JinisItem[]
+  interests    Interest[]
+
+  @@index([slNo])
+  @@index([name])
+  @@index([phoneNo])
+  @@index([date])
+  @@index([active])
+  @@index([settledAt])
+}
+
+model JinisItem {
+  id        String        @id @default(cuid())
+  name      String
+  wet       Float
+  type      JinisItemType
+  jinisId   String
+  jinis     Jinis         @relation(fields: [jinisId], references: [id], onDelete: Cascade)
+
+  @@index([jinisId])
+  @@index([type])
+}
+
+model JinisChara {
+  id          String     @id @default(cuid())
+  slNo        Int
+  name        String
+  fatherName  String
+  phoneNo     String
+  credit      Int
+  percentage  Float
+  description String?
+  date        DateTime
+  active      Boolean    @default(true)
+  settledAt   DateTime?
+  createdById String
+  createdBy   User       @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  interests   Interest[]
+
+  @@index([slNo])
+  @@index([name])
+  @@index([phoneNo])
+  @@index([date])
+  @@index([active])
+  @@index([settledAt])
+}
+
+model Interest {
+  id           String      @id @default(cuid())
+  amount       Int
+  date         DateTime
+  remarks      String?
+  jinisId      String?
+  jinis        Jinis?      @relation(fields: [jinisId], references: [id], onDelete: Restrict)
+  jinisCharaId String?
+  jinisChara   JinisChara? @relation(fields: [jinisCharaId], references: [id], onDelete: Restrict)
+  personName   String?
+  createdById  String
+  createdBy    User        @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([date])
+  @@index([jinisId])
+  @@index([jinisCharaId])
+  @@index([personName])
 }

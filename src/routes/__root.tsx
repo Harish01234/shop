@@ -10,7 +10,7 @@ import { FileQuestionIcon } from 'lucide-react'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Empty,
   EmptyContent,
@@ -19,6 +19,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty'
+import { Toaster } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'
 
 import appCss from '../styles.css?url'
@@ -62,7 +63,48 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   }),
   shellComponent: RootDocument,
   notFoundComponent: NotFoundPage,
+  errorComponent: RootError,
 })
+
+function RootError({
+  error,
+  reset,
+}: {
+  error: Error
+  reset: () => void
+}) {
+  return (
+    <div className="flex min-h-svh flex-col bg-background">
+      <header className="flex items-center justify-between px-4 py-3">
+        <Link
+          to="/"
+          className="font-heading text-base font-medium text-foreground"
+        >
+          Interest
+        </Link>
+        <ThemeToggle />
+      </header>
+      <main className="flex flex-1 items-center justify-center px-4 py-10">
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileQuestionIcon />
+            </EmptyMedia>
+            <EmptyTitle className="text-xl">Something went wrong</EmptyTitle>
+            <EmptyDescription>
+              {error.message || 'The page failed to load.'}
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button type="button" onClick={reset}>
+              Try again
+            </Button>
+          </EmptyContent>
+        </Empty>
+      </main>
+    </div>
+  )
+}
 
 function NotFoundPage() {
   return (
@@ -106,6 +148,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body className="bg-background text-foreground">
         {children}
+        <Toaster />
         <TanStackDevtools
           config={{
             position: 'bottom-right',

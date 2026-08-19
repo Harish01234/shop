@@ -397,11 +397,14 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  Todo: 'Todo',
   User: 'User',
   Session: 'Session',
   Account: 'Account',
-  Verification: 'Verification'
+  Verification: 'Verification',
+  Jinis: 'Jinis',
+  JinisItem: 'JinisItem',
+  JinisChara: 'JinisChara',
+  Interest: 'Interest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -417,84 +420,10 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "todo" | "user" | "session" | "account" | "verification"
+    modelProps: "user" | "session" | "account" | "verification" | "jinis" | "jinisItem" | "jinisChara" | "interest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
-    Todo: {
-      payload: Prisma.$TodoPayload<ExtArgs>
-      fields: Prisma.TodoFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.TodoFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TodoPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.TodoFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TodoPayload>
-        }
-        findFirst: {
-          args: Prisma.TodoFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TodoPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.TodoFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TodoPayload>
-        }
-        findMany: {
-          args: Prisma.TodoFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TodoPayload>[]
-        }
-        create: {
-          args: Prisma.TodoCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TodoPayload>
-        }
-        createMany: {
-          args: Prisma.TodoCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.TodoCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TodoPayload>[]
-        }
-        delete: {
-          args: Prisma.TodoDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TodoPayload>
-        }
-        update: {
-          args: Prisma.TodoUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TodoPayload>
-        }
-        deleteMany: {
-          args: Prisma.TodoDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.TodoUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.TodoUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TodoPayload>[]
-        }
-        upsert: {
-          args: Prisma.TodoUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TodoPayload>
-        }
-        aggregate: {
-          args: Prisma.TodoAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateTodo>
-        }
-        groupBy: {
-          args: Prisma.TodoGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.TodoGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.TodoCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.TodoCountAggregateOutputType> | number
-        }
-      }
-    }
     User: {
       payload: Prisma.$UserPayload<ExtArgs>
       fields: Prisma.UserFieldRefs
@@ -791,6 +720,302 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Jinis: {
+      payload: Prisma.$JinisPayload<ExtArgs>
+      fields: Prisma.JinisFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.JinisFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.JinisFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisPayload>
+        }
+        findFirst: {
+          args: Prisma.JinisFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.JinisFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisPayload>
+        }
+        findMany: {
+          args: Prisma.JinisFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisPayload>[]
+        }
+        create: {
+          args: Prisma.JinisCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisPayload>
+        }
+        createMany: {
+          args: Prisma.JinisCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.JinisCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisPayload>[]
+        }
+        delete: {
+          args: Prisma.JinisDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisPayload>
+        }
+        update: {
+          args: Prisma.JinisUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisPayload>
+        }
+        deleteMany: {
+          args: Prisma.JinisDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.JinisUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.JinisUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisPayload>[]
+        }
+        upsert: {
+          args: Prisma.JinisUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisPayload>
+        }
+        aggregate: {
+          args: Prisma.JinisAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateJinis>
+        }
+        groupBy: {
+          args: Prisma.JinisGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.JinisGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.JinisCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.JinisCountAggregateOutputType> | number
+        }
+      }
+    }
+    JinisItem: {
+      payload: Prisma.$JinisItemPayload<ExtArgs>
+      fields: Prisma.JinisItemFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.JinisItemFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisItemPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.JinisItemFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisItemPayload>
+        }
+        findFirst: {
+          args: Prisma.JinisItemFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisItemPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.JinisItemFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisItemPayload>
+        }
+        findMany: {
+          args: Prisma.JinisItemFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisItemPayload>[]
+        }
+        create: {
+          args: Prisma.JinisItemCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisItemPayload>
+        }
+        createMany: {
+          args: Prisma.JinisItemCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.JinisItemCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisItemPayload>[]
+        }
+        delete: {
+          args: Prisma.JinisItemDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisItemPayload>
+        }
+        update: {
+          args: Prisma.JinisItemUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisItemPayload>
+        }
+        deleteMany: {
+          args: Prisma.JinisItemDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.JinisItemUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.JinisItemUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisItemPayload>[]
+        }
+        upsert: {
+          args: Prisma.JinisItemUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisItemPayload>
+        }
+        aggregate: {
+          args: Prisma.JinisItemAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateJinisItem>
+        }
+        groupBy: {
+          args: Prisma.JinisItemGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.JinisItemGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.JinisItemCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.JinisItemCountAggregateOutputType> | number
+        }
+      }
+    }
+    JinisChara: {
+      payload: Prisma.$JinisCharaPayload<ExtArgs>
+      fields: Prisma.JinisCharaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.JinisCharaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisCharaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.JinisCharaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisCharaPayload>
+        }
+        findFirst: {
+          args: Prisma.JinisCharaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisCharaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.JinisCharaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisCharaPayload>
+        }
+        findMany: {
+          args: Prisma.JinisCharaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisCharaPayload>[]
+        }
+        create: {
+          args: Prisma.JinisCharaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisCharaPayload>
+        }
+        createMany: {
+          args: Prisma.JinisCharaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.JinisCharaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisCharaPayload>[]
+        }
+        delete: {
+          args: Prisma.JinisCharaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisCharaPayload>
+        }
+        update: {
+          args: Prisma.JinisCharaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisCharaPayload>
+        }
+        deleteMany: {
+          args: Prisma.JinisCharaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.JinisCharaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.JinisCharaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisCharaPayload>[]
+        }
+        upsert: {
+          args: Prisma.JinisCharaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$JinisCharaPayload>
+        }
+        aggregate: {
+          args: Prisma.JinisCharaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateJinisChara>
+        }
+        groupBy: {
+          args: Prisma.JinisCharaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.JinisCharaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.JinisCharaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.JinisCharaCountAggregateOutputType> | number
+        }
+      }
+    }
+    Interest: {
+      payload: Prisma.$InterestPayload<ExtArgs>
+      fields: Prisma.InterestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InterestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InterestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestPayload>
+        }
+        findFirst: {
+          args: Prisma.InterestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InterestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestPayload>
+        }
+        findMany: {
+          args: Prisma.InterestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestPayload>[]
+        }
+        create: {
+          args: Prisma.InterestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestPayload>
+        }
+        createMany: {
+          args: Prisma.InterestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InterestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestPayload>[]
+        }
+        delete: {
+          args: Prisma.InterestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestPayload>
+        }
+        update: {
+          args: Prisma.InterestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestPayload>
+        }
+        deleteMany: {
+          args: Prisma.InterestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InterestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InterestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestPayload>[]
+        }
+        upsert: {
+          args: Prisma.InterestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterestPayload>
+        }
+        aggregate: {
+          args: Prisma.InterestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInterest>
+        }
+        groupBy: {
+          args: Prisma.InterestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InterestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InterestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InterestCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -828,15 +1053,6 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
-
-
-export const TodoScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  createdAt: 'createdAt'
-} as const
-
-export type TodoScalarFieldEnum = (typeof TodoScalarFieldEnum)[keyof typeof TodoScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
@@ -903,6 +1119,74 @@ export const VerificationScalarFieldEnum = {
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
+export const JinisScalarFieldEnum = {
+  id: 'id',
+  slNo: 'slNo',
+  name: 'name',
+  fatherName: 'fatherName',
+  phoneNo: 'phoneNo',
+  credit: 'credit',
+  type: 'type',
+  goldWeight: 'goldWeight',
+  silverWeight: 'silverWeight',
+  date: 'date',
+  active: 'active',
+  settledAt: 'settledAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type JinisScalarFieldEnum = (typeof JinisScalarFieldEnum)[keyof typeof JinisScalarFieldEnum]
+
+
+export const JinisItemScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  wet: 'wet',
+  type: 'type',
+  jinisId: 'jinisId'
+} as const
+
+export type JinisItemScalarFieldEnum = (typeof JinisItemScalarFieldEnum)[keyof typeof JinisItemScalarFieldEnum]
+
+
+export const JinisCharaScalarFieldEnum = {
+  id: 'id',
+  slNo: 'slNo',
+  name: 'name',
+  fatherName: 'fatherName',
+  phoneNo: 'phoneNo',
+  credit: 'credit',
+  percentage: 'percentage',
+  description: 'description',
+  date: 'date',
+  active: 'active',
+  settledAt: 'settledAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type JinisCharaScalarFieldEnum = (typeof JinisCharaScalarFieldEnum)[keyof typeof JinisCharaScalarFieldEnum]
+
+
+export const InterestScalarFieldEnum = {
+  id: 'id',
+  amount: 'amount',
+  date: 'date',
+  remarks: 'remarks',
+  jinisId: 'jinisId',
+  jinisCharaId: 'jinisCharaId',
+  personName: 'personName',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InterestScalarFieldEnum = (typeof InterestScalarFieldEnum)[keyof typeof InterestScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -934,20 +1218,6 @@ export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 /**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-/**
  * Reference to a field of type 'String'
  */
 export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
@@ -958,6 +1228,13 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'String[]'
  */
 export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -976,9 +1253,30 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
- * Reference to a field of type 'Boolean'
+ * Reference to a field of type 'Int'
  */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'JinisType'
+ */
+export type EnumJinisTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JinisType'>
+    
+
+
+/**
+ * Reference to a field of type 'JinisType[]'
+ */
+export type ListEnumJinisTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JinisType[]'>
     
 
 
@@ -993,6 +1291,20 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'Float[]'
  */
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'JinisItemType'
+ */
+export type EnumJinisItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JinisItemType'>
+    
+
+
+/**
+ * Reference to a field of type 'JinisItemType[]'
+ */
+export type ListEnumJinisItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JinisItemType[]'>
     
 
 /**
@@ -1146,11 +1458,14 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
  */
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
-  todo?: Prisma.TodoOmit
   user?: Prisma.UserOmit
   session?: Prisma.SessionOmit
   account?: Prisma.AccountOmit
   verification?: Prisma.VerificationOmit
+  jinis?: Prisma.JinisOmit
+  jinisItem?: Prisma.JinisItemOmit
+  jinisChara?: Prisma.JinisCharaOmit
+  interest?: Prisma.InterestOmit
 }
 
 /* Types for Logging */

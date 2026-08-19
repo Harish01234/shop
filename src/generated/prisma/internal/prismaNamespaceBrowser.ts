@@ -51,11 +51,14 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Todo: 'Todo',
   User: 'User',
   Session: 'Session',
   Account: 'Account',
-  Verification: 'Verification'
+  Verification: 'Verification',
+  Jinis: 'Jinis',
+  JinisItem: 'JinisItem',
+  JinisChara: 'JinisChara',
+  Interest: 'Interest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -72,15 +75,6 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
-
-
-export const TodoScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  createdAt: 'createdAt'
-} as const
-
-export type TodoScalarFieldEnum = (typeof TodoScalarFieldEnum)[keyof typeof TodoScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
@@ -145,6 +139,74 @@ export const VerificationScalarFieldEnum = {
 } as const
 
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
+export const JinisScalarFieldEnum = {
+  id: 'id',
+  slNo: 'slNo',
+  name: 'name',
+  fatherName: 'fatherName',
+  phoneNo: 'phoneNo',
+  credit: 'credit',
+  type: 'type',
+  goldWeight: 'goldWeight',
+  silverWeight: 'silverWeight',
+  date: 'date',
+  active: 'active',
+  settledAt: 'settledAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type JinisScalarFieldEnum = (typeof JinisScalarFieldEnum)[keyof typeof JinisScalarFieldEnum]
+
+
+export const JinisItemScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  wet: 'wet',
+  type: 'type',
+  jinisId: 'jinisId'
+} as const
+
+export type JinisItemScalarFieldEnum = (typeof JinisItemScalarFieldEnum)[keyof typeof JinisItemScalarFieldEnum]
+
+
+export const JinisCharaScalarFieldEnum = {
+  id: 'id',
+  slNo: 'slNo',
+  name: 'name',
+  fatherName: 'fatherName',
+  phoneNo: 'phoneNo',
+  credit: 'credit',
+  percentage: 'percentage',
+  description: 'description',
+  date: 'date',
+  active: 'active',
+  settledAt: 'settledAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type JinisCharaScalarFieldEnum = (typeof JinisCharaScalarFieldEnum)[keyof typeof JinisCharaScalarFieldEnum]
+
+
+export const InterestScalarFieldEnum = {
+  id: 'id',
+  amount: 'amount',
+  date: 'date',
+  remarks: 'remarks',
+  jinisId: 'jinisId',
+  jinisCharaId: 'jinisCharaId',
+  personName: 'personName',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InterestScalarFieldEnum = (typeof InterestScalarFieldEnum)[keyof typeof InterestScalarFieldEnum]
 
 
 export const SortOrder = {

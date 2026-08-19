@@ -34,12 +34,22 @@ export function AppHeader({ user }: { user?: AppHeaderUser | null }) {
         <nav className="hidden items-center gap-1 md:flex">
           <Link
             to="/"
+            activeOptions={{ exact: true }}
             className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
             activeProps={{
               className: 'bg-primary/15 text-primary',
             }}
           >
             Home
+          </Link>
+          <Link
+            to="/jinis"
+            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
+            activeProps={{
+              className: 'bg-primary/15 text-primary',
+            }}
+          >
+            Jinis
           </Link>
         </nav>
 
@@ -65,12 +75,22 @@ export function AppHeader({ user }: { user?: AppHeaderUser | null }) {
               <div className="flex flex-col gap-3 px-4">
                 <Link
                   to="/"
+                  activeOptions={{ exact: true }}
                   className={cn(
                     buttonVariants({ variant: 'ghost' }),
                     'justify-start',
                   )}
                 >
                   Home
+                </Link>
+                <Link
+                  to="/jinis"
+                  className={cn(
+                    buttonVariants({ variant: 'ghost' }),
+                    'justify-start',
+                  )}
+                >
+                  Jinis
                 </Link>
                 <div className="flex items-center justify-between border-t border-border pt-3">
                   <span className="text-sm text-muted-foreground">Account</span>

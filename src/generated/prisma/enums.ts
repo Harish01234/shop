@@ -9,7 +9,19 @@
 * 🟢 You can import this file directly.
 */
 
+export const JinisType = {
+  GOLD: 'GOLD',
+  SILVER: 'SILVER',
+  BOTH: 'BOTH',
+  UNKNOWN: 'UNKNOWN'
+} as const
+
+export type JinisType = (typeof JinisType)[keyof typeof JinisType]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const JinisItemType = {
+  GOLD: 'GOLD',
+  SILVER: 'SILVER'
+} as const
+
+export type JinisItemType = (typeof JinisItemType)[keyof typeof JinisItemType]

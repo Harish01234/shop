@@ -8,9 +8,12 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Todo.ts'
 export type * from './models/User.ts'
 export type * from './models/Session.ts'
 export type * from './models/Account.ts'
 export type * from './models/Verification.ts'
+export type * from './models/Jinis.ts'
+export type * from './models/JinisItem.ts'
+export type * from './models/JinisChara.ts'
+export type * from './models/Interest.ts'
 export type * from './commonInputTypes.ts'
