@@ -1,36 +1,49 @@
-import { PrismaClient } from '../src/generated/prisma/client.js'
+import { prisma } from '#/db'
 
-import { getDatabaseUrl } from '../src/database-url.js'
+async function promoteFirstAdmin() {
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase()
 
-import { PrismaPg } from '@prisma/adapter-pg'
+  if (!adminEmail) {
+    throw new Error('Set ADMIN_EMAIL in .env.local to your Google email')
+  }
 
-const adapter = new PrismaPg({
-  connectionString: getDatabaseUrl(),
-})
-
-const prisma = new PrismaClient({ adapter })
-
-async function main() {
-  console.log('🌱 Seeding database...')
-
-  // Clear existing todos
-  await prisma.todo.deleteMany()
-
-  // Create example todos
-  const todos = await prisma.todo.createMany({
-    data: [
-      { title: 'Buy groceries' },
-      { title: 'Read a book' },
-      { title: 'Workout' },
-    ],
+  const user = await prisma.user.findFirst({
+    where: {
+      email: {
+        equals: adminEmail,
+        mode: 'insensitive',
+      },
+    },
   })
 
-  console.log(`✅ Created ${todos.count} todos`)
+  if (!user) {
+    console.log(
+      `No user for ${adminEmail}. Sign in with Google first, then run: npm run db:seed`,
+    )
+    return
+  }
+
+  if (user.role === 'admin') {
+    console.log(`${adminEmail} is already admin`)
+    return
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { role: 'admin' },
+  })
+
+  console.log(`Promoted ${adminEmail} to admin. Sign out and sign in again.`)
+}
+
+async function main() {
+  console.log('Seeding database...')
+  await promoteFirstAdmin()
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Error seeding database:', e)
+    console.error('Seed failed:', e)
     process.exit(1)
   })
   .finally(async () => {

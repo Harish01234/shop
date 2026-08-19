@@ -120,3 +120,35 @@ Does not work here. Prisma cannot see `.env.local`, so it says `DATABASE_URL` is
 npx dotenv -e .env.local -- prisma db pull
 ```
 Reads tables from the live database and writes them into `prisma/schema.prisma`. If the database is empty, it fails with `P4001`. Push your schema first with `npm run db:push`, then pull if you need to.
+
+```powershell
+nvm install 22
+nvm use 22.23.2
+node -v
+```
+Switches this project to Node 22 (needed for `npx auth@latest generate`).
+
+```powershell
+npx dotenv -e .env.local -- npx auth@latest generate --yes
+```
+Writes Better Auth models into `prisma/schema.prisma`.
+
+```powershell
+npm run db:generate
+```
+Updates Prisma Client after schema changes.
+
+```powershell
+npm run db:migrate
+```
+Creates a migration and applies it. Safer than `db:push` for a real app. If Prisma reports drift on an empty/dev DB, reset is OK.
+
+```powershell
+npx dotenv -e .env.local -- prisma migrate reset
+```
+Wipes the dev database and reapplies migrations. Do not use this on production with real users.
+
+```powershell
+npm run db:seed
+```
+Promotes `ADMIN_EMAIL` from `.env.local` to `admin`. Sign in with Google first or it will say no user found. Then sign out and sign in again.
