@@ -1,37 +1,94 @@
+import { LogOutIcon } from 'lucide-react'
+
 import { authClient } from '#/lib/auth-client'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { buttonVariants } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
 
-export default function BetterAuthHeader() {
+type UserMenuUser = {
+  name?: string | null
+  email?: string | null
+  image?: string | null
+}
+
+function initials(name?: string | null, email?: string | null) {
+  const source = name?.trim() || email?.trim() || 'U'
+  return source.charAt(0).toUpperCase()
+}
+
+export default function BetterAuthHeader({
+  user,
+}: {
+  user?: UserMenuUser | null
+}) {
   const { data: session, isPending } = authClient.useSession()
+  const currentUser = user ?? session?.user
 
-  if (isPending) {
-    return (
-      <div className="h-8 w-8 bg-neutral-100 dark:bg-neutral-800 animate-pulse" />
-    )
+  if (isPending && !user) {
+    return <Skeleton className="size-8 rounded-full" />
   }
 
-  if (session?.user) {
-    return (
-      <div className="flex items-center gap-2">
-        {session.user.image ? (
-          <img src={session.user.image} alt="" className="h-8 w-8" />
-        ) : (
-          <div className="h-8 w-8 bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
-            <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
-              {session.user.name?.charAt(0).toUpperCase() || 'U'}
-            </span>
-          </div>
+  if (!currentUser) {
+    return null
+  }
+
+  async function handleSignOut() {
+    await authClient.signOut()
+    window.location.assign('/signin')
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={cn(
+          buttonVariants({ variant: 'ghost', size: 'icon' }),
+          'rounded-full',
         )}
-        <button
-          onClick={() => {
-            void authClient.signOut()
-          }}
-          className="flex-1 h-9 px-4 text-sm font-medium bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+        aria-label="Open account menu"
+      >
+        <Avatar size="sm">
+          {currentUser.image ? (
+            <AvatarImage src={currentUser.image} alt="" />
+          ) : null}
+          <AvatarFallback>
+            {initials(currentUser.name, currentUser.email)}
+          </AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-56">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>
+            <div className="flex flex-col gap-0.5">
+              <span className="truncate text-sm font-medium text-foreground">
+                {currentUser.name || 'Account'}
+              </span>
+              {currentUser.email ? (
+                <span className="truncate text-xs font-normal">
+                  {currentUser.email}
+                </span>
+              ) : null}
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          variant="destructive"
+          onClick={() => void handleSignOut()}
         >
+          <LogOutIcon />
           Sign out
-        </button>
-      </div>
-    )
-  }
-
-  return null
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
 }

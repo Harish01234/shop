@@ -152,3 +152,13 @@ Wipes the dev database and reapplies migrations. Do not use this on production w
 npm run db:seed
 ```
 Promotes `ADMIN_EMAIL` from `.env.local` to `admin`. Sign in with Google first or it will say no user found. Then sign out and sign in again.
+
+```powershell
+npm run dev
+```
+Starts the app. Open http://localhost:3000 — unauthenticated users go to `/signin`. GitHub login needs `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`, plus redirect URI `http://localhost:3000/api/auth/callback/github`.
+
+```powershell
+Remove-Item -Recurse -Force node_modules\.vite
+```
+Clears Vite's cached React bundles. Use this if the browser shows "Invalid hook call" after adding UI packages, then restart `npm run dev`.

@@ -1,15 +1,29 @@
 import {
   HeadContent,
+  Link,
   Scripts,
   createRootRouteWithContext,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+import { FileQuestionIcon } from 'lucide-react'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { buttonVariants } from '@/components/ui/button'
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
+import { cn } from '@/lib/utils'
 
 import appCss from '../styles.css?url'
 
+import type { ReactNode } from 'react'
 import type { QueryClient } from '@tanstack/react-query'
 
 interface MyRouterContext {
@@ -27,7 +41,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Interest',
       },
     ],
     links: [
@@ -35,18 +49,62 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         rel: 'stylesheet',
         href: appCss,
       },
+      {
+        rel: 'icon',
+        href: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='24' font-size='24'%3EI%3C/text%3E%3C/svg%3E",
+      },
+    ],
+    scripts: [
+      {
+        children: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`,
+      },
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: NotFoundPage,
 })
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function NotFoundPage() {
   return (
-    <html lang="en">
+    <div className="flex min-h-svh flex-col bg-background">
+      <header className="flex items-center justify-between px-4 py-3">
+        <Link
+          to="/"
+          className="font-heading text-base font-medium text-foreground"
+        >
+          Interest
+        </Link>
+        <ThemeToggle />
+      </header>
+      <main className="flex flex-1 items-center justify-center px-4 py-10">
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileQuestionIcon />
+            </EmptyMedia>
+            <EmptyTitle className="text-xl">Page not found</EmptyTitle>
+            <EmptyDescription>
+              This address is not a page in Interest.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Link to="/" className={cn(buttonVariants())}>
+              Go home
+            </Link>
+          </EmptyContent>
+        </Empty>
+      </main>
+    </div>
+  )
+}
+
+function RootDocument({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="bg-background text-foreground">
         {children}
         <TanStackDevtools
           config={{
