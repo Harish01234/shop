@@ -53,6 +53,30 @@ export const jinisViewSchema = z.enum(['open', 'settled', 'all'])
 
 export const listJinisSchema = z.object({
   active: z.boolean().optional(),
+  slNo: z.string().trim().optional(),
+  name: z.string().trim().optional(),
+  fatherName: z.string().trim().optional(),
+  creditMin: z.number().int().nonnegative().optional(),
+  creditMax: z.number().int().nonnegative().optional(),
+  phoneNo: z.string().trim().optional(),
+  type: jinisTypeSchema.optional(),
+  date: z.string().trim().optional(),
+  from: z.string().trim().optional(),
+  to: z.string().trim().optional(),
+})
+
+export const jinisSearchSchema = z.object({
+  view: jinisViewSchema.default('open'),
+  slNo: z.string().trim().optional(),
+  name: z.string().trim().optional(),
+  fatherName: z.string().trim().optional(),
+  creditMin: z.coerce.number().int().nonnegative().optional(),
+  creditMax: z.coerce.number().int().nonnegative().optional(),
+  phoneNo: z.string().trim().optional(),
+  type: jinisTypeSchema.optional(),
+  date: z.string().trim().optional(),
+  from: z.string().trim().optional(),
+  to: z.string().trim().optional(),
 })
 
 export const settleJinisSchema = z.object({

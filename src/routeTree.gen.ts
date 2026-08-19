@@ -13,6 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as JinisRouteImport } from './routes/jinis'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminExportRouteImport } from './routes/admin/export'
+import { Route as AdminMigrationRouteImport } from './routes/admin/migration'
+import { Route as AdminSessionsRouteImport } from './routes/admin/sessions'
 import { Route as JinisIndexRouteImport } from './routes/jinis/index'
 import { Route as JinisNewRouteImport } from './routes/jinis/new'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -37,6 +41,26 @@ const SigninRoute = SigninRouteImport.update({
   path: '/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminExportRoute = AdminExportRouteImport.update({
+  id: '/export',
+  path: '/export',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMigrationRoute = AdminMigrationRouteImport.update({
+  id: '/migration',
+  path: '/migration',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSessionsRoute = AdminSessionsRouteImport.update({
+  id: '/sessions',
+  path: '/sessions',
+  getParentRoute: () => AdminRoute,
+} as any)
 const JinisIndexRoute = JinisIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -55,28 +79,39 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/jinis': typeof JinisRouteWithChildren
   '/signin': typeof SigninRoute
+  '/admin/export': typeof AdminExportRoute
+  '/admin/migration': typeof AdminMigrationRoute
+  '/admin/sessions': typeof AdminSessionsRoute
   '/jinis/new': typeof JinisNewRoute
+  '/admin/': typeof AdminIndexRoute
   '/jinis/': typeof JinisIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/signin': typeof SigninRoute
+  '/admin/export': typeof AdminExportRoute
+  '/admin/migration': typeof AdminMigrationRoute
+  '/admin/sessions': typeof AdminSessionsRoute
   '/jinis/new': typeof JinisNewRoute
+  '/admin': typeof AdminIndexRoute
   '/jinis': typeof JinisIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/jinis': typeof JinisRouteWithChildren
   '/signin': typeof SigninRoute
+  '/admin/export': typeof AdminExportRoute
+  '/admin/migration': typeof AdminMigrationRoute
+  '/admin/sessions': typeof AdminSessionsRoute
   '/jinis/new': typeof JinisNewRoute
+  '/admin/': typeof AdminIndexRoute
   '/jinis/': typeof JinisIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -87,25 +122,42 @@ export interface FileRouteTypes {
     | '/admin'
     | '/jinis'
     | '/signin'
+    | '/admin/export'
+    | '/admin/migration'
+    | '/admin/sessions'
     | '/jinis/new'
+    | '/admin/'
     | '/jinis/'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/signin' | '/jinis/new' | '/jinis' | '/api/auth/$'
+  to:
+    | '/'
+    | '/signin'
+    | '/admin/export'
+    | '/admin/migration'
+    | '/admin/sessions'
+    | '/jinis/new'
+    | '/admin'
+    | '/jinis'
+    | '/api/auth/$'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/jinis'
     | '/signin'
+    | '/admin/export'
+    | '/admin/migration'
+    | '/admin/sessions'
     | '/jinis/new'
+    | '/admin/'
     | '/jinis/'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   JinisRoute: typeof JinisRouteWithChildren
   SigninRoute: typeof SigninRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -141,6 +193,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SigninRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/export': {
+      id: '/admin/export'
+      path: '/export'
+      fullPath: '/admin/export'
+      preLoaderRoute: typeof AdminExportRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/migration': {
+      id: '/admin/migration'
+      path: '/migration'
+      fullPath: '/admin/migration'
+      preLoaderRoute: typeof AdminMigrationRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/sessions': {
+      id: '/admin/sessions'
+      path: '/sessions'
+      fullPath: '/admin/sessions'
+      preLoaderRoute: typeof AdminSessionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/jinis/': {
       id: '/jinis/'
       path: '/'
@@ -165,6 +245,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminExportRoute: typeof AdminExportRoute
+  AdminMigrationRoute: typeof AdminMigrationRoute
+  AdminSessionsRoute: typeof AdminSessionsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminExportRoute: AdminExportRoute,
+  AdminMigrationRoute: AdminMigrationRoute,
+  AdminSessionsRoute: AdminSessionsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface JinisRouteChildren {
   JinisNewRoute: typeof JinisNewRoute
   JinisIndexRoute: typeof JinisIndexRoute
@@ -179,7 +275,7 @@ const JinisRouteWithChildren = JinisRoute._addFileChildren(JinisRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   JinisRoute: JinisRouteWithChildren,
   SigninRoute: SigninRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

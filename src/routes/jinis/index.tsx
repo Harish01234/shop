@@ -1,8 +1,14 @@
-import { useState } from 'react'
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { useCallback, useState } from 'react'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { AlertCircleIcon } from 'lucide-react'
 
+import { AdvanceSearchFilter } from '#/features/jinis/component/AdvanceSearchFilter'
+import {
+  filtersFromSearch,
+  parseJinisSearch,
+  type JinisFilterValues,
+} from '#/features/jinis/jinis.filters'
 import {
   useDeleteJinis,
   useJinisList,
@@ -11,7 +17,6 @@ import {
 import { JinisModal } from '#/features/jinis/jinis-modal'
 import { JinisTable } from '#/features/jinis/jinis-table'
 import { jinisKeys, jinisListQueryOptions } from '#/features/jinis/jinis.queries'
-import { jinisViewSchema } from '#/features/jinis/jinis.schema'
 import type { JinisRecord, JinisView } from '#/features/jinis/jinis.types'
 import {
   AlertDialog,
@@ -29,13 +34,19 @@ import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/jinis/')({
-  validateSearch: (search: Record<string, unknown>) => {
-    const parsed = jinisViewSchema.safeParse(search.view)
-    return { view: parsed.success ? parsed.data : 'open' } as const
+  validateSearch: (search: Record<string, unknown>) => parseJinisSearch(search),
+  loaderDeps: ({ search }) => search,
+  loader: ({ context, deps }) => {
+    const filters = filtersFromSearch(deps)
+    return Promise.all([
+      context.queryClient.ensureQueryData(
+        jinisListQueryOptions(deps.view, filters),
+      ),
+      context.queryClient.ensureQueryData(
+        jinisListQueryOptions('all', filters),
+      ),
+    ])
   },
-  loaderDeps: ({ search }) => ({ view: search.view }),
-  loader: ({ context, deps }) =>
-    context.queryClient.ensureQueryData(jinisListQueryOptions(deps.view)),
   pendingComponent: JinisListPending,
   errorComponent: JinisListError,
   component: JinisListPage,
@@ -93,9 +104,12 @@ function JinisListError({
 }
 
 function JinisListPage() {
-  const { view } = Route.useSearch()
-  const currentView: JinisView = view
-  const jinisQuery = useJinisList(currentView)
+  const search = Route.useSearch()
+  const currentView: JinisView = search.view
+  const filters = filtersFromSearch(search)
+  const navigate = useNavigate({ from: '/jinis/' })
+  const jinisQuery = useJinisList(currentView, filters)
+  const rangeQuery = useJinisList('all', filters)
   const deleteJinisMutation = useDeleteJinis()
   const toggleJinisMutation = useToggleJinis()
 
@@ -104,9 +118,23 @@ function JinisListPage() {
   const [deleteTarget, setDeleteTarget] = useState<JinisRecord | null>(null)
 
   const records = jinisQuery.data ?? []
+  const rangeRecords = rangeQuery.data ?? []
   const togglingId = toggleJinisMutation.isPending
     ? (toggleJinisMutation.variables?.record.id ?? null)
     : null
+
+  const handleFiltersChange = useCallback(
+    (nextFilters: JinisFilterValues) => {
+      void navigate({
+        replace: true,
+        search: {
+          view: currentView,
+          ...nextFilters,
+        },
+      })
+    },
+    [currentView, navigate],
+  )
 
   function openCreateModal() {
     setEditingRecord(undefined)
@@ -152,7 +180,7 @@ function JinisListPage() {
       <div className="flex flex-wrap gap-1">
         <Link
           to="/jinis"
-          search={{ view: 'open' }}
+          search={(prev) => ({ ...prev, view: 'open' })}
           className={cn(
             buttonVariants({
               variant: currentView === 'open' ? 'default' : 'ghost',
@@ -163,7 +191,7 @@ function JinisListPage() {
         </Link>
         <Link
           to="/jinis"
-          search={{ view: 'settled' }}
+          search={(prev) => ({ ...prev, view: 'settled' })}
           className={cn(
             buttonVariants({
               variant: currentView === 'settled' ? 'default' : 'ghost',
@@ -174,7 +202,7 @@ function JinisListPage() {
         </Link>
         <Link
           to="/jinis"
-          search={{ view: 'all' }}
+          search={(prev) => ({ ...prev, view: 'all' })}
           className={cn(
             buttonVariants({
               variant: currentView === 'all' ? 'default' : 'ghost',
@@ -184,6 +212,13 @@ function JinisListPage() {
           All
         </Link>
       </div>
+
+      <AdvanceSearchFilter
+        filters={filters}
+        onChange={handleFiltersChange}
+        totalCount={rangeRecords.length}
+        activeCount={rangeRecords.filter((record) => record.active).length}
+      />
 
       {jinisQuery.isError && records.length === 0 ? (
         <Alert variant="destructive">

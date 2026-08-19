@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { MenuIcon } from 'lucide-react'
 
+import { isAdminRole } from '#/lib/admin-role'
 import BetterAuthHeader from '#/integrations/better-auth/header-user'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { buttonVariants } from '@/components/ui/button'
@@ -17,6 +18,7 @@ type AppHeaderUser = {
   name?: string | null
   email?: string | null
   image?: string | null
+  role?: string | null
 }
 
 export function AppHeader({ user }: { user?: AppHeaderUser | null }) {
@@ -44,6 +46,7 @@ export function AppHeader({ user }: { user?: AppHeaderUser | null }) {
           </Link>
           <Link
             to="/jinis"
+            search={{ view: 'open' }}
             className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
             activeProps={{
               className: 'bg-primary/15 text-primary',
@@ -51,6 +54,17 @@ export function AppHeader({ user }: { user?: AppHeaderUser | null }) {
           >
             Jinis
           </Link>
+          {isAdminRole(user?.role) ? (
+            <Link
+              to="/admin"
+              className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
+              activeProps={{
+                className: 'bg-primary/15 text-primary',
+              }}
+            >
+              Admin
+            </Link>
+          ) : null}
         </nav>
 
         <div className="ml-auto flex items-center gap-1">
@@ -85,6 +99,7 @@ export function AppHeader({ user }: { user?: AppHeaderUser | null }) {
                 </Link>
                 <Link
                   to="/jinis"
+                  search={{ view: 'open' }}
                   className={cn(
                     buttonVariants({ variant: 'ghost' }),
                     'justify-start',
@@ -92,6 +107,17 @@ export function AppHeader({ user }: { user?: AppHeaderUser | null }) {
                 >
                   Jinis
                 </Link>
+                {isAdminRole(user?.role) ? (
+                  <Link
+                    to="/admin"
+                    className={cn(
+                      buttonVariants({ variant: 'ghost' }),
+                      'justify-start',
+                    )}
+                  >
+                    Admin
+                  </Link>
+                ) : null}
                 <div className="flex items-center justify-between border-t border-border pt-3">
                   <span className="text-sm text-muted-foreground">Account</span>
                   <BetterAuthHeader user={user} />

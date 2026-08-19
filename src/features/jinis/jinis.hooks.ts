@@ -10,6 +10,7 @@ import {
   jinisListQueryOptions,
   refetchJinisLists,
 } from './jinis.queries'
+import type { JinisFilterValues } from './jinis.filters'
 import type {
   CreateJinisInput,
   JinisRecord,
@@ -18,8 +19,11 @@ import type {
 } from './jinis.types'
 import { toast } from '@/components/ui/toast'
 
-export function useJinisList(view: JinisView) {
-  return useQuery(jinisListQueryOptions(view))
+export function useJinisList(
+  view: JinisView,
+  filters: JinisFilterValues = {},
+) {
+  return useQuery(jinisListQueryOptions(view, filters))
 }
 
 export function useCreateJinis() {
