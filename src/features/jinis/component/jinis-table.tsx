@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 import { PencilIcon, Trash2Icon } from 'lucide-react'
 
-import type { JinisRecord } from './jinis.types'
+import type { JinisRecord } from '#/features/jinis/jinis.types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {

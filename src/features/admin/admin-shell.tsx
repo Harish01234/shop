@@ -125,6 +125,14 @@ export function AdminShell({ user }: { user: AdminShellUser }) {
                   <span>Jinis</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  render={<Link to="/jinischara" search={{ view: 'open' }} />}
+                  tooltip="JinisChara"
+                >
+                  <span>JinisChara</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarFooter>
         </Sidebar>

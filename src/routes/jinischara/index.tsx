@@ -3,21 +3,27 @@ import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { AlertCircleIcon } from 'lucide-react'
 
-import { AdvanceSearchFilter } from '#/features/jinis/component/AdvanceSearchFilter'
+import { AdvanceSearchFilter } from '#/features/jinischara/component/AdvanceSearchFilter'
+import { JinisCharaModal } from '#/features/jinischara/component/jinischara-modal'
+import { JinisCharaTable } from '#/features/jinischara/component/jinischara-table'
 import {
   filtersFromSearch,
-  parseJinisSearch,
-  type JinisFilterValues,
-} from '#/features/jinis/jinis.filters'
+  parseJinisCharaSearch,
+  type JinisCharaFilterValues,
+} from '#/features/jinischara/jinischara.filters'
 import {
-  useDeleteJinis,
-  useJinisList,
-  useToggleJinis,
-} from '#/features/jinis/jinis.hooks'
-import { JinisModal } from '#/features/jinis/component/jinis-modal'
-import { JinisTable } from '#/features/jinis/component/jinis-table'
-import { jinisKeys, jinisListQueryOptions } from '#/features/jinis/jinis.queries'
-import type { JinisRecord, JinisView } from '#/features/jinis/jinis.types'
+  useDeleteJinisChara,
+  useJinisCharaList,
+  useToggleJinisChara,
+} from '#/features/jinischara/jinischara.hooks'
+import {
+  jinisCharaKeys,
+  jinisCharaListQueryOptions,
+} from '#/features/jinischara/jinischara.queries'
+import type {
+  JinisCharaRecord,
+  JinisCharaView,
+} from '#/features/jinischara/jinischara.types'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -33,26 +39,27 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute('/jinis/')({
-  validateSearch: (search: Record<string, unknown>) => parseJinisSearch(search),
+export const Route = createFileRoute('/jinischara/')({
+  validateSearch: (search: Record<string, unknown>) =>
+    parseJinisCharaSearch(search),
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) => {
     const filters = filtersFromSearch(deps)
     return Promise.all([
       context.queryClient.ensureQueryData(
-        jinisListQueryOptions(deps.view, filters),
+        jinisCharaListQueryOptions(deps.view, filters),
       ),
       context.queryClient.ensureQueryData(
-        jinisListQueryOptions('all', filters),
+        jinisCharaListQueryOptions('all', filters),
       ),
     ])
   },
-  pendingComponent: JinisListPending,
-  errorComponent: JinisListError,
-  component: JinisListPage,
+  pendingComponent: JinisCharaListPending,
+  errorComponent: JinisCharaListError,
+  component: JinisCharaListPage,
 })
 
-function JinisListPending() {
+function JinisCharaListPending() {
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-8">
       <div className="flex items-center justify-between gap-3">
@@ -72,7 +79,7 @@ function JinisListPending() {
   )
 }
 
-function JinisListError({
+function JinisCharaListError({
   error,
   reset,
 }: {
@@ -85,14 +92,14 @@ function JinisListError({
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-8">
       <Alert variant="destructive">
         <AlertCircleIcon />
-        <AlertTitle>Could not load Jinis</AlertTitle>
+        <AlertTitle>Could not load JinisChara</AlertTitle>
         <AlertDescription>{error.message}</AlertDescription>
       </Alert>
       <div>
         <Button
           type="button"
           onClick={() => {
-            void queryClient.invalidateQueries({ queryKey: jinisKeys.all })
+            void queryClient.invalidateQueries({ queryKey: jinisCharaKeys.all })
             reset()
           }}
         >
@@ -103,28 +110,32 @@ function JinisListError({
   )
 }
 
-function JinisListPage() {
+function JinisCharaListPage() {
   const search = Route.useSearch()
-  const currentView: JinisView = search.view
+  const currentView: JinisCharaView = search.view
   const filters = filtersFromSearch(search)
-  const navigate = useNavigate({ from: '/jinis/' })
-  const jinisQuery = useJinisList(currentView, filters)
-  const rangeQuery = useJinisList('all', filters)
-  const deleteJinisMutation = useDeleteJinis()
-  const toggleJinisMutation = useToggleJinis()
+  const navigate = useNavigate({ from: '/jinischara/' })
+  const listQuery = useJinisCharaList(currentView, filters)
+  const rangeQuery = useJinisCharaList('all', filters)
+  const deleteMutation = useDeleteJinisChara()
+  const toggleMutation = useToggleJinisChara()
 
   const [modalOpen, setModalOpen] = useState(false)
-  const [editingRecord, setEditingRecord] = useState<JinisRecord | undefined>()
-  const [deleteTarget, setDeleteTarget] = useState<JinisRecord | null>(null)
+  const [editingRecord, setEditingRecord] = useState<
+    JinisCharaRecord | undefined
+  >()
+  const [deleteTarget, setDeleteTarget] = useState<JinisCharaRecord | null>(
+    null,
+  )
 
-  const records = jinisQuery.data ?? []
+  const records = listQuery.data ?? []
   const rangeRecords = rangeQuery.data ?? []
-  const togglingId = toggleJinisMutation.isPending
-    ? (toggleJinisMutation.variables?.record.id ?? null)
+  const togglingId = toggleMutation.isPending
+    ? (toggleMutation.variables?.record.id ?? null)
     : null
 
   const handleFiltersChange = useCallback(
-    (nextFilters: JinisFilterValues) => {
+    (nextFilters: JinisCharaFilterValues) => {
       void navigate({
         replace: true,
         search: {
@@ -141,20 +152,20 @@ function JinisListPage() {
     setModalOpen(true)
   }
 
-  function openEditModal(record: JinisRecord) {
+  function openEditModal(record: JinisCharaRecord) {
     setEditingRecord(record)
     setModalOpen(true)
   }
 
-  function handleToggleActive(record: JinisRecord, active: boolean) {
-    toggleJinisMutation.mutate({ record, active })
+  function handleToggleActive(record: JinisCharaRecord, active: boolean) {
+    toggleMutation.mutate({ record, active })
   }
 
   async function confirmDelete() {
     if (!deleteTarget) return
 
     try {
-      await deleteJinisMutation.mutateAsync(deleteTarget)
+      await deleteMutation.mutateAsync(deleteTarget)
       setDeleteTarget(null)
     } catch {
       // Error toast is handled by the mutation.
@@ -166,20 +177,20 @@ function JinisListPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-heading text-2xl font-medium text-foreground">
-            Jinis
+            JinisChara
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Loans against gold or silver.
+            Loans with a percentage rate.
           </p>
         </div>
         <Button type="button" onClick={openCreateModal}>
-          Create Jinis
+          Create JinisChara
         </Button>
       </div>
 
       <div className="flex flex-wrap gap-1">
         <Link
-          to="/jinis"
+          to="/jinischara"
           search={(prev) => ({ ...prev, view: 'open' })}
           className={cn(
             buttonVariants({
@@ -190,7 +201,7 @@ function JinisListPage() {
           Open
         </Link>
         <Link
-          to="/jinis"
+          to="/jinischara"
           search={(prev) => ({ ...prev, view: 'settled' })}
           className={cn(
             buttonVariants({
@@ -201,7 +212,7 @@ function JinisListPage() {
           Settled
         </Link>
         <Link
-          to="/jinis"
+          to="/jinischara"
           search={(prev) => ({ ...prev, view: 'all' })}
           className={cn(
             buttonVariants({
@@ -220,17 +231,15 @@ function JinisListPage() {
         activeCount={rangeRecords.filter((record) => record.active).length}
       />
 
-      {jinisQuery.isError && records.length === 0 ? (
+      {listQuery.isError && records.length === 0 ? (
         <Alert variant="destructive">
           <AlertCircleIcon />
-          <AlertTitle>Could not load Jinis</AlertTitle>
-          <AlertDescription>
-            {jinisQuery.error.message}
-          </AlertDescription>
+          <AlertTitle>Could not load JinisChara</AlertTitle>
+          <AlertDescription>{listQuery.error.message}</AlertDescription>
         </Alert>
       ) : null}
 
-      <JinisTable
+      <JinisCharaTable
         records={records}
         onCreate={openCreateModal}
         onEdit={openEditModal}
@@ -239,10 +248,10 @@ function JinisListPage() {
         togglingId={togglingId}
       />
 
-      <JinisModal
+      <JinisCharaModal
         open={modalOpen}
         onOpenChange={setModalOpen}
-        jinis={editingRecord}
+        jinisChara={editingRecord}
         onSuccess={() => {
           setEditingRecord(undefined)
         }}
@@ -251,14 +260,14 @@ function JinisListPage() {
       <AlertDialog
         open={deleteTarget !== null}
         onOpenChange={(open) => {
-          if (!open && !deleteJinisMutation.isPending) {
+          if (!open && !deleteMutation.isPending) {
             setDeleteTarget(null)
           }
         }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this Jinis?</AlertDialogTitle>
+            <AlertDialogTitle>Delete this JinisChara?</AlertDialogTitle>
             <AlertDialogDescription>
               {deleteTarget
                 ? `#${deleteTarget.slNo} · ${deleteTarget.name} will be removed permanently.`
@@ -271,17 +280,17 @@ function JinisListPage() {
                 buttonVariants({ variant: 'outline' }),
                 'bg-background',
               )}
-              disabled={deleteJinisMutation.isPending}
+              disabled={deleteMutation.isPending}
             >
               Cancel
             </AlertDialogCancel>
             <Button
               type="button"
               variant="destructive"
-              disabled={deleteJinisMutation.isPending}
+              disabled={deleteMutation.isPending}
               onClick={() => void confirmDelete()}
             >
-              {deleteJinisMutation.isPending ? <Spinner /> : null}
+              {deleteMutation.isPending ? <Spinner /> : null}
               Delete
             </Button>
           </AlertDialogFooter>

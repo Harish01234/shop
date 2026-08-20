@@ -54,6 +54,16 @@ export function AppHeader({ user }: { user?: AppHeaderUser | null }) {
           >
             Jinis
           </Link>
+          <Link
+            to="/jinischara"
+            search={{ view: 'open' }}
+            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}
+            activeProps={{
+              className: 'bg-primary/15 text-primary',
+            }}
+          >
+            JinisChara
+          </Link>
           {isAdminRole(user?.role) ? (
             <Link
               to="/admin"
@@ -106,6 +116,16 @@ export function AppHeader({ user }: { user?: AppHeaderUser | null }) {
                   )}
                 >
                   Jinis
+                </Link>
+                <Link
+                  to="/jinischara"
+                  search={{ view: 'open' }}
+                  className={cn(
+                    buttonVariants({ variant: 'ghost' }),
+                    'justify-start',
+                  )}
+                >
+                  JinisChara
                 </Link>
                 {isAdminRole(user?.role) ? (
                   <Link

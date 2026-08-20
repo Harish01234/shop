@@ -1,5 +1,5 @@
 import { JinisForm } from './jinis-form'
-import type { JinisRecord } from './jinis.types'
+import type { JinisRecord } from '#/features/jinis/jinis.types'
 import {
   Dialog,
   DialogContent,

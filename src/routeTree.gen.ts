@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as JinisRouteImport } from './routes/jinis'
+import { Route as JinischaraRouteImport } from './routes/jinischara'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminExportRouteImport } from './routes/admin/export'
@@ -19,6 +20,7 @@ import { Route as AdminMigrationRouteImport } from './routes/admin/migration'
 import { Route as AdminSessionsRouteImport } from './routes/admin/sessions'
 import { Route as JinisIndexRouteImport } from './routes/jinis/index'
 import { Route as JinisNewRouteImport } from './routes/jinis/new'
+import { Route as JinischaraIndexRouteImport } from './routes/jinischara/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -34,6 +36,11 @@ const AdminRoute = AdminRouteImport.update({
 const JinisRoute = JinisRouteImport.update({
   id: '/jinis',
   path: '/jinis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JinischaraRoute = JinischaraRouteImport.update({
+  id: '/jinischara',
+  path: '/jinischara',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SigninRoute = SigninRouteImport.update({
@@ -71,6 +78,11 @@ const JinisNewRoute = JinisNewRouteImport.update({
   path: '/new',
   getParentRoute: () => JinisRoute,
 } as any)
+const JinischaraIndexRoute = JinischaraIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => JinischaraRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -81,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/jinis': typeof JinisRouteWithChildren
+  '/jinischara': typeof JinischaraRouteWithChildren
   '/signin': typeof SigninRoute
   '/admin/export': typeof AdminExportRoute
   '/admin/migration': typeof AdminMigrationRoute
@@ -88,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/jinis/new': typeof JinisNewRoute
   '/admin/': typeof AdminIndexRoute
   '/jinis/': typeof JinisIndexRoute
+  '/jinischara/': typeof JinischaraIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
@@ -99,6 +113,7 @@ export interface FileRoutesByTo {
   '/jinis/new': typeof JinisNewRoute
   '/admin': typeof AdminIndexRoute
   '/jinis': typeof JinisIndexRoute
+  '/jinischara': typeof JinischaraIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
@@ -106,6 +121,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/jinis': typeof JinisRouteWithChildren
+  '/jinischara': typeof JinischaraRouteWithChildren
   '/signin': typeof SigninRoute
   '/admin/export': typeof AdminExportRoute
   '/admin/migration': typeof AdminMigrationRoute
@@ -113,6 +129,7 @@ export interface FileRoutesById {
   '/jinis/new': typeof JinisNewRoute
   '/admin/': typeof AdminIndexRoute
   '/jinis/': typeof JinisIndexRoute
+  '/jinischara/': typeof JinischaraIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
@@ -121,6 +138,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/jinis'
+    | '/jinischara'
     | '/signin'
     | '/admin/export'
     | '/admin/migration'
@@ -128,6 +146,7 @@ export interface FileRouteTypes {
     | '/jinis/new'
     | '/admin/'
     | '/jinis/'
+    | '/jinischara/'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -139,12 +158,14 @@ export interface FileRouteTypes {
     | '/jinis/new'
     | '/admin'
     | '/jinis'
+    | '/jinischara'
     | '/api/auth/$'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/jinis'
+    | '/jinischara'
     | '/signin'
     | '/admin/export'
     | '/admin/migration'
@@ -152,6 +173,7 @@ export interface FileRouteTypes {
     | '/jinis/new'
     | '/admin/'
     | '/jinis/'
+    | '/jinischara/'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
@@ -159,6 +181,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   JinisRoute: typeof JinisRouteWithChildren
+  JinischaraRoute: typeof JinischaraRouteWithChildren
   SigninRoute: typeof SigninRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
@@ -184,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/jinis'
       fullPath: '/jinis'
       preLoaderRoute: typeof JinisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jinischara': {
+      id: '/jinischara'
+      path: '/jinischara'
+      fullPath: '/jinischara'
+      preLoaderRoute: typeof JinischaraRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signin': {
@@ -235,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JinisNewRouteImport
       parentRoute: typeof JinisRoute
     }
+    '/jinischara/': {
+      id: '/jinischara/'
+      path: '/'
+      fullPath: '/jinischara/'
+      preLoaderRoute: typeof JinischaraIndexRouteImport
+      parentRoute: typeof JinischaraRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -273,10 +310,23 @@ const JinisRouteChildren: JinisRouteChildren = {
 
 const JinisRouteWithChildren = JinisRoute._addFileChildren(JinisRouteChildren)
 
+interface JinischaraRouteChildren {
+  JinischaraIndexRoute: typeof JinischaraIndexRoute
+}
+
+const JinischaraRouteChildren: JinischaraRouteChildren = {
+  JinischaraIndexRoute: JinischaraIndexRoute,
+}
+
+const JinischaraRouteWithChildren = JinischaraRoute._addFileChildren(
+  JinischaraRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   JinisRoute: JinisRouteWithChildren,
+  JinischaraRoute: JinischaraRouteWithChildren,
   SigninRoute: SigninRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }

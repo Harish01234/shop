@@ -1,65 +1,62 @@
 import { useState, type FormEvent } from 'react'
+import { AlertCircleIcon } from 'lucide-react'
 
-import { useCreateJinis, useUpdateJinis } from './jinis.hooks'
-import { emptyItem, JinisItemFields } from './jinis-item-fields'
-import { createJinisSchema, updateJinisSchema } from './jinis.schema'
-import type { JinisItemInput, JinisRecord, JinisType } from './jinis.types'
-import { getErrorMessage, sumJinisWeights } from './jinis.utils'
+import {
+  useCreateJinisChara,
+  useUpdateJinisChara,
+} from '#/features/jinischara/jinischara.hooks'
+import {
+  createJinisCharaSchema,
+  updateJinisCharaSchema,
+} from '#/features/jinischara/jinischara.schema'
+import type { JinisCharaRecord } from '#/features/jinischara/jinischara.types'
+import { getErrorMessage } from '#/features/jinischara/jinischara.utils'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import {
-  NativeSelect,
-  NativeSelectOption,
-} from '@/components/ui/native-select'
 import { Spinner } from '@/components/ui/spinner'
-import { AlertCircleIcon } from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
 
 function toDateInput(value: Date | string) {
   return new Date(value).toISOString().slice(0, 10)
 }
 
-type JinisFormProps = {
-  jinis?: JinisRecord
+type JinisCharaFormProps = {
+  jinisChara?: JinisCharaRecord
   onSuccess: () => void
   onCancel: () => void
 }
 
-export function JinisForm({ jinis, onSuccess, onCancel }: JinisFormProps) {
-  const isEdit = Boolean(jinis)
-  const createJinisMutation = useCreateJinis()
-  const updateJinisMutation = useUpdateJinis()
-  const saving = createJinisMutation.isPending || updateJinisMutation.isPending
+export function JinisCharaForm({
+  jinisChara,
+  onSuccess,
+  onCancel,
+}: JinisCharaFormProps) {
+  const isEdit = Boolean(jinisChara)
+  const createMutation = useCreateJinisChara()
+  const updateMutation = useUpdateJinisChara()
+  const saving = createMutation.isPending || updateMutation.isPending
 
-  const [slNo, setSlNo] = useState(jinis ? String(jinis.slNo) : '')
-  const [name, setName] = useState(jinis?.name ?? '')
-  const [fatherName, setFatherName] = useState(jinis?.fatherName ?? '')
-  const [phoneNo, setPhoneNo] = useState(jinis?.phoneNo ?? '')
-  const [credit, setCredit] = useState(jinis ? String(jinis.credit) : '')
-  const [type, setType] = useState<JinisType>(jinis?.type ?? 'GOLD')
-  const [date, setDate] = useState(
-    jinis ? toDateInput(jinis.date) : toDateInput(new Date()),
+  const [slNo, setSlNo] = useState(jinisChara ? String(jinisChara.slNo) : '')
+  const [name, setName] = useState(jinisChara?.name ?? '')
+  const [fatherName, setFatherName] = useState(jinisChara?.fatherName ?? '')
+  const [phoneNo, setPhoneNo] = useState(jinisChara?.phoneNo ?? '')
+  const [credit, setCredit] = useState(jinisChara ? String(jinisChara.credit) : '')
+  const [percentage, setPercentage] = useState(
+    jinisChara ? String(jinisChara.percentage) : '',
   )
-  const [items, setItems] = useState<JinisItemInput[]>(
-    jinis?.items.length
-      ? jinis.items.map((item) => ({
-          name: item.name,
-          wet: item.wet,
-          type: item.type,
-        }))
-      : [emptyItem()],
+  const [description, setDescription] = useState(jinisChara?.description ?? '')
+  const [date, setDate] = useState(
+    jinisChara ? toDateInput(jinisChara.date) : toDateInput(new Date()),
   )
   const [error, setError] = useState<string | null>(null)
-
-  const weights = sumJinisWeights(items)
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
@@ -71,25 +68,25 @@ export function JinisForm({ jinis, onSuccess, onCancel }: JinisFormProps) {
       fatherName,
       phoneNo,
       credit: Number(credit),
-      type,
+      percentage: Number(percentage),
+      description: description.trim() || undefined,
       date: new Date(date),
-      items: items.map((item) => ({
-        ...item,
-        wet: Number(item.wet),
-      })),
     }
 
     try {
-      if (isEdit && jinis) {
-        const parsed = updateJinisSchema.parse({ id: jinis.id, ...payload })
-        await updateJinisMutation.mutateAsync(parsed)
+      if (isEdit && jinisChara) {
+        const parsed = updateJinisCharaSchema.parse({
+          id: jinisChara.id,
+          ...payload,
+        })
+        await updateMutation.mutateAsync(parsed)
       } else {
-        const parsed = createJinisSchema.parse(payload)
-        await createJinisMutation.mutateAsync(parsed)
+        const parsed = createJinisCharaSchema.parse(payload)
+        await createMutation.mutateAsync(parsed)
       }
       onSuccess()
     } catch (caught) {
-      setError(getErrorMessage(caught, 'Could not save this Jinis.'))
+      setError(getErrorMessage(caught, 'Could not save this JinisChara.'))
     }
   }
 
@@ -163,36 +160,28 @@ export function JinisForm({ jinis, onSuccess, onCancel }: JinisFormProps) {
                 onChange={(event) => setCredit(event.target.value)}
               />
             </Field>
+            <Field>
+              <FieldLabel htmlFor="percentage">Percentage</FieldLabel>
+              <Input
+                id="percentage"
+                type="number"
+                min="0"
+                step="0.01"
+                required
+                value={percentage}
+                onChange={(event) => setPercentage(event.target.value)}
+              />
+            </Field>
             <Field className="sm:col-span-2">
-              <FieldLabel htmlFor="type">Jinis type</FieldLabel>
-              <NativeSelect
-                id="type"
-                className="w-full max-w-xs"
-                value={type}
-                onChange={(event) =>
-                  setType(event.target.value as JinisType)
-                }
-              >
-                <NativeSelectOption value="GOLD">Gold</NativeSelectOption>
-                <NativeSelectOption value="SILVER">Silver</NativeSelectOption>
-                <NativeSelectOption value="BOTH">Both</NativeSelectOption>
-                <NativeSelectOption value="UNKNOWN">Unknown</NativeSelectOption>
-              </NativeSelect>
+              <FieldLabel htmlFor="description">Description</FieldLabel>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                placeholder="Optional notes"
+              />
             </Field>
           </FieldGroup>
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-none ring-foreground/10">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Items</CardTitle>
-          <CardDescription>
-            Gold {weights.goldWeight.toFixed(2)} · Silver{' '}
-            {weights.silverWeight.toFixed(2)}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <JinisItemFields items={items} onChange={setItems} />
         </CardContent>
       </Card>
 
@@ -215,7 +204,7 @@ export function JinisForm({ jinis, onSuccess, onCancel }: JinisFormProps) {
         </Button>
         <Button type="submit" disabled={saving}>
           {saving ? <Spinner /> : null}
-          {isEdit ? 'Save changes' : 'Create Jinis'}
+          {isEdit ? 'Save changes' : 'Create JinisChara'}
         </Button>
       </div>
     </form>

@@ -1,6 +1,6 @@
 import { PlusIcon, TrashIcon } from 'lucide-react'
 
-import type { JinisItemInput } from './jinis.types'
+import type { JinisItemInput } from '#/features/jinis/jinis.types'
 import { Button } from '@/components/ui/button'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
