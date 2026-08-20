@@ -1,5 +1,6 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import {
+  BanknoteIcon,
   DatabaseIcon,
   DownloadIcon,
   IndianRupeeIcon,
@@ -9,9 +10,13 @@ import {
 
 import { useAdminOverview } from '#/features/admin/admin.hooks'
 import { adminOverviewQueryOptions } from '#/features/admin/admin.queries'
+import { useTotalInterest } from '#/features/interest/interest.hooks'
+import { totalInterestQueryOptions } from '#/features/interest/interest.queries'
 import { useActiveJinisTotal } from '#/features/jinis/jinis.hooks'
 import { activeJinisTotalQueryOptions } from '#/features/jinis/jinis.queries'
 import { formatJinisCredit } from '#/features/jinis/jinis.utils'
+import { useActiveJinisCharaTotal } from '#/features/jinischara/jinischara.hooks'
+import { activeJinisCharaTotalQueryOptions } from '#/features/jinischara/jinischara.queries'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import {
@@ -29,6 +34,8 @@ export const Route = createFileRoute('/admin/')({
     Promise.all([
       context.queryClient.ensureQueryData(adminOverviewQueryOptions()),
       context.queryClient.ensureQueryData(activeJinisTotalQueryOptions()),
+      context.queryClient.ensureQueryData(activeJinisCharaTotalQueryOptions()),
+      context.queryClient.ensureQueryData(totalInterestQueryOptions()),
     ]),
   component: AdminDashboardPage,
 })
@@ -36,6 +43,8 @@ export const Route = createFileRoute('/admin/')({
 function AdminDashboardPage() {
   const overviewQuery = useAdminOverview()
   const activeTotalQuery = useActiveJinisTotal()
+  const activeCharaTotalQuery = useActiveJinisCharaTotal()
+  const totalInterestQuery = useTotalInterest()
   const data = overviewQuery.data
 
   return (
@@ -45,11 +54,11 @@ function AdminDashboardPage() {
           Dashboard
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Overview of users, sessions, and Jinis.
+          Overview of users, sessions, Jinis, and JinisChara.
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <StatCard
           title="Users"
           value={data?.userCount}
@@ -69,10 +78,24 @@ function AdminDashboardPage() {
           loading={overviewQuery.isPending}
         />
         <StatCard
-          title="Total Active Credit"
+          title="Total Active Jinis Credit"
           value={activeTotalQuery.data}
           icon={IndianRupeeIcon}
           loading={activeTotalQuery.isPending}
+          format="inr"
+        />
+        <StatCard
+          title="Total Active JinisChara Credit"
+          value={activeCharaTotalQuery.data}
+          icon={IndianRupeeIcon}
+          loading={activeCharaTotalQuery.isPending}
+          format="inr"
+        />
+        <StatCard
+          title="Total Interest Collected"
+          value={totalInterestQuery.data}
+          icon={BanknoteIcon}
+          loading={totalInterestQuery.isPending}
           format="inr"
         />
       </div>
@@ -121,6 +144,14 @@ function AdminDashboardPage() {
             <CardDescription>Open other admin pages.</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
+            <Link
+              to="/admin/interest"
+              search={{ source: 'all' }}
+              className={cn(buttonVariants({ variant: 'outline' }), 'justify-start')}
+            >
+              <BanknoteIcon />
+              Interest
+            </Link>
             <Link
               to="/admin/sessions"
               className={cn(buttonVariants({ variant: 'outline' }), 'justify-start')}

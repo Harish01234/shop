@@ -16,6 +16,7 @@ import { Route as JinischaraRouteImport } from './routes/jinischara'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminExportRouteImport } from './routes/admin/export'
+import { Route as AdminInterestRouteImport } from './routes/admin/interest'
 import { Route as AdminMigrationRouteImport } from './routes/admin/migration'
 import { Route as AdminSessionsRouteImport } from './routes/admin/sessions'
 import { Route as JinisIndexRouteImport } from './routes/jinis/index'
@@ -58,6 +59,11 @@ const AdminExportRoute = AdminExportRouteImport.update({
   path: '/export',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminInterestRoute = AdminInterestRouteImport.update({
+  id: '/interest',
+  path: '/interest',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminMigrationRoute = AdminMigrationRouteImport.update({
   id: '/migration',
   path: '/migration',
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/jinischara': typeof JinischaraRouteWithChildren
   '/signin': typeof SigninRoute
   '/admin/export': typeof AdminExportRoute
+  '/admin/interest': typeof AdminInterestRoute
   '/admin/migration': typeof AdminMigrationRoute
   '/admin/sessions': typeof AdminSessionsRoute
   '/jinis/new': typeof JinisNewRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/signin': typeof SigninRoute
   '/admin/export': typeof AdminExportRoute
+  '/admin/interest': typeof AdminInterestRoute
   '/admin/migration': typeof AdminMigrationRoute
   '/admin/sessions': typeof AdminSessionsRoute
   '/jinis/new': typeof JinisNewRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/jinischara': typeof JinischaraRouteWithChildren
   '/signin': typeof SigninRoute
   '/admin/export': typeof AdminExportRoute
+  '/admin/interest': typeof AdminInterestRoute
   '/admin/migration': typeof AdminMigrationRoute
   '/admin/sessions': typeof AdminSessionsRoute
   '/jinis/new': typeof JinisNewRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/jinischara'
     | '/signin'
     | '/admin/export'
+    | '/admin/interest'
     | '/admin/migration'
     | '/admin/sessions'
     | '/jinis/new'
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/'
     | '/signin'
     | '/admin/export'
+    | '/admin/interest'
     | '/admin/migration'
     | '/admin/sessions'
     | '/jinis/new'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/jinischara'
     | '/signin'
     | '/admin/export'
+    | '/admin/interest'
     | '/admin/migration'
     | '/admin/sessions'
     | '/jinis/new'
@@ -237,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminExportRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/interest': {
+      id: '/admin/interest'
+      path: '/interest'
+      fullPath: '/admin/interest'
+      preLoaderRoute: typeof AdminInterestRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/migration': {
       id: '/admin/migration'
       path: '/migration'
@@ -284,6 +303,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminExportRoute: typeof AdminExportRoute
+  AdminInterestRoute: typeof AdminInterestRoute
   AdminMigrationRoute: typeof AdminMigrationRoute
   AdminSessionsRoute: typeof AdminSessionsRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -291,6 +311,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminExportRoute: AdminExportRoute,
+  AdminInterestRoute: AdminInterestRoute,
   AdminMigrationRoute: AdminMigrationRoute,
   AdminSessionsRoute: AdminSessionsRoute,
   AdminIndexRoute: AdminIndexRoute,

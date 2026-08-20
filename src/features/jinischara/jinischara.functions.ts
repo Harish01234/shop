@@ -16,6 +16,7 @@ import {
   getJinisCharaRecord,
   listJinisCharaRecords,
   settleJinisCharaRecord,
+  sumActiveJinisCharaCredit,
   updateJinisCharaRecord,
 } from './jinischara.server'
 
@@ -36,6 +37,13 @@ export const listJinisChara = createServerFn({ method: 'GET' })
     await requireUser()
     return listJinisCharaRecords(data)
   })
+
+export const getActiveJinisCharaTotal = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    await requireUser()
+    return sumActiveJinisCharaCredit()
+  },
+)
 
 export const getJinisChara = createServerFn({ method: 'GET' })
   .validator(jinisCharaIdSchema)

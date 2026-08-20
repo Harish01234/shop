@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useServerFn } from '@tanstack/react-start'
 
 import { refetchJinisLists } from '#/features/jinis/jinis.queries'
+import { refetchInterestLists } from '#/features/interest/interest.queries'
 import {
   deleteAllJinis,
   exportData,
@@ -117,6 +118,7 @@ export function useDeleteAllJinis() {
       })
       await Promise.all([
         refetchJinisLists(queryClient),
+        refetchInterestLists(queryClient),
         refetchAdminOverview(queryClient),
       ])
     },

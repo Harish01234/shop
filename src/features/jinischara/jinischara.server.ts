@@ -177,3 +177,12 @@ export async function settleJinisCharaRecord(data: SettleJinisCharaInput) {
     },
   })
 }
+
+export async function sumActiveJinisCharaCredit() {
+  const result = await prisma.jinisChara.aggregate({
+    where: { active: true },
+    _sum: { credit: true },
+  })
+
+  return result._sum.credit ?? 0
+}

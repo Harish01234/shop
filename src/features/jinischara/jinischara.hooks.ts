@@ -8,6 +8,7 @@ import {
 } from './jinischara.functions'
 import type { JinisCharaFilterValues } from './jinischara.filters'
 import {
+  activeJinisCharaTotalQueryOptions,
   jinisCharaListQueryOptions,
   refetchJinisCharaLists,
 } from './jinischara.queries'
@@ -24,6 +25,10 @@ export function useJinisCharaList(
   filters: JinisCharaFilterValues = {},
 ) {
   return useQuery(jinisCharaListQueryOptions(view, filters))
+}
+
+export function useActiveJinisCharaTotal() {
+  return useQuery(activeJinisCharaTotalQueryOptions())
 }
 
 export function useCreateJinisChara() {

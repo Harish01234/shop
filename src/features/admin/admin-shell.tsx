@@ -1,5 +1,6 @@
 import { Link, Outlet, useMatchRoute } from '@tanstack/react-router'
 import {
+  BanknoteIcon,
   DatabaseIcon,
   DownloadIcon,
   LayoutDashboardIcon,
@@ -37,6 +38,12 @@ const adminNav = [
     title: 'Sessions',
     to: '/admin/sessions' as const,
     icon: MonitorIcon,
+    exact: false,
+  },
+  {
+    title: 'Interest',
+    to: '/admin/interest' as const,
+    icon: BanknoteIcon,
     exact: false,
   },
   {
