@@ -182,3 +182,5 @@ model Interest {
   @@index([jinisCharaId])
   @@index([personName])
 }
+
+
