@@ -8,6 +8,7 @@ import type {
   SettleJinisCharaInput,
   UpdateJinisCharaInput,
 } from './jinischara.types'
+import { DEFAULT_JINISCHARA_PERCENTAGE } from './jinischara.utils'
 
 function dayStart(value: string) {
   return new Date(`${value}T00:00:00`)
@@ -113,7 +114,7 @@ export async function createJinisCharaRecord(
       fatherName: data.fatherName,
       phoneNo: data.phoneNo,
       credit: data.credit,
-      percentage: data.percentage,
+      percentage: data.percentage ?? DEFAULT_JINISCHARA_PERCENTAGE,
       description: data.description || null,
       date: data.date,
       active: data.active,

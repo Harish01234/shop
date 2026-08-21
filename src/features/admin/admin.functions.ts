@@ -6,14 +6,18 @@ import { auth } from '#/lib/auth'
 import { isAdminRole } from '#/lib/admin-role'
 import {
   adminDeleteAllJinisSchema,
+  adminDeleteAllJinisCharaSchema,
   adminExportSchema,
   adminJinisImportSchema,
+  adminJinisCharaImportSchema,
   adminSessionIdSchema,
 } from './admin.schema'
 import {
+  deleteAllJinisCharaRecords,
   deleteAllJinisRecords,
   exportAdminData,
   getAdminOverview,
+  importJinisCharaCsv,
   importJinisCsv,
   listAdminSessions,
   revokeAdminSession,
@@ -73,6 +77,20 @@ export const deleteAllJinis = createServerFn({ method: 'POST' })
   .handler(async () => {
     await requireAdmin()
     return deleteAllJinisRecords()
+  })
+
+export const importJinisChara = createServerFn({ method: 'POST' })
+  .validator(adminJinisCharaImportSchema)
+  .handler(async ({ data }) => {
+    const session = await requireAdmin()
+    return importJinisCharaCsv(data, session.user.id)
+  })
+
+export const deleteAllJinisChara = createServerFn({ method: 'POST' })
+  .validator(adminDeleteAllJinisCharaSchema)
+  .handler(async () => {
+    await requireAdmin()
+    return deleteAllJinisCharaRecords()
   })
 
 export const exportData = createServerFn({ method: 'POST' })

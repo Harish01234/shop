@@ -390,7 +390,7 @@ export type JinisCharaCreateInput = {
   fatherName: string
   phoneNo: string
   credit: number
-  percentage: number
+  percentage?: number
   description?: string | null
   date: Date | string
   active?: boolean
@@ -408,7 +408,7 @@ export type JinisCharaUncheckedCreateInput = {
   fatherName: string
   phoneNo: string
   credit: number
-  percentage: number
+  percentage?: number
   description?: string | null
   date: Date | string
   active?: boolean
@@ -462,7 +462,7 @@ export type JinisCharaCreateManyInput = {
   fatherName: string
   phoneNo: string
   credit: number
-  percentage: number
+  percentage?: number
   description?: string | null
   date: Date | string
   active?: boolean
@@ -648,7 +648,7 @@ export type JinisCharaCreateWithoutCreatedByInput = {
   fatherName: string
   phoneNo: string
   credit: number
-  percentage: number
+  percentage?: number
   description?: string | null
   date: Date | string
   active?: boolean
@@ -665,7 +665,7 @@ export type JinisCharaUncheckedCreateWithoutCreatedByInput = {
   fatherName: string
   phoneNo: string
   credit: number
-  percentage: number
+  percentage?: number
   description?: string | null
   date: Date | string
   active?: boolean
@@ -728,7 +728,7 @@ export type JinisCharaCreateWithoutInterestsInput = {
   fatherName: string
   phoneNo: string
   credit: number
-  percentage: number
+  percentage?: number
   description?: string | null
   date: Date | string
   active?: boolean
@@ -745,7 +745,7 @@ export type JinisCharaUncheckedCreateWithoutInterestsInput = {
   fatherName: string
   phoneNo: string
   credit: number
-  percentage: number
+  percentage?: number
   description?: string | null
   date: Date | string
   active?: boolean
@@ -812,7 +812,7 @@ export type JinisCharaCreateManyCreatedByInput = {
   fatherName: string
   phoneNo: string
   credit: number
-  percentage: number
+  percentage?: number
   description?: string | null
   date: Date | string
   active?: boolean

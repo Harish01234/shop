@@ -19,6 +19,7 @@ import { getDailyCalculation } from '#/features/dailycalculation/dailycalculatio
 import type {
   DailyCalculationAsolSudhRow,
   DailyCalculationDeoyaRow,
+  DailyCalculationLoanSource,
   DailyCalculationRecord,
 } from '#/features/dailycalculation/dailycalculation.types'
 import {
@@ -76,6 +77,36 @@ type DailyCalculationDetailViewProps = {
 
 function formatDetailDate(value: Date | string) {
   return format(new Date(value), 'dd MMM yyyy')
+}
+
+function defaultInterestDateInPeriod(
+  periodStart: Date | string,
+  periodEnd: Date | string,
+) {
+  const start = new Date(periodStart)
+  const end = new Date(periodEnd)
+  const today = new Date()
+  const todayTime = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  ).getTime()
+  const startTime = new Date(
+    start.getFullYear(),
+    start.getMonth(),
+    start.getDate(),
+  ).getTime()
+  const endTime = new Date(
+    end.getFullYear(),
+    end.getMonth(),
+    end.getDate(),
+  ).getTime()
+
+  if (todayTime >= startTime && todayTime <= endTime) {
+    return today
+  }
+
+  return end
 }
 
 function DetailColumnEmpty({ message }: { message: string }) {
@@ -166,7 +197,7 @@ export function DailyCalculationDetailView({
   const [interestAsolContext, setInterestAsolContext] = useState<
     | {
         settledCredit: number
-        source: 'Jinis' | 'JinisChara'
+        source: DailyCalculationLoanSource
       }
     | undefined
   >()
@@ -243,10 +274,17 @@ export function DailyCalculationDetailView({
         data: { id: row.interestId },
       })) as InterestRecord
       setEditingInterest(record)
-      setInterestAsolContext({
-        settledCredit: row.amount,
-        source: row.source,
-      })
+      if (
+        (row.source === 'Jinis' || row.source === 'JinisChara') &&
+        row.amount > 0
+      ) {
+        setInterestAsolContext({
+          settledCredit: row.amount,
+          source: row.source,
+        })
+      } else {
+        setInterestAsolContext(undefined)
+      }
       setInterestModalOpen(true)
     } finally {
       setLoadingEditId(null)
@@ -545,7 +583,7 @@ export function DailyCalculationDetailView({
             <div>
               <h2 className="font-medium text-foreground">Asol + Sudh</h2>
               <p className="text-sm text-muted-foreground">
-                Settled credit and linked interest during the period.
+                Settled credit and interest during the period.
               </p>
             </div>
             <Button type="button" size="sm" onClick={openCreateInterest}>
@@ -577,7 +615,11 @@ export function DailyCalculationDetailView({
                     <TableRow key={rowKey('asol', row)}>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span>{row.slNo}</span>
+                          <span>
+                            {row.source === 'Person'
+                              ? (row.personName || '—')
+                              : row.slNo}
+                          </span>
                           <span className="text-xs text-muted-foreground">
                             {row.source}
                           </span>
@@ -694,6 +736,11 @@ export function DailyCalculationDetailView({
         }}
         interest={editingInterest}
         asolContext={interestAsolContext}
+        defaultDate={
+          editingInterest
+            ? undefined
+            : defaultInterestDateInPeriod(detail.periodStart, detail.periodEnd)
+        }
         onSuccess={() => {
           setEditingInterest(undefined)
           setInterestAsolContext(undefined)

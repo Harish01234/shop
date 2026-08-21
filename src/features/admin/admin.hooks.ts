@@ -3,10 +3,14 @@ import { useServerFn } from '@tanstack/react-start'
 
 import { refetchJinisLists } from '#/features/jinis/jinis.queries'
 import { refetchInterestLists } from '#/features/interest/interest.queries'
+import { refetchJinisCharaLists } from '#/features/jinischara/jinischara.queries'
+import { getErrorMessage } from '#/features/jinischara/jinischara.utils'
 import {
   deleteAllJinis,
+  deleteAllJinisChara,
   exportData,
   importJinis,
+  importJinisChara,
   revokeSession,
 } from './admin.functions'
 import {
@@ -17,6 +21,7 @@ import {
 } from './admin.queries'
 import type {
   AdminExportInput,
+  AdminJinisCharaImportInput,
   AdminJinisImportInput,
   AdminSessionRecord,
 } from './admin.types'
@@ -125,6 +130,80 @@ export function useDeleteAllJinis() {
     onError: () => {
       toast.add({
         title: 'Could not delete Jinis',
+        description: 'Please try again.',
+        type: 'error',
+      })
+    },
+  })
+}
+
+export function useImportJinisChara() {
+  const queryClient = useQueryClient()
+  const importJinisCharaFn = useServerFn(importJinisChara)
+
+  return useMutation({
+    mutationFn: (data: AdminJinisCharaImportInput) =>
+      importJinisCharaFn({ data }),
+    onSuccess: async (result) => {
+      if (result.imported === 0 && result.skipped > 0) {
+        toast.add({
+          title: 'Nothing imported',
+          description: `All ${result.skipped} rows were skipped because those serial numbers already exist.`,
+          type: 'error',
+        })
+        return
+      }
+
+      toast.add({
+        title: 'JinisChara imported',
+        description:
+          result.skipped > 0
+            ? `${result.imported} added. ${result.skipped} skipped as already present.`
+            : `${result.imported} added.`,
+        type: 'success',
+      })
+      await Promise.all([
+        refetchJinisCharaLists(queryClient),
+        refetchAdminOverview(queryClient),
+      ])
+    },
+    onError: (error) => {
+      toast.add({
+        title: 'Could not import JinisChara',
+        description: getErrorMessage(
+          error,
+          'Please check the preview and try again.',
+        ),
+        type: 'error',
+      })
+    },
+  })
+}
+
+export function useDeleteAllJinisChara() {
+  const queryClient = useQueryClient()
+  const deleteAllJinisCharaFn = useServerFn(deleteAllJinisChara)
+
+  return useMutation({
+    mutationFn: () => deleteAllJinisCharaFn({ data: {} }),
+    onSuccess: async (result) => {
+      toast.add({
+        title: 'JinisChara deleted',
+        description:
+          result.paymentsDeleted > 0
+            ? `${result.deleted} JinisChara removed, including ${result.paymentsDeleted} linked payments.`
+            : `${result.deleted} JinisChara removed.`,
+        type: 'success',
+      })
+      await Promise.all([
+        refetchJinisCharaLists(queryClient),
+        refetchInterestLists(queryClient),
+        refetchAdminOverview(queryClient),
+      ])
+    },
+    onError: () => {
+      toast.add({
+        title: 'Could not delete JinisChara',
         description: 'Please try again.',
         type: 'error',
       })

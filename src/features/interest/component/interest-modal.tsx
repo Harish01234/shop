@@ -16,6 +16,7 @@ type InterestModalProps = {
     settledCredit: number
     source: 'Jinis' | 'JinisChara'
   }
+  defaultDate?: Date | string
   onSuccess: () => void
 }
 
@@ -24,6 +25,7 @@ export function InterestModal({
   onOpenChange,
   interest,
   asolContext,
+  defaultDate,
   onSuccess,
 }: InterestModalProps) {
   const isEdit = Boolean(interest)
@@ -46,9 +48,10 @@ export function InterestModal({
           </DialogDescription>
         </DialogHeader>
         <InterestForm
-          key={interest?.id ?? 'new'}
+          key={interest?.id ?? `new-${defaultDate ?? 'today'}`}
           interest={interest}
           asolContext={asolContext}
+          defaultDate={defaultDate}
           onCancel={() => onOpenChange(false)}
           onSuccess={() => {
             onSuccess()

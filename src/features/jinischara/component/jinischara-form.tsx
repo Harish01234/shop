@@ -10,7 +10,7 @@ import {
   updateJinisCharaSchema,
 } from '#/features/jinischara/jinischara.schema'
 import type { JinisCharaRecord } from '#/features/jinischara/jinischara.types'
-import { getErrorMessage } from '#/features/jinischara/jinischara.utils'
+import { getErrorMessage, DEFAULT_JINISCHARA_PERCENTAGE } from '#/features/jinischara/jinischara.utils'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -50,7 +50,7 @@ export function JinisCharaForm({
   const [phoneNo, setPhoneNo] = useState(jinisChara?.phoneNo ?? '')
   const [credit, setCredit] = useState(jinisChara ? String(jinisChara.credit) : '')
   const [percentage, setPercentage] = useState(
-    jinisChara ? String(jinisChara.percentage) : '',
+    jinisChara ? String(jinisChara.percentage) : String(DEFAULT_JINISCHARA_PERCENTAGE),
   )
   const [description, setDescription] = useState(jinisChara?.description ?? '')
   const [date, setDate] = useState(
@@ -68,7 +68,9 @@ export function JinisCharaForm({
       fatherName,
       phoneNo,
       credit: Number(credit),
-      percentage: Number(percentage),
+      percentage: percentage.trim()
+        ? Number(percentage)
+        : DEFAULT_JINISCHARA_PERCENTAGE,
       description: description.trim() || undefined,
       date: new Date(date),
     }

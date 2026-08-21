@@ -279,25 +279,30 @@ export async function refreshDailyCalculationTotalsRecord(
   })
 }
 
-function buildAsolSudhRows(
-  settledJinis: {
-    id: string
-    slNo: number
-    credit: number
-    settledAt: Date | null
-    interests: { id: string; amount: number; date: Date }[]
-  }[],
-  settledJinisChara: {
-    id: string
-    slNo: number
-    credit: number
-    settledAt: Date | null
-    interests: { id: string; amount: number; date: Date }[]
-  }[],
-) {
-  const asolSudhRows: DailyCalculationAsolSudhRow[] = []
+type SettledLoanForAsolSudh = {
+  id: string
+  slNo: number
+  credit: number
+  settledAt: Date | null
+  interests: { id: string; amount: number; date: Date }[]
+}
 
-  for (const row of settledJinis) {
+type PeriodInterestForAsolSudh = {
+  id: string
+  amount: number
+  date: Date
+  personName: string | null
+  jinis: { id: string; slNo: number } | null
+  jinisChara: { id: string; slNo: number } | null
+}
+
+function pushSettledLoanAsolSudhRows(
+  asolSudhRows: DailyCalculationAsolSudhRow[],
+  includedInterestIds: Set<string>,
+  loans: SettledLoanForAsolSudh[],
+  source: 'Jinis' | 'JinisChara',
+) {
+  for (const row of loans) {
     if (!row.settledAt) continue
 
     if (row.interests.length === 0) {
@@ -305,54 +310,93 @@ function buildAsolSudhRows(
         recordId: row.id,
         interestId: null,
         slNo: row.slNo,
+        personName: null,
         amount: row.credit,
         sudh: 0,
         date: row.settledAt,
-        source: 'Jinis',
+        source,
       })
       continue
     }
 
     for (const interest of row.interests) {
+      includedInterestIds.add(interest.id)
       asolSudhRows.push({
         recordId: row.id,
         interestId: interest.id,
         slNo: row.slNo,
+        personName: null,
         amount: row.credit,
         sudh: interest.amount,
         date: interest.date,
-        source: 'Jinis',
+        source,
       })
     }
   }
+}
 
-  for (const row of settledJinisChara) {
-    if (!row.settledAt) continue
+function buildAsolSudhRows(
+  settledJinis: SettledLoanForAsolSudh[],
+  settledJinisChara: SettledLoanForAsolSudh[],
+  periodInterests: PeriodInterestForAsolSudh[],
+) {
+  const asolSudhRows: DailyCalculationAsolSudhRow[] = []
+  const includedInterestIds = new Set<string>()
 
-    if (row.interests.length === 0) {
+  pushSettledLoanAsolSudhRows(
+    asolSudhRows,
+    includedInterestIds,
+    settledJinis,
+    'Jinis',
+  )
+  pushSettledLoanAsolSudhRows(
+    asolSudhRows,
+    includedInterestIds,
+    settledJinisChara,
+    'JinisChara',
+  )
+
+  for (const interest of periodInterests) {
+    if (includedInterestIds.has(interest.id)) continue
+
+    if (interest.jinis) {
       asolSudhRows.push({
-        recordId: row.id,
-        interestId: null,
-        slNo: row.slNo,
-        amount: row.credit,
-        sudh: 0,
-        date: row.settledAt,
+        recordId: interest.jinis.id,
+        interestId: interest.id,
+        slNo: interest.jinis.slNo,
+        personName: null,
+        amount: 0,
+        sudh: interest.amount,
+        date: interest.date,
+        source: 'Jinis',
+      })
+      continue
+    }
+
+    if (interest.jinisChara) {
+      asolSudhRows.push({
+        recordId: interest.jinisChara.id,
+        interestId: interest.id,
+        slNo: interest.jinisChara.slNo,
+        personName: null,
+        amount: 0,
+        sudh: interest.amount,
+        date: interest.date,
         source: 'JinisChara',
       })
       continue
     }
 
-    for (const interest of row.interests) {
-      asolSudhRows.push({
-        recordId: row.id,
-        interestId: interest.id,
-        slNo: row.slNo,
-        amount: row.credit,
-        sudh: interest.amount,
-        date: interest.date,
-        source: 'JinisChara',
-      })
-    }
+    asolSudhRows.push({
+      recordId: interest.id,
+      interestId: interest.id,
+      slNo: 0,
+      personName: interest.personName,
+      amount: 0,
+      sudh: interest.amount,
+      date: interest.date,
+      source: 'Person',
+    })
   }
 
   return asolSudhRows.sort(compareDetailRows)
@@ -376,8 +420,13 @@ export async function getDailyCalculationDetailRecord(
     lte: periodEnd,
   }
 
-  const [issuedJinis, issuedJinisChara, settledJinis, settledJinisChara] =
-    await Promise.all([
+  const [
+    issuedJinis,
+    issuedJinisChara,
+    settledJinis,
+    settledJinisChara,
+    periodInterests,
+  ] = await Promise.all([
       prisma.jinis.findMany({
         where: { date: inPeriod },
         select: { id: true, slNo: true, credit: true, date: true },
@@ -413,6 +462,18 @@ export async function getDailyCalculationDetailRecord(
             orderBy: [{ date: 'asc' }, { createdAt: 'asc' }],
           },
         },
+      }),
+      prisma.interest.findMany({
+        where: { date: inPeriod },
+        select: {
+          id: true,
+          amount: true,
+          date: true,
+          personName: true,
+          jinis: { select: { id: true, slNo: true } },
+          jinisChara: { select: { id: true, slNo: true } },
+        },
+        orderBy: [{ date: 'asc' }, { createdAt: 'asc' }],
       }),
     ])
 
@@ -433,7 +494,11 @@ export async function getDailyCalculationDetailRecord(
     })),
   ].sort(compareDetailRows)
 
-  const asolSudhRows = buildAsolSudhRows(settledJinis, settledJinisChara)
+  const asolSudhRows = buildAsolSudhRows(
+    settledJinis,
+    settledJinisChara,
+    periodInterests,
+  )
 
   return {
     ...record,

@@ -143,7 +143,7 @@ model JinisChara {
   fatherName  String
   phoneNo     String
   credit      Int
-  percentage  Float
+  percentage  Float      @default(5)
   description String?
   date        DateTime
   active      Boolean    @default(true)

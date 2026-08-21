@@ -1,12 +1,18 @@
 import { z } from 'zod'
 
+import { DEFAULT_JINISCHARA_PERCENTAGE } from './jinischara.utils'
+
 export const createJinisCharaSchema = z.object({
   slNo: z.number().int().positive(),
   name: z.string().trim().min(1),
   fatherName: z.string().trim().min(1),
   phoneNo: z.string().trim().min(1),
   credit: z.number().int().positive(),
-  percentage: z.number().nonnegative(),
+  percentage: z
+    .number()
+    .nonnegative()
+    .optional()
+    .default(DEFAULT_JINISCHARA_PERCENTAGE),
   description: z.string().trim().optional(),
   date: z.coerce.date(),
   active: z.boolean().default(true),

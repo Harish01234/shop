@@ -1,7 +1,10 @@
+import { DEFAULT_JINISCHARA_PERCENTAGE } from '#/features/jinischara/jinischara.utils'
+
 import { prisma } from '#/db'
 
 import type {
   AdminExportInput,
+  AdminJinisCharaImportInput,
   AdminJinisImportInput,
   AdminSessionRecord,
 } from './admin.types'
@@ -61,10 +64,12 @@ const sessionSelect = {
 
 export async function getAdminOverview(currentSessionId: string) {
   const now = new Date()
-  const [userCount, activeSessionCount, jinisCount, recent] = await Promise.all([
+  const [userCount, activeSessionCount, jinisCount, jinisCharaCount, recent] =
+    await Promise.all([
     prisma.user.count(),
     prisma.session.count({ where: { expiresAt: { gt: now } } }),
     prisma.jinis.count(),
+    prisma.jinisChara.count(),
     prisma.session.findMany({
       take: 8,
       orderBy: { updatedAt: 'desc' },
@@ -76,6 +81,7 @@ export async function getAdminOverview(currentSessionId: string) {
     userCount,
     activeSessionCount,
     jinisCount,
+    jinisCharaCount,
     recentSessions: recent.map((session) =>
       toSessionRecord(session, currentSessionId),
     ),
@@ -140,6 +146,59 @@ export async function importJinisCsv(
     imported: toCreate.length,
     skipped: input.rows.length - toCreate.length,
   }
+}
+
+export async function importJinisCharaCsv(
+  input: AdminJinisCharaImportInput,
+  createdById: string,
+) {
+  const existing = await prisma.jinisChara.findMany({
+    where: {
+      slNo: { in: input.rows.map((row) => row.slNo) },
+    },
+    select: { slNo: true },
+  })
+  const existingSlNos = new Set(existing.map((row) => row.slNo))
+  const toCreate = input.rows.filter((row) => !existingSlNos.has(row.slNo))
+
+  if (toCreate.length > 0) {
+    await prisma.$transaction(async (tx) => {
+      await tx.jinisChara.createMany({
+        data: toCreate.map((row) => ({
+          slNo: row.slNo,
+          name: row.name,
+          fatherName: row.fatherName,
+          phoneNo: row.phoneNo,
+          credit: row.credit,
+          percentage: row.percentage ?? DEFAULT_JINISCHARA_PERCENTAGE,
+          description: row.description ?? null,
+          date: row.date,
+          active: true,
+          settledAt: null,
+          createdById,
+        })),
+      })
+    })
+  }
+
+  return {
+    imported: toCreate.length,
+    skipped: input.rows.length - toCreate.length,
+  }
+}
+
+export async function deleteAllJinisCharaRecords() {
+  return prisma.$transaction(async (tx) => {
+    const payments = await tx.interest.deleteMany({
+      where: { jinisCharaId: { not: null } },
+    })
+    const jinisChara = await tx.jinisChara.deleteMany()
+
+    return {
+      deleted: jinisChara.count,
+      paymentsDeleted: payments.count,
+    }
+  })
 }
 
 export async function deleteAllJinisRecords() {

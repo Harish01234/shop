@@ -163,6 +163,7 @@ type InterestAsolContext = {
 type InterestFormProps = {
   interest?: InterestRecord
   asolContext?: InterestAsolContext
+  defaultDate?: Date | string
   onSuccess: () => void
   onCancel: () => void
 }
@@ -170,6 +171,7 @@ type InterestFormProps = {
 export function InterestForm({
   interest,
   asolContext,
+  defaultDate,
   onSuccess,
   onCancel,
 }: InterestFormProps) {
@@ -200,7 +202,9 @@ export function InterestForm({
 
   const [amount, setAmount] = useState(interest ? String(interest.amount) : '')
   const [date, setDate] = useState(
-    interest ? toDateInput(interest.date) : toDateInput(new Date()),
+    interest
+      ? toDateInput(interest.date)
+      : toDateInput(defaultDate ?? new Date()),
   )
   const [remarks, setRemarks] = useState(interest?.remarks ?? '')
   const [linkType, setLinkType] = useState<LinkType>(linkTypeFromRecord(interest))

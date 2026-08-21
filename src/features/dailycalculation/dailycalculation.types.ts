@@ -94,20 +94,22 @@ export type DailyCalculationPersonMoneyRecord = {
   updatedAt?: Date | string
 }
 
-export type DailyCalculationDetailSource = 'Jinis' | 'JinisChara'
+export type DailyCalculationLoanSource = 'Jinis' | 'JinisChara'
+export type DailyCalculationDetailSource = DailyCalculationLoanSource | 'Person'
 
 export type DailyCalculationDeoyaRow = {
   recordId: string
   slNo: number
   amount: number
   date: Date | string
-  source: DailyCalculationDetailSource
+  source: DailyCalculationLoanSource
 }
 
 export type DailyCalculationAsolSudhRow = {
   recordId: string
   interestId: string | null
   slNo: number
+  personName: string | null
   amount: number
   sudh: number
   date: Date | string
