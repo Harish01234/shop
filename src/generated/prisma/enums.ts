@@ -25,3 +25,19 @@ export const JinisItemType = {
 } as const
 
 export type JinisItemType = (typeof JinisItemType)[keyof typeof JinisItemType]
+
+
+export const DailyCalculationRecordStatus = {
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED'
+} as const
+
+export type DailyCalculationRecordStatus = (typeof DailyCalculationRecordStatus)[keyof typeof DailyCalculationRecordStatus]
+
+
+export const DailyCalculationBalanceStatus = {
+  CORRECT: 'CORRECT',
+  INCORRECT: 'INCORRECT'
+} as const
+
+export type DailyCalculationBalanceStatus = (typeof DailyCalculationBalanceStatus)[keyof typeof DailyCalculationBalanceStatus]

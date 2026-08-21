@@ -57,3 +57,15 @@ export type JinisChara = Prisma.JinisCharaModel
  * 
  */
 export type Interest = Prisma.InterestModel
+/**
+ * Model DailyCalculation
+ * App-layer validation (not enforceable in schema):
+ * - periodStart <= periodEnd
+ * - no overlapping periods between any two DailyCalculation records
+ */
+export type DailyCalculation = Prisma.DailyCalculationModel
+/**
+ * Model DailyCalculationPersonMoney
+ * 
+ */
+export type DailyCalculationPersonMoney = Prisma.DailyCalculationPersonMoneyModel

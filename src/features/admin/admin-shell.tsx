@@ -1,6 +1,7 @@
 import { Link, Outlet, useMatchRoute } from '@tanstack/react-router'
 import {
   BanknoteIcon,
+  CalculatorIcon,
   DatabaseIcon,
   DownloadIcon,
   LayoutDashboardIcon,
@@ -44,6 +45,12 @@ const adminNav = [
     title: 'Interest',
     to: '/admin/interest' as const,
     icon: BanknoteIcon,
+    exact: false,
+  },
+  {
+    title: 'Daily Calculation',
+    to: '/admin/daily-calculation' as const,
+    icon: CalculatorIcon,
     exact: false,
   },
   {

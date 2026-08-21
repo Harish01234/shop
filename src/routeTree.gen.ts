@@ -15,6 +15,7 @@ import { Route as JinisRouteImport } from './routes/jinis'
 import { Route as JinischaraRouteImport } from './routes/jinischara'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminDailyCalculationRouteImport } from './routes/admin/daily-calculation'
 import { Route as AdminExportRouteImport } from './routes/admin/export'
 import { Route as AdminInterestRouteImport } from './routes/admin/interest'
 import { Route as AdminMigrationRouteImport } from './routes/admin/migration'
@@ -22,7 +23,9 @@ import { Route as AdminSessionsRouteImport } from './routes/admin/sessions'
 import { Route as JinisIndexRouteImport } from './routes/jinis/index'
 import { Route as JinisNewRouteImport } from './routes/jinis/new'
 import { Route as JinischaraIndexRouteImport } from './routes/jinischara/index'
+import { Route as AdminDailyCalculationIndexRouteImport } from './routes/admin/daily-calculation/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AdminDailyCalculationIdDetailRouteImport } from './routes/admin/daily-calculation/$id/detail'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +55,11 @@ const SigninRoute = SigninRouteImport.update({
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDailyCalculationRoute = AdminDailyCalculationRouteImport.update({
+  id: '/daily-calculation',
+  path: '/daily-calculation',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminExportRoute = AdminExportRouteImport.update({
@@ -89,11 +97,23 @@ const JinischaraIndexRoute = JinischaraIndexRouteImport.update({
   path: '/',
   getParentRoute: () => JinischaraRoute,
 } as any)
+const AdminDailyCalculationIndexRoute =
+  AdminDailyCalculationIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AdminDailyCalculationRoute,
+  } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDailyCalculationIdDetailRoute =
+  AdminDailyCalculationIdDetailRouteImport.update({
+    id: '/$id/detail',
+    path: '/$id/detail',
+    getParentRoute: () => AdminDailyCalculationRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -101,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/jinis': typeof JinisRouteWithChildren
   '/jinischara': typeof JinischaraRouteWithChildren
   '/signin': typeof SigninRoute
+  '/admin/daily-calculation': typeof AdminDailyCalculationRouteWithChildren
   '/admin/export': typeof AdminExportRoute
   '/admin/interest': typeof AdminInterestRoute
   '/admin/migration': typeof AdminMigrationRoute
@@ -110,6 +131,8 @@ export interface FileRoutesByFullPath {
   '/jinis/': typeof JinisIndexRoute
   '/jinischara/': typeof JinischaraIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin/daily-calculation/': typeof AdminDailyCalculationIndexRoute
+  '/admin/daily-calculation/$id/detail': typeof AdminDailyCalculationIdDetailRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -123,6 +146,8 @@ export interface FileRoutesByTo {
   '/jinis': typeof JinisIndexRoute
   '/jinischara': typeof JinischaraIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin/daily-calculation': typeof AdminDailyCalculationIndexRoute
+  '/admin/daily-calculation/$id/detail': typeof AdminDailyCalculationIdDetailRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -131,6 +156,7 @@ export interface FileRoutesById {
   '/jinis': typeof JinisRouteWithChildren
   '/jinischara': typeof JinischaraRouteWithChildren
   '/signin': typeof SigninRoute
+  '/admin/daily-calculation': typeof AdminDailyCalculationRouteWithChildren
   '/admin/export': typeof AdminExportRoute
   '/admin/interest': typeof AdminInterestRoute
   '/admin/migration': typeof AdminMigrationRoute
@@ -140,6 +166,8 @@ export interface FileRoutesById {
   '/jinis/': typeof JinisIndexRoute
   '/jinischara/': typeof JinischaraIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin/daily-calculation/': typeof AdminDailyCalculationIndexRoute
+  '/admin/daily-calculation/$id/detail': typeof AdminDailyCalculationIdDetailRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -149,6 +177,7 @@ export interface FileRouteTypes {
     | '/jinis'
     | '/jinischara'
     | '/signin'
+    | '/admin/daily-calculation'
     | '/admin/export'
     | '/admin/interest'
     | '/admin/migration'
@@ -158,6 +187,8 @@ export interface FileRouteTypes {
     | '/jinis/'
     | '/jinischara/'
     | '/api/auth/$'
+    | '/admin/daily-calculation/'
+    | '/admin/daily-calculation/$id/detail'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -171,6 +202,8 @@ export interface FileRouteTypes {
     | '/jinis'
     | '/jinischara'
     | '/api/auth/$'
+    | '/admin/daily-calculation'
+    | '/admin/daily-calculation/$id/detail'
   id:
     | '__root__'
     | '/'
@@ -178,6 +211,7 @@ export interface FileRouteTypes {
     | '/jinis'
     | '/jinischara'
     | '/signin'
+    | '/admin/daily-calculation'
     | '/admin/export'
     | '/admin/interest'
     | '/admin/migration'
@@ -187,6 +221,8 @@ export interface FileRouteTypes {
     | '/jinis/'
     | '/jinischara/'
     | '/api/auth/$'
+    | '/admin/daily-calculation/'
+    | '/admin/daily-calculation/$id/detail'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -242,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/daily-calculation': {
+      id: '/admin/daily-calculation'
+      path: '/daily-calculation'
+      fullPath: '/admin/daily-calculation'
+      preLoaderRoute: typeof AdminDailyCalculationRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/export': {
       id: '/admin/export'
       path: '/export'
@@ -291,6 +334,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JinischaraIndexRouteImport
       parentRoute: typeof JinischaraRoute
     }
+    '/admin/daily-calculation/': {
+      id: '/admin/daily-calculation/'
+      path: '/'
+      fullPath: '/admin/daily-calculation/'
+      preLoaderRoute: typeof AdminDailyCalculationIndexRouteImport
+      parentRoute: typeof AdminDailyCalculationRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -298,10 +348,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/daily-calculation/$id/detail': {
+      id: '/admin/daily-calculation/$id/detail'
+      path: '/$id/detail'
+      fullPath: '/admin/daily-calculation/$id/detail'
+      preLoaderRoute: typeof AdminDailyCalculationIdDetailRouteImport
+      parentRoute: typeof AdminDailyCalculationRoute
+    }
   }
 }
 
+interface AdminDailyCalculationRouteChildren {
+  AdminDailyCalculationIndexRoute: typeof AdminDailyCalculationIndexRoute
+  AdminDailyCalculationIdDetailRoute: typeof AdminDailyCalculationIdDetailRoute
+}
+
+const AdminDailyCalculationRouteChildren: AdminDailyCalculationRouteChildren = {
+  AdminDailyCalculationIndexRoute: AdminDailyCalculationIndexRoute,
+  AdminDailyCalculationIdDetailRoute: AdminDailyCalculationIdDetailRoute,
+}
+
+const AdminDailyCalculationRouteWithChildren =
+  AdminDailyCalculationRoute._addFileChildren(
+    AdminDailyCalculationRouteChildren,
+  )
+
 interface AdminRouteChildren {
+  AdminDailyCalculationRoute: typeof AdminDailyCalculationRouteWithChildren
   AdminExportRoute: typeof AdminExportRoute
   AdminInterestRoute: typeof AdminInterestRoute
   AdminMigrationRoute: typeof AdminMigrationRoute
@@ -310,6 +383,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminDailyCalculationRoute: AdminDailyCalculationRouteWithChildren,
   AdminExportRoute: AdminExportRoute,
   AdminInterestRoute: AdminInterestRoute,
   AdminMigrationRoute: AdminMigrationRoute,

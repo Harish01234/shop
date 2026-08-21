@@ -404,7 +404,9 @@ export const ModelName = {
   Jinis: 'Jinis',
   JinisItem: 'JinisItem',
   JinisChara: 'JinisChara',
-  Interest: 'Interest'
+  Interest: 'Interest',
+  DailyCalculation: 'DailyCalculation',
+  DailyCalculationPersonMoney: 'DailyCalculationPersonMoney'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -420,7 +422,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "jinis" | "jinisItem" | "jinisChara" | "interest"
+    modelProps: "user" | "session" | "account" | "verification" | "jinis" | "jinisItem" | "jinisChara" | "interest" | "dailyCalculation" | "dailyCalculationPersonMoney"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1016,6 +1018,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DailyCalculation: {
+      payload: Prisma.$DailyCalculationPayload<ExtArgs>
+      fields: Prisma.DailyCalculationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DailyCalculationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DailyCalculationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPayload>
+        }
+        findFirst: {
+          args: Prisma.DailyCalculationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DailyCalculationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPayload>
+        }
+        findMany: {
+          args: Prisma.DailyCalculationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPayload>[]
+        }
+        create: {
+          args: Prisma.DailyCalculationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPayload>
+        }
+        createMany: {
+          args: Prisma.DailyCalculationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DailyCalculationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPayload>[]
+        }
+        delete: {
+          args: Prisma.DailyCalculationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPayload>
+        }
+        update: {
+          args: Prisma.DailyCalculationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPayload>
+        }
+        deleteMany: {
+          args: Prisma.DailyCalculationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DailyCalculationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DailyCalculationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPayload>[]
+        }
+        upsert: {
+          args: Prisma.DailyCalculationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPayload>
+        }
+        aggregate: {
+          args: Prisma.DailyCalculationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDailyCalculation>
+        }
+        groupBy: {
+          args: Prisma.DailyCalculationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DailyCalculationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DailyCalculationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DailyCalculationCountAggregateOutputType> | number
+        }
+      }
+    }
+    DailyCalculationPersonMoney: {
+      payload: Prisma.$DailyCalculationPersonMoneyPayload<ExtArgs>
+      fields: Prisma.DailyCalculationPersonMoneyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DailyCalculationPersonMoneyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPersonMoneyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DailyCalculationPersonMoneyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPersonMoneyPayload>
+        }
+        findFirst: {
+          args: Prisma.DailyCalculationPersonMoneyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPersonMoneyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DailyCalculationPersonMoneyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPersonMoneyPayload>
+        }
+        findMany: {
+          args: Prisma.DailyCalculationPersonMoneyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPersonMoneyPayload>[]
+        }
+        create: {
+          args: Prisma.DailyCalculationPersonMoneyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPersonMoneyPayload>
+        }
+        createMany: {
+          args: Prisma.DailyCalculationPersonMoneyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DailyCalculationPersonMoneyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPersonMoneyPayload>[]
+        }
+        delete: {
+          args: Prisma.DailyCalculationPersonMoneyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPersonMoneyPayload>
+        }
+        update: {
+          args: Prisma.DailyCalculationPersonMoneyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPersonMoneyPayload>
+        }
+        deleteMany: {
+          args: Prisma.DailyCalculationPersonMoneyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DailyCalculationPersonMoneyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DailyCalculationPersonMoneyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPersonMoneyPayload>[]
+        }
+        upsert: {
+          args: Prisma.DailyCalculationPersonMoneyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DailyCalculationPersonMoneyPayload>
+        }
+        aggregate: {
+          args: Prisma.DailyCalculationPersonMoneyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDailyCalculationPersonMoney>
+        }
+        groupBy: {
+          args: Prisma.DailyCalculationPersonMoneyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DailyCalculationPersonMoneyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DailyCalculationPersonMoneyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DailyCalculationPersonMoneyCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1187,6 +1337,47 @@ export const InterestScalarFieldEnum = {
 export type InterestScalarFieldEnum = (typeof InterestScalarFieldEnum)[keyof typeof InterestScalarFieldEnum]
 
 
+export const DailyCalculationScalarFieldEnum = {
+  id: 'id',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  tabil: 'tabil',
+  cashInHome: 'cashInHome',
+  cashInShop: 'cashInShop',
+  asol: 'asol',
+  sudh: 'sudh',
+  deoya: 'deoya',
+  personMoneyTotal: 'personMoneyTotal',
+  leftTotal: 'leftTotal',
+  rightTotal: 'rightTotal',
+  difference: 'difference',
+  balanceStatus: 'balanceStatus',
+  recordStatus: 'recordStatus',
+  openedAt: 'openedAt',
+  closedAt: 'closedAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastEditedById: 'lastEditedById',
+  lastEditedAt: 'lastEditedAt'
+} as const
+
+export type DailyCalculationScalarFieldEnum = (typeof DailyCalculationScalarFieldEnum)[keyof typeof DailyCalculationScalarFieldEnum]
+
+
+export const DailyCalculationPersonMoneyScalarFieldEnum = {
+  id: 'id',
+  personName: 'personName',
+  amount: 'amount',
+  remarks: 'remarks',
+  dailyCalculationId: 'dailyCalculationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DailyCalculationPersonMoneyScalarFieldEnum = (typeof DailyCalculationPersonMoneyScalarFieldEnum)[keyof typeof DailyCalculationPersonMoneyScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1305,6 +1496,34 @@ export type EnumJinisItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'JinisItemType[]'
  */
 export type ListEnumJinisItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JinisItemType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DailyCalculationBalanceStatus'
+ */
+export type EnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DailyCalculationBalanceStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'DailyCalculationBalanceStatus[]'
+ */
+export type ListEnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DailyCalculationBalanceStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DailyCalculationRecordStatus'
+ */
+export type EnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DailyCalculationRecordStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'DailyCalculationRecordStatus[]'
+ */
+export type ListEnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DailyCalculationRecordStatus[]'>
     
 
 /**
@@ -1466,6 +1685,8 @@ export type GlobalOmitConfig = {
   jinisItem?: Prisma.JinisItemOmit
   jinisChara?: Prisma.JinisCharaOmit
   interest?: Prisma.InterestOmit
+  dailyCalculation?: Prisma.DailyCalculationOmit
+  dailyCalculationPersonMoney?: Prisma.DailyCalculationPersonMoneyOmit
 }
 
 /* Types for Logging */

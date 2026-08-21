@@ -12,6 +12,10 @@ type InterestModalProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   interest?: InterestRecord
+  asolContext?: {
+    settledCredit: number
+    source: 'Jinis' | 'JinisChara'
+  }
   onSuccess: () => void
 }
 
@@ -19,6 +23,7 @@ export function InterestModal({
   open,
   onOpenChange,
   interest,
+  asolContext,
   onSuccess,
 }: InterestModalProps) {
   const isEdit = Boolean(interest)
@@ -28,15 +33,22 @@ export function InterestModal({
       <DialogContent className="max-h-[min(90vh,800px)] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {isEdit ? 'Edit Interest' : 'Create Interest'}
+            {isEdit
+              ? asolContext
+                ? 'Edit Sudh'
+                : 'Edit Interest'
+              : 'Create Interest'}
           </DialogTitle>
           <DialogDescription>
-            Record a payment against a Jinis, JinisChara, or person.
+            {asolContext
+              ? 'Update the interest amount for this settled loan. Settled credit cannot be changed here.'
+              : 'Record a payment against a Jinis, JinisChara, or person.'}
           </DialogDescription>
         </DialogHeader>
         <InterestForm
           key={interest?.id ?? 'new'}
           interest={interest}
+          asolContext={asolContext}
           onCancel={() => onOpenChange(false)}
           onSuccess={() => {
             onSuccess()

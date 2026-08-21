@@ -11,6 +11,7 @@ import {
 } from '#/features/interest/interest.schema'
 import type { InterestRecord } from '#/features/interest/interest.types'
 import { getErrorMessage } from '#/features/interest/interest.utils'
+import { formatMoney } from '#/features/dailycalculation/dailycalculation.utils'
 import { useJinisList } from '#/features/jinis/jinis.hooks'
 import { useJinisCharaList } from '#/features/jinischara/jinischara.hooks'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -154,14 +155,21 @@ function linkTypeFromRecord(interest?: InterestRecord): LinkType {
   return 'person'
 }
 
+type InterestAsolContext = {
+  settledCredit: number
+  source: 'Jinis' | 'JinisChara'
+}
+
 type InterestFormProps = {
   interest?: InterestRecord
+  asolContext?: InterestAsolContext
   onSuccess: () => void
   onCancel: () => void
 }
 
 export function InterestForm({
   interest,
+  asolContext,
   onSuccess,
   onCancel,
 }: InterestFormProps) {
@@ -257,7 +265,9 @@ export function InterestForm({
         <CardContent>
           <FieldGroup className="grid gap-4 sm:grid-cols-2">
             <Field>
-              <FieldLabel htmlFor="amount">Amount</FieldLabel>
+              <FieldLabel htmlFor="amount">
+                {asolContext ? 'Sudh (interest amount)' : 'Amount'}
+              </FieldLabel>
               <Input
                 id="amount"
                 type="number"
@@ -277,24 +287,49 @@ export function InterestForm({
                 onChange={(event) => setDate(event.target.value)}
               />
             </Field>
-            <Field>
-              <FieldLabel htmlFor="linkType">Linked to</FieldLabel>
-              <NativeSelect
-                id="linkType"
-                className="w-full"
-                value={linkType}
-                onChange={(event) =>
-                  handleLinkTypeChange(event.target.value as LinkType)
-                }
-              >
-                <NativeSelectOption value="jinis">Jinis</NativeSelectOption>
-                <NativeSelectOption value="jinischara">
-                  JinisChara
-                </NativeSelectOption>
-                <NativeSelectOption value="person">Person</NativeSelectOption>
-              </NativeSelect>
-            </Field>
-            {linkType === 'jinis' ? (
+            {asolContext ? (
+              <Field className="sm:col-span-2">
+                <FieldLabel htmlFor="settledCredit">
+                  Settled credit (Asol)
+                </FieldLabel>
+                <Input
+                  id="settledCredit"
+                  readOnly
+                  disabled
+                  value={formatMoney(asolContext.settledCredit)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Read-only here. Edit credit from the {asolContext.source} row
+                  on the Deoya side or the main {asolContext.source} list.
+                </p>
+              </Field>
+            ) : null}
+            {asolContext ? (
+              <Field className="sm:col-span-2">
+                <FieldLabel>Linked to</FieldLabel>
+                <Input readOnly disabled value={asolContext.source} />
+              </Field>
+            ) : null}
+            {!asolContext ? (
+              <Field>
+                <FieldLabel htmlFor="linkType">Linked to</FieldLabel>
+                <NativeSelect
+                  id="linkType"
+                  className="w-full"
+                  value={linkType}
+                  onChange={(event) =>
+                    handleLinkTypeChange(event.target.value as LinkType)
+                  }
+                >
+                  <NativeSelectOption value="jinis">Jinis</NativeSelectOption>
+                  <NativeSelectOption value="jinischara">
+                    JinisChara
+                  </NativeSelectOption>
+                  <NativeSelectOption value="person">Person</NativeSelectOption>
+                </NativeSelect>
+              </Field>
+            ) : null}
+            {!asolContext && linkType === 'jinis' ? (
               <Field>
                 <FieldLabel htmlFor="jinisId">Jinis</FieldLabel>
                 <InterestLinkCombobox
@@ -311,7 +346,7 @@ export function InterestForm({
                 />
               </Field>
             ) : null}
-            {linkType === 'jinischara' ? (
+            {!asolContext && linkType === 'jinischara' ? (
               <Field>
                 <FieldLabel htmlFor="jinisCharaId">JinisChara</FieldLabel>
                 <InterestLinkCombobox
@@ -330,7 +365,7 @@ export function InterestForm({
                 />
               </Field>
             ) : null}
-            {linkType === 'person' ? (
+            {!asolContext && linkType === 'person' ? (
               <Field>
                 <FieldLabel htmlFor="personName">Person name</FieldLabel>
                 <Input

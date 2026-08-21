@@ -58,7 +58,9 @@ export const ModelName = {
   Jinis: 'Jinis',
   JinisItem: 'JinisItem',
   JinisChara: 'JinisChara',
-  Interest: 'Interest'
+  Interest: 'Interest',
+  DailyCalculation: 'DailyCalculation',
+  DailyCalculationPersonMoney: 'DailyCalculationPersonMoney'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -207,6 +209,47 @@ export const InterestScalarFieldEnum = {
 } as const
 
 export type InterestScalarFieldEnum = (typeof InterestScalarFieldEnum)[keyof typeof InterestScalarFieldEnum]
+
+
+export const DailyCalculationScalarFieldEnum = {
+  id: 'id',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  tabil: 'tabil',
+  cashInHome: 'cashInHome',
+  cashInShop: 'cashInShop',
+  asol: 'asol',
+  sudh: 'sudh',
+  deoya: 'deoya',
+  personMoneyTotal: 'personMoneyTotal',
+  leftTotal: 'leftTotal',
+  rightTotal: 'rightTotal',
+  difference: 'difference',
+  balanceStatus: 'balanceStatus',
+  recordStatus: 'recordStatus',
+  openedAt: 'openedAt',
+  closedAt: 'closedAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastEditedById: 'lastEditedById',
+  lastEditedAt: 'lastEditedAt'
+} as const
+
+export type DailyCalculationScalarFieldEnum = (typeof DailyCalculationScalarFieldEnum)[keyof typeof DailyCalculationScalarFieldEnum]
+
+
+export const DailyCalculationPersonMoneyScalarFieldEnum = {
+  id: 'id',
+  personName: 'personName',
+  amount: 'amount',
+  remarks: 'remarks',
+  dailyCalculationId: 'dailyCalculationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DailyCalculationPersonMoneyScalarFieldEnum = (typeof DailyCalculationPersonMoneyScalarFieldEnum)[keyof typeof DailyCalculationPersonMoneyScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -249,6 +249,40 @@ export type EnumJinisItemTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumJinisItemTypeFilter<$PrismaModel>
 }
 
+export type EnumDailyCalculationBalanceStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.DailyCalculationBalanceStatus | Prisma.EnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DailyCalculationBalanceStatus[] | Prisma.ListEnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DailyCalculationBalanceStatus[] | Prisma.ListEnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDailyCalculationBalanceStatusFilter<$PrismaModel> | $Enums.DailyCalculationBalanceStatus
+}
+
+export type EnumDailyCalculationRecordStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.DailyCalculationRecordStatus | Prisma.EnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DailyCalculationRecordStatus[] | Prisma.ListEnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DailyCalculationRecordStatus[] | Prisma.ListEnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDailyCalculationRecordStatusFilter<$PrismaModel> | $Enums.DailyCalculationRecordStatus
+}
+
+export type EnumDailyCalculationBalanceStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DailyCalculationBalanceStatus | Prisma.EnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DailyCalculationBalanceStatus[] | Prisma.ListEnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DailyCalculationBalanceStatus[] | Prisma.ListEnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDailyCalculationBalanceStatusWithAggregatesFilter<$PrismaModel> | $Enums.DailyCalculationBalanceStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDailyCalculationBalanceStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDailyCalculationBalanceStatusFilter<$PrismaModel>
+}
+
+export type EnumDailyCalculationRecordStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DailyCalculationRecordStatus | Prisma.EnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DailyCalculationRecordStatus[] | Prisma.ListEnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DailyCalculationRecordStatus[] | Prisma.ListEnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDailyCalculationRecordStatusWithAggregatesFilter<$PrismaModel> | $Enums.DailyCalculationRecordStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDailyCalculationRecordStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDailyCalculationRecordStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -484,6 +518,40 @@ export type NestedEnumJinisItemTypeWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumJinisItemTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumJinisItemTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumDailyCalculationBalanceStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.DailyCalculationBalanceStatus | Prisma.EnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DailyCalculationBalanceStatus[] | Prisma.ListEnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DailyCalculationBalanceStatus[] | Prisma.ListEnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDailyCalculationBalanceStatusFilter<$PrismaModel> | $Enums.DailyCalculationBalanceStatus
+}
+
+export type NestedEnumDailyCalculationRecordStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.DailyCalculationRecordStatus | Prisma.EnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DailyCalculationRecordStatus[] | Prisma.ListEnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DailyCalculationRecordStatus[] | Prisma.ListEnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDailyCalculationRecordStatusFilter<$PrismaModel> | $Enums.DailyCalculationRecordStatus
+}
+
+export type NestedEnumDailyCalculationBalanceStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DailyCalculationBalanceStatus | Prisma.EnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DailyCalculationBalanceStatus[] | Prisma.ListEnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DailyCalculationBalanceStatus[] | Prisma.ListEnumDailyCalculationBalanceStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDailyCalculationBalanceStatusWithAggregatesFilter<$PrismaModel> | $Enums.DailyCalculationBalanceStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDailyCalculationBalanceStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDailyCalculationBalanceStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumDailyCalculationRecordStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DailyCalculationRecordStatus | Prisma.EnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DailyCalculationRecordStatus[] | Prisma.ListEnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DailyCalculationRecordStatus[] | Prisma.ListEnumDailyCalculationRecordStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDailyCalculationRecordStatusWithAggregatesFilter<$PrismaModel> | $Enums.DailyCalculationRecordStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDailyCalculationRecordStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDailyCalculationRecordStatusFilter<$PrismaModel>
 }
 
 
