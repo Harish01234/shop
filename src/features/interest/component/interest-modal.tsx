@@ -47,17 +47,19 @@ export function InterestModal({
               : 'Record a payment against a Jinis, JinisChara, or person.'}
           </DialogDescription>
         </DialogHeader>
-        <InterestForm
-          key={interest?.id ?? `new-${defaultDate ?? 'today'}`}
-          interest={interest}
-          asolContext={asolContext}
-          defaultDate={defaultDate}
-          onCancel={() => onOpenChange(false)}
-          onSuccess={() => {
-            onSuccess()
-            onOpenChange(false)
-          }}
-        />
+        {open ? (
+          <InterestForm
+            key={interest?.id ?? `new-${defaultDate ?? 'today'}`}
+            interest={interest}
+            asolContext={asolContext}
+            defaultDate={defaultDate}
+            onCancel={() => onOpenChange(false)}
+            onSuccess={() => {
+              onSuccess()
+              onOpenChange(false)
+            }}
+          />
+        ) : null}
       </DialogContent>
     </Dialog>
   )

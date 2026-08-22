@@ -1,5 +1,7 @@
 import type { z } from 'zod'
 
+import type { PaginatedList } from '#/lib/pagination'
+
 import {
   createJinisSchema,
   jinisIdSchema,
@@ -29,6 +31,12 @@ export type JinisItemRecord = JinisItemInput & {
   jinisId: string
 }
 
+export type JinisLinkOption = {
+  id: string
+  slNo: number
+  name: string
+}
+
 export type JinisRecord = {
   id: string
   slNo: number
@@ -45,5 +53,10 @@ export type JinisRecord = {
   createdById?: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  items: JinisItemRecord[]
+  items?: JinisItemRecord[]
+}
+
+export type JinisListResult = PaginatedList<JinisRecord> & {
+  allCount: number
+  activeCount: number
 }

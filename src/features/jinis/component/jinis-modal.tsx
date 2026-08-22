@@ -1,5 +1,7 @@
 import { JinisForm } from './jinis-form'
+import { useJinisRecord } from '#/features/jinis/jinis.hooks'
 import type { JinisRecord } from '#/features/jinis/jinis.types'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
   Dialog,
   DialogContent,
@@ -7,6 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Spinner } from '@/components/ui/spinner'
+import { AlertCircleIcon } from 'lucide-react'
 
 type JinisModalProps = {
   open: boolean
@@ -22,6 +26,10 @@ export function JinisModal({
   onSuccess,
 }: JinisModalProps) {
   const isEdit = Boolean(jinis)
+  const hasItems = Boolean(jinis?.items)
+  const recordQuery = useJinisRecord(jinis?.id, open && isEdit && !hasItems)
+  const formRecord = hasItems ? jinis : recordQuery.data
+  const ready = !isEdit || Boolean(formRecord?.items)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -32,15 +40,29 @@ export function JinisModal({
             Loan against gold or silver. Weights are summed from the items.
           </DialogDescription>
         </DialogHeader>
-        <JinisForm
-          key={jinis?.id ?? 'new'}
-          jinis={jinis}
-          onCancel={() => onOpenChange(false)}
-          onSuccess={() => {
-            onSuccess()
-            onOpenChange(false)
-          }}
-        />
+        {open && isEdit && recordQuery.isError ? (
+          <Alert variant="destructive">
+            <AlertCircleIcon />
+            <AlertTitle>Could not load Jinis</AlertTitle>
+            <AlertDescription>{recordQuery.error.message}</AlertDescription>
+          </Alert>
+        ) : null}
+        {open && isEdit && !ready && !recordQuery.isError ? (
+          <div className="flex justify-center py-10">
+            <Spinner className="size-6" />
+          </div>
+        ) : null}
+        {open && ready ? (
+          <JinisForm
+            key={formRecord?.id ?? 'new'}
+            jinis={formRecord}
+            onCancel={() => onOpenChange(false)}
+            onSuccess={() => {
+              onSuccess()
+              onOpenChange(false)
+            }}
+          />
+        ) : null}
       </DialogContent>
     </Dialog>
   )

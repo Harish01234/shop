@@ -37,6 +37,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
+import { ListPagination } from '@/components/list-pagination'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/jinischara/')({
@@ -45,14 +46,9 @@ export const Route = createFileRoute('/jinischara/')({
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) => {
     const filters = filtersFromSearch(deps)
-    return Promise.all([
-      context.queryClient.ensureQueryData(
-        jinisCharaListQueryOptions(deps.view, filters),
-      ),
-      context.queryClient.ensureQueryData(
-        jinisCharaListQueryOptions('all', filters),
-      ),
-    ])
+    return context.queryClient.ensureQueryData(
+      jinisCharaListQueryOptions(deps.view, filters, deps.page),
+    )
   },
   pendingComponent: JinisCharaListPending,
   errorComponent: JinisCharaListError,
@@ -114,9 +110,9 @@ function JinisCharaListPage() {
   const search = Route.useSearch()
   const currentView: JinisCharaView = search.view
   const filters = filtersFromSearch(search)
+  const page = search.page ?? 1
   const navigate = useNavigate({ from: '/jinischara/' })
-  const listQuery = useJinisCharaList(currentView, filters)
-  const rangeQuery = useJinisCharaList('all', filters)
+  const listQuery = useJinisCharaList(currentView, filters, page)
   const deleteMutation = useDeleteJinisChara()
   const toggleMutation = useToggleJinisChara()
 
@@ -128,8 +124,9 @@ function JinisCharaListPage() {
     null,
   )
 
-  const records = listQuery.data ?? []
-  const rangeRecords = rangeQuery.data ?? []
+  const records = listQuery.data?.records ?? []
+  const totalCount = listQuery.data?.allCount ?? 0
+  const activeCount = listQuery.data?.activeCount ?? 0
   const togglingId = toggleMutation.isPending
     ? (toggleMutation.variables?.record.id ?? null)
     : null
@@ -141,6 +138,7 @@ function JinisCharaListPage() {
         search: {
           view: currentView,
           ...nextFilters,
+          page: 1,
         },
       })
     },
@@ -191,7 +189,7 @@ function JinisCharaListPage() {
       <div className="flex flex-wrap gap-1">
         <Link
           to="/jinischara"
-          search={(prev) => ({ ...prev, view: 'open' })}
+          search={(prev) => ({ ...prev, view: 'open', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentView === 'open' ? 'default' : 'ghost',
@@ -202,7 +200,7 @@ function JinisCharaListPage() {
         </Link>
         <Link
           to="/jinischara"
-          search={(prev) => ({ ...prev, view: 'settled' })}
+          search={(prev) => ({ ...prev, view: 'settled', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentView === 'settled' ? 'default' : 'ghost',
@@ -213,7 +211,7 @@ function JinisCharaListPage() {
         </Link>
         <Link
           to="/jinischara"
-          search={(prev) => ({ ...prev, view: 'all' })}
+          search={(prev) => ({ ...prev, view: 'all', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentView === 'all' ? 'default' : 'ghost',
@@ -227,8 +225,8 @@ function JinisCharaListPage() {
       <AdvanceSearchFilter
         filters={filters}
         onChange={handleFiltersChange}
-        totalCount={rangeRecords.length}
-        activeCount={rangeRecords.filter((record) => record.active).length}
+        totalCount={totalCount}
+        activeCount={activeCount}
       />
 
       {listQuery.isError && records.length === 0 ? (
@@ -246,6 +244,17 @@ function JinisCharaListPage() {
         onDelete={setDeleteTarget}
         onToggleActive={handleToggleActive}
         togglingId={togglingId}
+      />
+
+      <ListPagination
+        page={listQuery.data?.page ?? page}
+        pageSize={listQuery.data?.pageSize ?? 50}
+        total={listQuery.data?.total ?? 0}
+        onPageChange={(nextPage) => {
+          void navigate({
+            search: (prev) => ({ ...prev, page: nextPage }),
+          })
+        }}
       />
 
       <JinisCharaModal

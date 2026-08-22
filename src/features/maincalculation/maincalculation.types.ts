@@ -1,5 +1,7 @@
 import type { z } from 'zod'
 
+import type { PaginatedList } from '#/lib/pagination'
+
 import {
   createMainCalculationSchema,
   listAvailableDailyCalculationsSchema,
@@ -98,3 +100,5 @@ export type MainCalculationRecord = {
     name: string
   } | null
 }
+
+export type MainCalculationListResult = PaginatedList<MainCalculationRecord>

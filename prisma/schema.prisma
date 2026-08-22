@@ -123,6 +123,7 @@ model Jinis {
   @@index([phoneNo])
   @@index([date])
   @@index([active])
+  @@index([active, date])
   @@index([settledAt])
 }
 
@@ -161,6 +162,7 @@ model JinisChara {
   @@index([phoneNo])
   @@index([date])
   @@index([active])
+  @@index([active, date])
   @@index([settledAt])
 }
 

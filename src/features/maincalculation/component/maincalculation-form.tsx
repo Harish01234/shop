@@ -400,7 +400,9 @@ export function MainCalculationForm({
         </div>
       </form>
 
-      <AlertDialog open={finalizeOpen} onOpenChange={setFinalizeOpen}>
+      <AlertDialog open={finalizeOpen} onOpenChange={(open) => {
+        if (!open && !saving) setFinalizeOpen(false)
+      }}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Finalize this Main Calculation?</AlertDialogTitle>
@@ -415,6 +417,7 @@ export function MainCalculationForm({
                 buttonVariants({ variant: 'outline' }),
                 'bg-background',
               )}
+              disabled={saving}
             >
               Cancel
             </AlertDialogCancel>

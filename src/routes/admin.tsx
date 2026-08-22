@@ -13,22 +13,13 @@ export const Route = createFileRoute('/admin')({
     if (!isAdminRole(session.user.role)) {
       throw redirect({ to: '/' })
     }
-  },
-  loader: async () => {
-    const session = await getSession()
-    if (!session) {
-      throw redirect({ to: '/signin' })
-    }
-    if (!isAdminRole(session.user.role)) {
-      throw redirect({ to: '/' })
-    }
-    return { user: session.user }
+    return { session }
   },
   component: AdminLayout,
 })
 
 function AdminLayout() {
-  const { user } = Route.useLoaderData()
+  const { session } = Route.useRouteContext()
 
-  return <AdminShell user={user} />
+  return <AdminShell user={session.user} />
 }

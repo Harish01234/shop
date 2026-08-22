@@ -2,11 +2,9 @@ import { format } from 'date-fns'
 import { ArrowLeftIcon, PencilIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Link, getRouteApi } from '@tanstack/react-router'
-import { useServerFn } from '@tanstack/react-start'
 
 import { MainCalculationModal } from '#/features/maincalculation/component/maincalculation-modal'
 import { useMainCalculationDetail } from '#/features/maincalculation/maincalculation.hooks'
-import { getMainCalculation } from '#/features/maincalculation/maincalculation.functions'
 import { refetchMainCalculationDetail, refetchMainCalculationLists } from '#/features/maincalculation/maincalculation.queries'
 import type { MainCalculationRecord } from '#/features/maincalculation/maincalculation.types'
 import {
@@ -17,7 +15,6 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -75,27 +72,17 @@ export function MainCalculationDetailView({
   const listSearch = detailRouteApi.useSearch()
   const queryClient = useQueryClient()
   const detailQuery = useMainCalculationDetail(mainCalculationId)
-  const getMainCalculationFn = useServerFn(getMainCalculation)
-
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [editingRecord, setEditingRecord] = useState<
     MainCalculationRecord | undefined
   >()
-  const [loadingEdit, setLoadingEdit] = useState(false)
 
   const record = detailQuery.data
 
-  async function openEditModal() {
-    setLoadingEdit(true)
-    try {
-      const fresh = (await getMainCalculationFn({
-        data: { id: mainCalculationId },
-      })) as MainCalculationRecord
-      setEditingRecord(fresh)
-      setEditModalOpen(true)
-    } finally {
-      setLoadingEdit(false)
-    }
+  function openEditModal() {
+    if (!record) return
+    setEditingRecord(record)
+    setEditModalOpen(true)
   }
 
   async function handleEditSuccess() {
@@ -165,10 +152,9 @@ export function MainCalculationDetailView({
               variant="outline"
               size="sm"
               className="gap-1.5 bg-background"
-              disabled={loadingEdit}
-              onClick={() => void openEditModal()}
+              onClick={() => openEditModal()}
             >
-              {loadingEdit ? <Spinner /> : <PencilIcon className="size-4" />}
+              <PencilIcon className="size-4" />
               Edit
             </Button>
           </div>

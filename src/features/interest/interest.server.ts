@@ -1,5 +1,6 @@
 import { prisma } from '#/db'
 import type { InterestWhereInput } from '#/generated/prisma/models/Interest'
+import { paginationArgs } from '#/lib/pagination'
 
 import type {
   CreateInterestInput,
@@ -114,11 +115,30 @@ export async function listInterestRecords(data: ListInterestInput) {
     })
   }
 
-  return prisma.interest.findMany({
-    where: filters.length ? { AND: filters } : undefined,
-    include: relatedSelect,
-    orderBy: { date: 'desc' },
-  })
+  const where = filters.length ? { AND: filters } : undefined
+  const { page, pageSize, skip, take } = paginationArgs(data.page, data.pageSize)
+
+  const [records, total] = await Promise.all([
+    prisma.interest.findMany({
+      where,
+      select: {
+        id: true,
+        amount: true,
+        date: true,
+        remarks: true,
+        jinisId: true,
+        jinisCharaId: true,
+        personName: true,
+        ...relatedSelect,
+      },
+      orderBy: { date: 'desc' },
+      skip,
+      take,
+    }),
+    prisma.interest.count({ where }),
+  ])
+
+  return { records, total, page, pageSize }
 }
 
 export async function getInterestRecord(data: InterestIdInput) {

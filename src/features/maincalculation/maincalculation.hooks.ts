@@ -29,8 +29,9 @@ import { toast } from '@/components/ui/toast'
 export function useMainCalculationList(
   view: MainCalculationView,
   filters: MainCalculationFilterValues = {},
+  page = 1,
 ) {
-  return useQuery(mainCalculationListQueryOptions(view, filters))
+  return useQuery(mainCalculationListQueryOptions(view, filters, page))
 }
 
 export function useMainCalculationDetail(id: string | null, enabled = true) {

@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { listPaginationSchema } from '#/lib/pagination'
+
 export const jinisTypeSchema = z.enum([
   'GOLD',
   'SILVER',
@@ -63,6 +65,7 @@ export const listJinisSchema = z.object({
   date: z.string().trim().optional(),
   from: z.string().trim().optional(),
   to: z.string().trim().optional(),
+  ...listPaginationSchema.shape,
 })
 
 export const jinisSearchSchema = z.object({
@@ -77,6 +80,7 @@ export const jinisSearchSchema = z.object({
   date: z.string().trim().optional(),
   from: z.string().trim().optional(),
   to: z.string().trim().optional(),
+  page: z.coerce.number().int().positive().optional(),
 })
 
 export const settleJinisSchema = z.object({

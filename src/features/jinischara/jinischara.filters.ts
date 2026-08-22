@@ -1,4 +1,5 @@
 import type { JinisCharaSearch, JinisCharaView, ListJinisCharaInput } from './jinischara.types'
+import { DEFAULT_PAGE_SIZE, parsePage } from '#/lib/pagination'
 
 export function activeFilterForView(view: JinisCharaView) {
   if (view === 'open') return true
@@ -6,7 +7,7 @@ export function activeFilterForView(view: JinisCharaView) {
   return undefined
 }
 
-export type JinisCharaFilterValues = Omit<JinisCharaSearch, 'view'>
+export type JinisCharaFilterValues = Omit<JinisCharaSearch, 'view' | 'page'>
 
 export const emptyJinisCharaFilters: JinisCharaFilterValues = {}
 
@@ -26,6 +27,7 @@ export function parseJinisCharaSearch(
     date: emptyToUndefined(search.date),
     from: emptyToUndefined(search.from),
     to: emptyToUndefined(search.to),
+    page: search.page,
   }
 
   const view =
@@ -46,13 +48,14 @@ export function parseJinisCharaSearch(
     date: asString(parsed.date),
     from: asString(parsed.from),
     to: asString(parsed.to),
+    page: parsePage(parsed.page),
   }
 }
 
 export function filtersFromSearch(
   search: JinisCharaSearch,
 ): JinisCharaFilterValues {
-  const { view: _view, ...filters } = search
+  const { view: _view, page: _page, ...filters } = search
   return compactFilters(filters)
 }
 
@@ -85,12 +88,15 @@ export function countActiveFilters(filters: JinisCharaFilterValues) {
 export function toListJinisCharaInput(
   view: JinisCharaView,
   filters: JinisCharaFilterValues,
+  page = 1,
 ): ListJinisCharaInput {
   const active = activeFilterForView(view)
   const compact = compactFilters(filters)
   return {
     ...(active === undefined ? {} : { active }),
     ...compact,
+    page,
+    pageSize: DEFAULT_PAGE_SIZE,
   }
 }
 

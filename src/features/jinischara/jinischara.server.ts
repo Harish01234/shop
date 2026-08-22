@@ -1,5 +1,9 @@
 import { prisma } from '#/db'
 import type { JinisCharaWhereInput } from '#/generated/prisma/models/JinisChara'
+import {
+  LINK_OPTIONS_LIMIT,
+  paginationArgs,
+} from '#/lib/pagination'
 
 import type {
   CreateJinisCharaInput,
@@ -18,7 +22,76 @@ function dayEnd(value: string) {
   return new Date(`${value}T23:59:59.999`)
 }
 
+const jinisCharaListSelect = {
+  id: true,
+  slNo: true,
+  name: true,
+  fatherName: true,
+  phoneNo: true,
+  credit: true,
+  percentage: true,
+  description: true,
+  date: true,
+  active: true,
+  settledAt: true,
+} as const
+
 export async function listJinisCharaRecords(data: ListJinisCharaInput) {
+  const where = await buildJinisCharaWhereFilters(data)
+  const { page, pageSize, skip, take } = paginationArgs(data.page, data.pageSize)
+  const filterWhere = await buildJinisCharaWhereFilters({
+    ...data,
+    active: undefined,
+  })
+  const andClause = filterWhere?.AND ?? []
+
+  const [records, total, allCount, activeCount] = await Promise.all([
+    prisma.jinisChara.findMany({
+      where,
+      orderBy: { date: 'desc' },
+      skip,
+      take,
+      select: jinisCharaListSelect,
+    }),
+    prisma.jinisChara.count({ where }),
+    prisma.jinisChara.count({ where: filterWhere }),
+    prisma.jinisChara.count({
+      where: { AND: [...andClause, { active: true }] },
+    }),
+  ])
+
+  return { records, total, allCount, activeCount, page, pageSize }
+}
+
+export async function listJinisCharaLinkOptions(query?: string) {
+  const trimmed = query?.trim()
+  const filters: JinisCharaWhereInput[] = []
+
+  if (trimmed) {
+    const asNumber = Number(trimmed)
+    filters.push({
+      OR: [
+        { name: { contains: trimmed, mode: 'insensitive' } },
+        ...(Number.isInteger(asNumber) && String(asNumber) === trimmed
+          ? [{ slNo: asNumber }]
+          : []),
+      ],
+    })
+  }
+
+  return prisma.jinisChara.findMany({
+    where: filters.length ? { AND: filters } : undefined,
+    select: {
+      id: true,
+      slNo: true,
+      name: true,
+    },
+    orderBy: { slNo: 'desc' },
+    take: LINK_OPTIONS_LIMIT,
+  })
+}
+
+async function buildJinisCharaWhereFilters(data: ListJinisCharaInput) {
   const filters: JinisCharaWhereInput[] = []
 
   if (data.active !== undefined) {
@@ -26,15 +99,21 @@ export async function listJinisCharaRecords(data: ListJinisCharaInput) {
   }
 
   if (data.slNo) {
-    const matches = await prisma.$queryRaw<{ id: string }[]>`
-      SELECT id FROM "JinisChara"
-      WHERE CAST("slNo" AS TEXT) ILIKE ${`%${data.slNo}%`}
-    `
-    filters.push(
-      matches.length > 0
-        ? { id: { in: matches.map((row) => row.id) } }
-        : { id: '__none__' },
-    )
+    const trimmed = data.slNo.trim()
+    const asNumber = Number(trimmed)
+    if (Number.isInteger(asNumber) && String(asNumber) === trimmed) {
+      filters.push({ slNo: asNumber })
+    } else {
+      const matches = await prisma.$queryRaw<{ id: string }[]>`
+        SELECT id FROM "JinisChara"
+        WHERE CAST("slNo" AS TEXT) ILIKE ${`%${trimmed}%`}
+      `
+      filters.push(
+        matches.length > 0
+          ? { id: { in: matches.map((row) => row.id) } }
+          : { id: '__none__' },
+      )
+    }
   }
 
   if (data.name) {
@@ -91,10 +170,7 @@ export async function listJinisCharaRecords(data: ListJinisCharaInput) {
     })
   }
 
-  return prisma.jinisChara.findMany({
-    where: filters.length ? { AND: filters } : undefined,
-    orderBy: { date: 'desc' },
-  })
+  return filters.length ? { AND: filters } : undefined
 }
 
 export async function getJinisCharaRecord(data: JinisCharaIdInput) {

@@ -1,8 +1,15 @@
 import { keepPreviousData, queryOptions, type QueryClient } from '@tanstack/react-query'
 
 import {
+  detailQueryDefaults,
+  listQueryDefaults,
+  previewQueryDefaults,
+} from '#/lib/query-options'
+
+import {
   listDailyCalculation,
   previewDailyCalculation,
+  getDailyCalculation,
   getDailyCalculationDetail,
 } from './dailycalculation.functions'
 import {
@@ -11,6 +18,7 @@ import {
 } from './dailycalculation.filters'
 import type {
   DailyCalculationDetail,
+  DailyCalculationListResult,
   DailyCalculationRecord,
   DailyCalculationTotals,
   DailyCalculationView,
@@ -24,20 +32,23 @@ export const dailyCalculationKeys = {
     [...dailyCalculationKeys.lists(), input] as const,
   preview: (periodStart: string, periodEnd: string) =>
     [...dailyCalculationKeys.all, 'preview', periodStart, periodEnd] as const,
+  record: (id: string) => [...dailyCalculationKeys.all, 'record', id] as const,
   detail: (id: string) => [...dailyCalculationKeys.all, 'detail', id] as const,
 }
 
 export function dailyCalculationListQueryOptions(
   view: DailyCalculationView,
   filters: DailyCalculationFilterValues = {},
+  page = 1,
 ) {
-  const input = toListDailyCalculationInput(view, filters)
+  const input = toListDailyCalculationInput(view, filters, page)
 
   return queryOptions({
     queryKey: dailyCalculationKeys.list(input),
     queryFn: () =>
-      listDailyCalculation({ data: input }) as Promise<DailyCalculationRecord[]>,
+      listDailyCalculation({ data: input }) as Promise<DailyCalculationListResult>,
     placeholderData: keepPreviousData,
+    ...listQueryDefaults,
   })
 }
 
@@ -60,6 +71,16 @@ export function previewDailyCalculationQueryOptions(
       }) as Promise<DailyCalculationTotals>,
     enabled: Boolean(periodStart && periodEnd && periodStart <= periodEnd),
     placeholderData: keepPreviousData,
+    ...previewQueryDefaults,
+  })
+}
+
+export function dailyCalculationRecordQueryOptions(id: string) {
+  return queryOptions({
+    queryKey: dailyCalculationKeys.record(id),
+    queryFn: () =>
+      getDailyCalculation({ data: { id } }) as Promise<DailyCalculationRecord>,
+    ...detailQueryDefaults,
   })
 }
 
@@ -68,11 +89,12 @@ export function dailyCalculationDetailQueryOptions(id: string) {
     queryKey: dailyCalculationKeys.detail(id),
     queryFn: () =>
       getDailyCalculationDetail({ data: { id } }) as Promise<DailyCalculationDetail>,
+    ...detailQueryDefaults,
   })
 }
 
 export function refetchDailyCalculationLists(queryClient: QueryClient) {
-  return queryClient.invalidateQueries({ queryKey: dailyCalculationKeys.all })
+  return queryClient.invalidateQueries({ queryKey: dailyCalculationKeys.lists() })
 }
 
 export function refetchDailyCalculationDetail(

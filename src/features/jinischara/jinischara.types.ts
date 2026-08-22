@@ -1,5 +1,7 @@
 import type { z } from 'zod'
 
+import type { PaginatedList } from '#/lib/pagination'
+
 import {
   createJinisCharaSchema,
   jinisCharaIdSchema,
@@ -18,6 +20,12 @@ export type JinisCharaSearch = z.infer<typeof jinisCharaSearchSchema>
 export type JinisCharaView = z.infer<typeof jinisCharaViewSchema>
 export type SettleJinisCharaInput = z.infer<typeof settleJinisCharaSchema>
 
+export type JinisCharaLinkOption = {
+  id: string
+  slNo: number
+  name: string
+}
+
 export type JinisCharaRecord = {
   id: string
   slNo: number
@@ -33,4 +41,9 @@ export type JinisCharaRecord = {
   createdById?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+}
+
+export type JinisCharaListResult = PaginatedList<JinisCharaRecord> & {
+  allCount: number
+  activeCount: number
 }

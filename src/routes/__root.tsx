@@ -1,14 +1,12 @@
+import { lazy, Suspense } from 'react'
 import {
   HeadContent,
   Link,
   Scripts,
   createRootRouteWithContext,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
 import { FileQuestionIcon } from 'lucide-react'
 
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
@@ -26,6 +24,10 @@ import appCss from '../styles.css?url'
 
 import type { ReactNode } from 'react'
 import type { QueryClient } from '@tanstack/react-query'
+
+const AppDevtools = import.meta.env.DEV
+  ? lazy(() => import('../integrations/tanstack-devtools'))
+  : () => null
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -149,18 +151,11 @@ function RootDocument({ children }: { children: ReactNode }) {
       <body className="bg-background text-foreground">
         {children}
         <Toaster />
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            TanStackQueryDevtools,
-          ]}
-        />
+        {import.meta.env.DEV ? (
+          <Suspense>
+            <AppDevtools />
+          </Suspense>
+        ) : null}
         <Scripts />
       </body>
     </html>

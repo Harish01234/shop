@@ -1,6 +1,12 @@
 import { keepPreviousData, queryOptions, type QueryClient } from '@tanstack/react-query'
 
 import {
+  detailQueryDefaults,
+  listQueryDefaults,
+  previewQueryDefaults,
+} from '#/lib/query-options'
+
+import {
   getMainCalculation,
   listAvailableDailyCalculationsForMainCalc,
   listMainCalculation,
@@ -13,6 +19,7 @@ import {
 import type {
   AvailableDailyCalculationOption,
   ListMainCalculationInput,
+  MainCalculationListResult,
   MainCalculationRecord,
   MainCalculationTotals,
   MainCalculationView,
@@ -41,14 +48,16 @@ export const mainCalculationKeys = {
 export function mainCalculationListQueryOptions(
   view: MainCalculationView,
   filters: MainCalculationFilterValues = {},
+  page = 1,
 ) {
-  const input = toListMainCalculationInput(view, filters)
+  const input = toListMainCalculationInput(view, filters, page)
 
   return queryOptions({
     queryKey: mainCalculationKeys.list(input),
     queryFn: () =>
-      listMainCalculation({ data: input }) as Promise<MainCalculationRecord[]>,
+      listMainCalculation({ data: input }) as Promise<MainCalculationListResult>,
     placeholderData: keepPreviousData,
+    ...listQueryDefaults,
   })
 }
 
@@ -57,6 +66,7 @@ export function mainCalculationDetailQueryOptions(id: string) {
     queryKey: mainCalculationKeys.detail(id),
     queryFn: () =>
       getMainCalculation({ data: { id } }) as Promise<MainCalculationRecord>,
+    ...detailQueryDefaults,
   })
 }
 
@@ -79,6 +89,7 @@ export function previewMainCalculationQueryOptions(input: {
       }) as Promise<MainCalculationTotals>,
     enabled: Boolean(input.calculationDate && input.dailyCalculationId),
     placeholderData: keepPreviousData,
+    ...previewQueryDefaults,
   })
 }
 
@@ -99,7 +110,12 @@ export function availableDailyCalculationsQueryOptions(
 }
 
 export function refetchMainCalculationLists(queryClient: QueryClient) {
-  return queryClient.invalidateQueries({ queryKey: mainCalculationKeys.all })
+  return Promise.all([
+    queryClient.invalidateQueries({ queryKey: mainCalculationKeys.lists() }),
+    queryClient.invalidateQueries({
+      queryKey: [...mainCalculationKeys.all, 'availableDailyCalculations'],
+    }),
+  ])
 }
 
 export function refetchMainCalculationDetail(

@@ -26,22 +26,7 @@ function initials(name?: string | null, email?: string | null) {
   return source.charAt(0).toUpperCase()
 }
 
-export default function BetterAuthHeader({
-  user,
-}: {
-  user?: UserMenuUser | null
-}) {
-  const { data: session, isPending } = authClient.useSession()
-  const currentUser = user ?? session?.user
-
-  if (isPending && !user) {
-    return <Skeleton className="size-8 rounded-full" />
-  }
-
-  if (!currentUser) {
-    return null
-  }
-
+function UserMenu({ user }: { user: UserMenuUser }) {
   async function handleSignOut() {
     await authClient.signOut()
     window.location.assign('/signin')
@@ -57,12 +42,8 @@ export default function BetterAuthHeader({
         aria-label="Open account menu"
       >
         <Avatar size="sm">
-          {currentUser.image ? (
-            <AvatarImage src={currentUser.image} alt="" />
-          ) : null}
-          <AvatarFallback>
-            {initials(currentUser.name, currentUser.email)}
-          </AvatarFallback>
+          {user.image ? <AvatarImage src={user.image} alt="" /> : null}
+          <AvatarFallback>{initials(user.name, user.email)}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-56">
@@ -70,11 +51,11 @@ export default function BetterAuthHeader({
           <DropdownMenuLabel>
             <div className="flex flex-col gap-0.5">
               <span className="truncate text-sm font-medium text-foreground">
-                {currentUser.name || 'Account'}
+                {user.name || 'Account'}
               </span>
-              {currentUser.email ? (
+              {user.email ? (
                 <span className="truncate text-xs font-normal">
-                  {currentUser.email}
+                  {user.email}
                 </span>
               ) : null}
             </div>
@@ -91,4 +72,30 @@ export default function BetterAuthHeader({
       </DropdownMenuContent>
     </DropdownMenu>
   )
+}
+
+function HeaderFromSession() {
+  const { data: session, isPending } = authClient.useSession()
+
+  if (isPending) {
+    return <Skeleton className="size-8 rounded-full" />
+  }
+
+  if (!session?.user) {
+    return null
+  }
+
+  return <UserMenu user={session.user} />
+}
+
+export default function BetterAuthHeader({
+  user,
+}: {
+  user?: UserMenuUser | null
+}) {
+  if (user) {
+    return <UserMenu user={user} />
+  }
+
+  return <HeaderFromSession />
 }

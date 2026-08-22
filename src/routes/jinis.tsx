@@ -9,23 +9,17 @@ export const Route = createFileRoute('/jinis')({
     if (!session) {
       throw redirect({ to: '/signin' })
     }
-  },
-  loader: async () => {
-    const session = await getSession()
-    if (!session) {
-      throw redirect({ to: '/signin' })
-    }
-    return { user: session.user }
+    return { session }
   },
   component: JinisLayout,
 })
 
 function JinisLayout() {
-  const { user } = Route.useLoaderData()
+  const { session } = Route.useRouteContext()
 
   return (
     <div className="flex min-h-svh flex-col bg-background">
-      <AppHeader user={user} />
+      <AppHeader user={session.user} />
       <Outlet />
     </div>
   )

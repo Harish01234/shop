@@ -44,7 +44,7 @@ const config = defineConfig({
     ],
   },
   plugins: [
-    devtools(),
+    devtools({ removeDevtoolsOnBuild: true }),
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),
     tanstackStart(),

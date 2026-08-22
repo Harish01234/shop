@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { listPaginationSchema } from '#/lib/pagination'
+
 export const dailyCalculationRecordStatusSchema = z.enum(['OPEN', 'CLOSED'])
 
 export const dailyCalculationBalanceStatusSchema = z.enum([
@@ -25,7 +27,7 @@ function hasValidPeriod(data: {
 
 const periodOrderIssue = {
   message: 'Period start must be on or before period end.',
-  path: ['periodEnd'] as const,
+  path: ['periodEnd'],
 }
 
 // Client-entered fields only. Automatic totals (asol, sudh, deoya,
@@ -71,6 +73,7 @@ export const listDailyCalculationSchema = z.object({
   balanceStatus: dailyCalculationBalanceStatusSchema.optional(),
   from: z.string().trim().optional(),
   to: z.string().trim().optional(),
+  ...listPaginationSchema.shape,
 })
 
 export const dailyCalculationSearchSchema = z.object({
@@ -78,4 +81,5 @@ export const dailyCalculationSearchSchema = z.object({
   balanceStatus: dailyCalculationBalanceStatusSchema.optional(),
   from: z.string().trim().optional(),
   to: z.string().trim().optional(),
+  page: z.coerce.number().int().positive().optional(),
 })

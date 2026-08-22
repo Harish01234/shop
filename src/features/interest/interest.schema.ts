@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { listPaginationSchema } from '#/lib/pagination'
+
 export const interestSourceSchema = z.enum([
   'jinis',
   'jinischara',
@@ -57,6 +59,7 @@ export const listInterestSchema = z.object({
   from: z.string().trim().optional(),
   to: z.string().trim().optional(),
   source: interestSourceSchema.optional(),
+  ...listPaginationSchema.shape,
 })
 
 export const interestSearchSchema = z.object({
@@ -69,4 +72,5 @@ export const interestSearchSchema = z.object({
   date: z.string().trim().optional(),
   from: z.string().trim().optional(),
   to: z.string().trim().optional(),
+  page: z.coerce.number().int().positive().optional(),
 })

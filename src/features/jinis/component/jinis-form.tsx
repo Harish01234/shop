@@ -49,7 +49,7 @@ export function JinisForm({ jinis, onSuccess, onCancel }: JinisFormProps) {
     jinis ? toDateInput(jinis.date) : toDateInput(new Date()),
   )
   const [items, setItems] = useState<JinisItemInput[]>(
-    jinis?.items.length
+    jinis?.items?.length
       ? jinis.items.map((item) => ({
           name: item.name,
           wet: item.wet,

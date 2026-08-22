@@ -4,6 +4,7 @@ import type {
   MainCalculationSearch,
   MainCalculationView,
 } from './maincalculation.types'
+import { DEFAULT_PAGE_SIZE, parsePage } from '#/lib/pagination'
 
 export function recordStatusForView(view: MainCalculationView) {
   if (view === 'draft') return 'DRAFT' as const
@@ -11,7 +12,7 @@ export function recordStatusForView(view: MainCalculationView) {
   return undefined
 }
 
-export type MainCalculationFilterValues = Omit<MainCalculationSearch, 'view'>
+export type MainCalculationFilterValues = Omit<MainCalculationSearch, 'view' | 'page'>
 
 export function parseMainCalculationSearch(
   search: Record<string, unknown>,
@@ -21,6 +22,7 @@ export function parseMainCalculationSearch(
     balanceStatus: emptyToUndefined(search.balanceStatus),
     from: emptyToUndefined(search.from),
     to: emptyToUndefined(search.to),
+    page: search.page,
   }
 
   const view =
@@ -40,13 +42,14 @@ export function parseMainCalculationSearch(
     balanceStatus,
     from: asString(parsed.from),
     to: asString(parsed.to),
+    page: parsePage(parsed.page),
   }
 }
 
 export function filtersFromSearch(
   search: MainCalculationSearch,
 ): MainCalculationFilterValues {
-  const { view: _view, ...filters } = search
+  const { view: _view, page: _page, ...filters } = search
   return compactFilters(filters)
 }
 
@@ -63,12 +66,15 @@ export function compactFilters(
 export function toListMainCalculationInput(
   view: MainCalculationView,
   filters: MainCalculationFilterValues,
+  page = 1,
 ): ListMainCalculationInput {
   const recordStatus = recordStatusForView(view)
   const compact = compactFilters(filters)
   return {
     ...(recordStatus ? { recordStatus } : {}),
     ...compact,
+    page,
+    pageSize: DEFAULT_PAGE_SIZE,
   }
 }
 

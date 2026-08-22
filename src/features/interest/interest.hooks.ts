@@ -26,8 +26,9 @@ import { toast } from '@/components/ui/toast'
 export function useInterestList(
   source: InterestSource = 'all',
   filters: InterestFilterValues = {},
+  page = 1,
 ) {
-  return useQuery(interestListQueryOptions(source, filters))
+  return useQuery(interestListQueryOptions(source, filters, page))
 }
 
 export function useTotalInterest() {
@@ -74,6 +75,13 @@ export function useUpdateInterest() {
       toast.add({
         title: 'Interest updated successfully',
         type: 'success',
+      })
+    },
+    onError: (error) => {
+      toast.add({
+        title: 'Could not update Interest',
+        description: getErrorMessage(error, 'Please try again.'),
+        type: 'error',
       })
     },
   })

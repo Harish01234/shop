@@ -1,8 +1,7 @@
-import { notFound, redirect } from '@tanstack/react-router'
+import { notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { getRequestHeaders } from '@tanstack/react-start/server'
 
-import { auth } from '#/lib/auth'
+import { requireUserMiddleware } from '#/lib/auth-middleware'
 import {
   createInterestSchema,
   interestIdSchema,
@@ -18,36 +17,19 @@ import {
   updateInterestRecord,
 } from './interest.server'
 
-async function requireUser() {
-  const headers = getRequestHeaders()
-  const session = await auth.api.getSession({ headers })
-
-  if (!session) {
-    throw redirect({ to: '/signin' })
-  }
-
-  return session.user
-}
-
 export const listInterest = createServerFn({ method: 'GET' })
+  .middleware([requireUserMiddleware])
   .validator(listInterestSchema)
-  .handler(async ({ data }) => {
-    await requireUser()
-    return listInterestRecords(data)
-  })
+  .handler(async ({ data }) => listInterestRecords(data))
 
-export const getTotalInterest = createServerFn({ method: 'GET' }).handler(
-  async () => {
-    await requireUser()
-    return sumInterestAmount()
-  },
-)
+export const getTotalInterest = createServerFn({ method: 'GET' })
+  .middleware([requireUserMiddleware])
+  .handler(async () => sumInterestAmount())
 
 export const getInterest = createServerFn({ method: 'GET' })
+  .middleware([requireUserMiddleware])
   .validator(interestIdSchema)
   .handler(async ({ data }) => {
-    await requireUser()
-
     const record = await getInterestRecord(data)
 
     if (!record) {
@@ -58,17 +40,16 @@ export const getInterest = createServerFn({ method: 'GET' })
   })
 
 export const createInterest = createServerFn({ method: 'POST' })
+  .middleware([requireUserMiddleware])
   .validator(createInterestSchema)
-  .handler(async ({ data }) => {
-    const user = await requireUser()
-    return createInterestRecord(data, user.id)
-  })
+  .handler(async ({ data, context }) =>
+    createInterestRecord(data, context.session.user.id),
+  )
 
 export const updateInterest = createServerFn({ method: 'POST' })
+  .middleware([requireUserMiddleware])
   .validator(updateInterestSchema)
   .handler(async ({ data }) => {
-    await requireUser()
-
     const record = await updateInterestRecord(data)
 
     if (!record) {
@@ -79,10 +60,9 @@ export const updateInterest = createServerFn({ method: 'POST' })
   })
 
 export const deleteInterest = createServerFn({ method: 'POST' })
+  .middleware([requireUserMiddleware])
   .validator(interestIdSchema)
   .handler(async ({ data }) => {
-    await requireUser()
-
     const result = await deleteInterestRecord(data)
 
     if (!result) {

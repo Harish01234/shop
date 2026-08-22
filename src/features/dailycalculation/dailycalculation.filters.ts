@@ -4,6 +4,7 @@ import type {
   DailyCalculationView,
   ListDailyCalculationInput,
 } from './dailycalculation.types'
+import { DEFAULT_PAGE_SIZE, parsePage } from '#/lib/pagination'
 
 export function recordStatusForView(view: DailyCalculationView) {
   if (view === 'open') return 'OPEN' as const
@@ -11,7 +12,7 @@ export function recordStatusForView(view: DailyCalculationView) {
   return undefined
 }
 
-export type DailyCalculationFilterValues = Omit<DailyCalculationSearch, 'view'>
+export type DailyCalculationFilterValues = Omit<DailyCalculationSearch, 'view' | 'page'>
 
 export function parseDailyCalculationSearch(
   search: Record<string, unknown>,
@@ -21,6 +22,7 @@ export function parseDailyCalculationSearch(
     balanceStatus: emptyToUndefined(search.balanceStatus),
     from: emptyToUndefined(search.from),
     to: emptyToUndefined(search.to),
+    page: search.page,
   }
 
   const view =
@@ -38,13 +40,14 @@ export function parseDailyCalculationSearch(
     balanceStatus,
     from: asString(parsed.from),
     to: asString(parsed.to),
+    page: parsePage(parsed.page),
   }
 }
 
 export function filtersFromSearch(
   search: DailyCalculationSearch,
 ): DailyCalculationFilterValues {
-  const { view: _view, ...filters } = search
+  const { view: _view, page: _page, ...filters } = search
   return compactFilters(filters)
 }
 
@@ -65,12 +68,15 @@ export function countActiveFilters(filters: DailyCalculationFilterValues) {
 export function toListDailyCalculationInput(
   view: DailyCalculationView,
   filters: DailyCalculationFilterValues,
+  page = 1,
 ): ListDailyCalculationInput {
   const recordStatus = recordStatusForView(view)
   const compact = compactFilters(filters)
   return {
     ...(recordStatus ? { recordStatus } : {}),
     ...compact,
+    page,
+    pageSize: DEFAULT_PAGE_SIZE,
   }
 }
 

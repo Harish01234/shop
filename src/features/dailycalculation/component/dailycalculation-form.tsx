@@ -92,7 +92,7 @@ export function DailyCalculationForm({
   const [personMoneyEntries, setPersonMoneyEntries] = useState<
     DailyCalculationPersonMoneyInput[]
   >(
-    record?.personMoneyEntries.length
+    record?.personMoneyEntries?.length
       ? record.personMoneyEntries.map((entry) => ({
           personName: entry.personName,
           amount: entry.amount,

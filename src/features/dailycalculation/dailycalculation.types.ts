@@ -1,5 +1,7 @@
 import type { z } from 'zod'
 
+import type { PaginatedList } from '#/lib/pagination'
+
 import type {
   closeDailyCalculationSchema,
   createDailyCalculationSchema,
@@ -81,7 +83,7 @@ export type DailyCalculationRecord = {
     id: string
     name: string
   } | null
-  personMoneyEntries: DailyCalculationPersonMoneyRecord[]
+  personMoneyEntries?: DailyCalculationPersonMoneyRecord[]
 }
 
 export type DailyCalculationPersonMoneyRecord = {
@@ -121,6 +123,8 @@ export type DailyCalculationDetail = {
   periodStart: Date | string
   periodEnd: Date | string
   recordStatus: DailyCalculationRecordStatus
+  openedAt: Date | string
+  closedAt: Date | string | null
   tabil: number
   cashInHome: number
   cashInShop: number
@@ -136,3 +140,5 @@ export type DailyCalculationDetail = {
   deoyaRows: DailyCalculationDeoyaRow[]
   asolSudhRows: DailyCalculationAsolSudhRow[]
 }
+
+export type DailyCalculationListResult = PaginatedList<DailyCalculationRecord>

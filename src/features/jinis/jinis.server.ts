@@ -1,5 +1,9 @@
 import { prisma } from '#/db'
 import type { JinisWhereInput } from '#/generated/prisma/models/Jinis'
+import {
+  LINK_OPTIONS_LIMIT,
+  paginationArgs,
+} from '#/lib/pagination'
 
 import { sumJinisWeights } from './jinis.utils'
 import type {
@@ -18,7 +22,22 @@ function dayEnd(value: string) {
   return new Date(`${value}T23:59:59.999`)
 }
 
-export async function listJinisRecords(data: ListJinisInput) {
+const jinisListSelect = {
+  id: true,
+  slNo: true,
+  name: true,
+  fatherName: true,
+  phoneNo: true,
+  credit: true,
+  type: true,
+  goldWeight: true,
+  silverWeight: true,
+  date: true,
+  active: true,
+  settledAt: true,
+} as const
+
+async function buildJinisWhereFilters(data: ListJinisInput) {
   const filters: JinisWhereInput[] = []
 
   if (data.active !== undefined) {
@@ -26,15 +45,21 @@ export async function listJinisRecords(data: ListJinisInput) {
   }
 
   if (data.slNo) {
-    const matches = await prisma.$queryRaw<{ id: string }[]>`
-      SELECT id FROM "Jinis"
-      WHERE CAST("slNo" AS TEXT) ILIKE ${`%${data.slNo}%`}
-    `
-    filters.push(
-      matches.length > 0
-        ? { id: { in: matches.map((row) => row.id) } }
-        : { id: '__none__' },
-    )
+    const trimmed = data.slNo.trim()
+    const asNumber = Number(trimmed)
+    if (Number.isInteger(asNumber) && String(asNumber) === trimmed) {
+      filters.push({ slNo: asNumber })
+    } else {
+      const matches = await prisma.$queryRaw<{ id: string }[]>`
+        SELECT id FROM "Jinis"
+        WHERE CAST("slNo" AS TEXT) ILIKE ${`%${trimmed}%`}
+      `
+      filters.push(
+        matches.length > 0
+          ? { id: { in: matches.map((row) => row.id) } }
+          : { id: '__none__' },
+      )
+    }
   }
 
   if (data.name) {
@@ -86,10 +111,61 @@ export async function listJinisRecords(data: ListJinisInput) {
     })
   }
 
+  return filters.length ? { AND: filters } : undefined
+}
+
+export async function listJinisRecords(data: ListJinisInput) {
+  const where = await buildJinisWhereFilters(data)
+  const { page, pageSize, skip, take } = paginationArgs(data.page, data.pageSize)
+  const filterWhere = await buildJinisWhereFilters({
+    ...data,
+    active: undefined,
+  })
+  const andClause = filterWhere?.AND ?? []
+
+  const [records, total, allCount, activeCount] = await Promise.all([
+    prisma.jinis.findMany({
+      where,
+      orderBy: { date: 'desc' },
+      skip,
+      take,
+      select: jinisListSelect,
+    }),
+    prisma.jinis.count({ where }),
+    prisma.jinis.count({ where: filterWhere }),
+    prisma.jinis.count({
+      where: { AND: [...andClause, { active: true }] },
+    }),
+  ])
+
+  return { records, total, allCount, activeCount, page, pageSize }
+}
+
+export async function listJinisLinkOptions(query?: string) {
+  const trimmed = query?.trim()
+  const filters: JinisWhereInput[] = []
+
+  if (trimmed) {
+    const asNumber = Number(trimmed)
+    filters.push({
+      OR: [
+        { name: { contains: trimmed, mode: 'insensitive' } },
+        ...(Number.isInteger(asNumber) && String(asNumber) === trimmed
+          ? [{ slNo: asNumber }]
+          : []),
+      ],
+    })
+  }
+
   return prisma.jinis.findMany({
     where: filters.length ? { AND: filters } : undefined,
-    include: { items: true },
-    orderBy: { date: 'desc' },
+    select: {
+      id: true,
+      slNo: true,
+      name: true,
+    },
+    orderBy: { slNo: 'desc' },
+    take: LINK_OPTIONS_LIMIT,
   })
 }
 

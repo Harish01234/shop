@@ -23,8 +23,6 @@ import type {
   InterestRecord,
   InterestSource,
 } from '#/features/interest/interest.types'
-import { jinisListQueryOptions } from '#/features/jinis/jinis.queries'
-import { jinisCharaListQueryOptions } from '#/features/jinischara/jinischara.queries'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -38,6 +36,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
+import { ListPagination } from '@/components/list-pagination'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/admin/interest')({
@@ -46,13 +45,9 @@ export const Route = createFileRoute('/admin/interest')({
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) => {
     const filters = filtersFromSearch(deps)
-    return Promise.all([
-      context.queryClient.ensureQueryData(
-        interestListQueryOptions(deps.source, filters),
-      ),
-      context.queryClient.ensureQueryData(jinisListQueryOptions('all')),
-      context.queryClient.ensureQueryData(jinisCharaListQueryOptions('all')),
-    ])
+    return context.queryClient.ensureQueryData(
+      interestListQueryOptions(deps.source, filters, deps.page),
+    )
   },
   pendingComponent: InterestListPending,
   errorComponent: InterestListError,
@@ -114,15 +109,16 @@ function AdminInterestPage() {
   const search = Route.useSearch()
   const currentSource: InterestSource = search.source
   const filters = filtersFromSearch(search)
+  const page = search.page ?? 1
   const navigate = useNavigate({ from: '/admin/interest' })
-  const interestQuery = useInterestList(currentSource, filters)
+  const interestQuery = useInterestList(currentSource, filters, page)
   const deleteMutation = useDeleteInterest()
 
   const [modalOpen, setModalOpen] = useState(false)
   const [editingRecord, setEditingRecord] = useState<InterestRecord | undefined>()
   const [deleteTarget, setDeleteTarget] = useState<InterestRecord | null>(null)
 
-  const records = interestQuery.data ?? []
+  const records = interestQuery.data?.records ?? []
 
   const handleFiltersChange = useCallback(
     (nextFilters: InterestFilterValues) => {
@@ -131,6 +127,7 @@ function AdminInterestPage() {
         search: {
           source: currentSource,
           ...nextFilters,
+          page: 1,
         },
       })
     },
@@ -177,7 +174,7 @@ function AdminInterestPage() {
       <div className="flex flex-wrap gap-1">
         <Link
           to="/admin/interest"
-          search={(prev) => ({ ...prev, source: 'all' })}
+          search={(prev) => ({ ...prev, source: 'all', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentSource === 'all' ? 'default' : 'ghost',
@@ -188,7 +185,7 @@ function AdminInterestPage() {
         </Link>
         <Link
           to="/admin/interest"
-          search={(prev) => ({ ...prev, source: 'jinis' })}
+          search={(prev) => ({ ...prev, source: 'jinis', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentSource === 'jinis' ? 'default' : 'ghost',
@@ -199,7 +196,7 @@ function AdminInterestPage() {
         </Link>
         <Link
           to="/admin/interest"
-          search={(prev) => ({ ...prev, source: 'jinischara' })}
+          search={(prev) => ({ ...prev, source: 'jinischara', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentSource === 'jinischara' ? 'default' : 'ghost',
@@ -210,7 +207,7 @@ function AdminInterestPage() {
         </Link>
         <Link
           to="/admin/interest"
-          search={(prev) => ({ ...prev, source: 'person' })}
+          search={(prev) => ({ ...prev, source: 'person', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentSource === 'person' ? 'default' : 'ghost',
@@ -224,7 +221,7 @@ function AdminInterestPage() {
       <AdvanceSearchFilter
         filters={filters}
         onChange={handleFiltersChange}
-        totalCount={records.length}
+        totalCount={interestQuery.data?.total ?? 0}
       />
 
       {interestQuery.isError && records.length === 0 ? (
@@ -240,6 +237,17 @@ function AdminInterestPage() {
         onCreate={openCreateModal}
         onEdit={openEditModal}
         onDelete={setDeleteTarget}
+      />
+
+      <ListPagination
+        page={interestQuery.data?.page ?? page}
+        pageSize={interestQuery.data?.pageSize ?? 50}
+        total={interestQuery.data?.total ?? 0}
+        onPageChange={(nextPage) => {
+          void navigate({
+            search: (prev) => ({ ...prev, page: nextPage }),
+          })
+        }}
       />
 
       <InterestModal

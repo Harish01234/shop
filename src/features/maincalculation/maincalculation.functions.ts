@@ -1,9 +1,7 @@
-import { notFound, redirect } from '@tanstack/react-router'
+import { notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { getRequestHeaders } from '@tanstack/react-start/server'
 
-import { auth } from '#/lib/auth'
-import { isAdminRole } from '#/lib/admin-role'
+import { requireAdminMiddleware } from '#/lib/auth-middleware'
 import {
   createMainCalculationSchema,
   listAvailableDailyCalculationsSchema,
@@ -20,37 +18,36 @@ import {
   listAvailableDailyCalculations,
   listMainCalculationRecords,
   previewMainCalculationTotals,
+  refreshMainCalculationTotalsRecord,
   updateMainCalculationRecord,
 } from './maincalculation.server'
 
-async function requireAdmin() {
-  const headers = getRequestHeaders()
-  const session = await auth.api.getSession({ headers })
-
-  if (!session) {
-    throw redirect({ to: '/signin' })
-  }
-
-  if (!isAdminRole(session.user.role)) {
-    throw redirect({ to: '/' })
-  }
-
-  return session
-}
-
 export const listMainCalculation = createServerFn({ method: 'GET' })
+  .middleware([requireAdminMiddleware])
   .validator(listMainCalculationSchema)
-  .handler(async ({ data }) => {
-    await requireAdmin()
-    return listMainCalculationRecords(data)
-  })
+  .handler(async ({ data }) => listMainCalculationRecords(data))
 
 export const getMainCalculation = createServerFn({ method: 'GET' })
+  .middleware([requireAdminMiddleware])
   .validator(mainCalculationIdSchema)
   .handler(async ({ data }) => {
-    await requireAdmin()
-
     const record = await getMainCalculationRecord(data)
+
+    if (!record) {
+      throw notFound()
+    }
+
+    return record
+  })
+
+export const refreshMainCalculation = createServerFn({ method: 'POST' })
+  .middleware([requireAdminMiddleware])
+  .validator(mainCalculationIdSchema)
+  .handler(async ({ data, context }) => {
+    const record = await refreshMainCalculationTotalsRecord(
+      data,
+      context.session.user.id,
+    )
 
     if (!record) {
       throw notFound()
@@ -62,32 +59,30 @@ export const getMainCalculation = createServerFn({ method: 'GET' })
 export const listAvailableDailyCalculationsForMainCalc = createServerFn({
   method: 'POST',
 })
+  .middleware([requireAdminMiddleware])
   .validator(listAvailableDailyCalculationsSchema)
-  .handler(async ({ data }) => {
-    await requireAdmin()
-    return listAvailableDailyCalculations(data)
-  })
+  .handler(async ({ data }) => listAvailableDailyCalculations(data))
 
 export const previewMainCalculation = createServerFn({ method: 'POST' })
+  .middleware([requireAdminMiddleware])
   .validator(previewMainCalculationSchema)
-  .handler(async ({ data }) => {
-    await requireAdmin()
-    return previewMainCalculationTotals(data)
-  })
+  .handler(async ({ data }) => previewMainCalculationTotals(data))
 
 export const createMainCalculation = createServerFn({ method: 'POST' })
+  .middleware([requireAdminMiddleware])
   .validator(createMainCalculationSchema)
-  .handler(async ({ data }) => {
-    const session = await requireAdmin()
-    return createMainCalculationRecord(data, session.user.id)
-  })
+  .handler(async ({ data, context }) =>
+    createMainCalculationRecord(data, context.session.user.id),
+  )
 
 export const updateMainCalculation = createServerFn({ method: 'POST' })
+  .middleware([requireAdminMiddleware])
   .validator(updateMainCalculationSchema)
-  .handler(async ({ data }) => {
-    const session = await requireAdmin()
-
-    const record = await updateMainCalculationRecord(data, session.user.id)
+  .handler(async ({ data, context }) => {
+    const record = await updateMainCalculationRecord(
+      data,
+      context.session.user.id,
+    )
 
     if (!record) {
       throw notFound()
@@ -97,11 +92,13 @@ export const updateMainCalculation = createServerFn({ method: 'POST' })
   })
 
 export const finalizeMainCalculation = createServerFn({ method: 'POST' })
+  .middleware([requireAdminMiddleware])
   .validator(mainCalculationIdSchema)
-  .handler(async ({ data }) => {
-    const session = await requireAdmin()
-
-    const record = await finalizeMainCalculationRecord(data, session.user.id)
+  .handler(async ({ data, context }) => {
+    const record = await finalizeMainCalculationRecord(
+      data,
+      context.session.user.id,
+    )
 
     if (!record) {
       throw notFound()
@@ -111,10 +108,9 @@ export const finalizeMainCalculation = createServerFn({ method: 'POST' })
   })
 
 export const deleteMainCalculation = createServerFn({ method: 'POST' })
+  .middleware([requireAdminMiddleware])
   .validator(mainCalculationIdSchema)
   .handler(async ({ data }) => {
-    await requireAdmin()
-
     const result = await deleteMainCalculationRecord(data)
 
     if (!result) {

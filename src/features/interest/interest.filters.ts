@@ -3,8 +3,9 @@ import type {
   InterestSource,
   ListInterestInput,
 } from './interest.types'
+import { DEFAULT_PAGE_SIZE, parsePage } from '#/lib/pagination'
 
-export type InterestFilterValues = Omit<InterestSearch, 'source'>
+export type InterestFilterValues = Omit<InterestSearch, 'source' | 'page'>
 
 export function parseInterestSearch(
   search: Record<string, unknown>,
@@ -19,6 +20,7 @@ export function parseInterestSearch(
     date: emptyToUndefined(search.date),
     from: emptyToUndefined(search.from),
     to: emptyToUndefined(search.to),
+    page: search.page,
   }
 
   const source: InterestSource =
@@ -39,11 +41,12 @@ export function parseInterestSearch(
     date: asString(parsed.date),
     from: asString(parsed.from),
     to: asString(parsed.to),
+    page: parsePage(parsed.page),
   }
 }
 
 export function filtersFromSearch(search: InterestSearch): InterestFilterValues {
-  const { source: _source, ...filters } = search
+  const { source: _source, page: _page, ...filters } = search
   return compactFilters(filters)
 }
 
@@ -69,11 +72,14 @@ export function countActiveFilters(filters: InterestFilterValues) {
 export function toListInterestInput(
   source: InterestSource,
   filters: InterestFilterValues,
+  page = 1,
 ): ListInterestInput {
   const compact = compactFilters(filters)
   return {
     ...(source === 'all' ? {} : { source }),
     ...compact,
+    page,
+    pageSize: DEFAULT_PAGE_SIZE,
   }
 }
 

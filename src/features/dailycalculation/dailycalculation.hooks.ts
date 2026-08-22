@@ -2,10 +2,7 @@ import { useCallback } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useServerFn } from '@tanstack/react-start'
 
-import { refetchInterestLists } from '#/features/interest/interest.queries'
-import { refetchJinisLists } from '#/features/jinis/jinis.queries'
-import { refetchJinisCharaLists } from '#/features/jinischara/jinischara.queries'
-import { mainCalculationKeys } from '#/features/maincalculation/maincalculation.queries'
+import { refetchMainCalculationLists } from '#/features/maincalculation/maincalculation.queries'
 import {
   closeDailyCalculation,
   createDailyCalculation,
@@ -15,7 +12,9 @@ import {
 } from './dailycalculation.functions'
 import {
   dailyCalculationDetailQueryOptions,
+  dailyCalculationKeys,
   dailyCalculationListQueryOptions,
+  dailyCalculationRecordQueryOptions,
   previewDailyCalculationQueryOptions,
   refetchDailyCalculationDetail,
   refetchDailyCalculationLists,
@@ -35,8 +34,9 @@ import { toast } from '@/components/ui/toast'
 export function useDailyCalculationList(
   view: DailyCalculationView,
   filters: DailyCalculationFilterValues = {},
+  page = 1,
 ) {
-  return useQuery(dailyCalculationListQueryOptions(view, filters))
+  return useQuery(dailyCalculationListQueryOptions(view, filters, page))
 }
 
 export function usePreviewDailyCalculation(
@@ -53,6 +53,13 @@ export function useDailyCalculationDetail(id: string | null, enabled = true) {
   })
 }
 
+export function useDailyCalculationRecord(id: string | undefined, enabled = true) {
+  return useQuery({
+    ...dailyCalculationRecordQueryOptions(id ?? ''),
+    enabled: enabled && Boolean(id),
+  })
+}
+
 export function useRefreshDailyCalculation() {
   const queryClient = useQueryClient()
   const refreshFn = useServerFn(refreshDailyCalculation)
@@ -63,6 +70,13 @@ export function useRefreshDailyCalculation() {
       await refetchDailyCalculationDetail(queryClient, variables.id)
       await refetchDailyCalculationLists(queryClient)
     },
+    onError: (error) => {
+      toast.add({
+        title: 'Could not refresh Daily Calculation',
+        description: getErrorMessage(error, 'Please try again.'),
+        type: 'error',
+      })
+    },
   })
 }
 
@@ -71,14 +85,11 @@ export function useSyncDailyCalculationDetail(dailyCalculationId: string) {
   const refreshFn = useServerFn(refreshDailyCalculation)
 
   return useCallback(async () => {
-    await Promise.all([
-      refetchJinisLists(queryClient),
-      refetchJinisCharaLists(queryClient),
-      refetchInterestLists(queryClient),
-    ])
     await refreshFn({ data: { id: dailyCalculationId } })
-    await refetchDailyCalculationDetail(queryClient, dailyCalculationId)
-    await refetchDailyCalculationLists(queryClient)
+    await Promise.all([
+      refetchDailyCalculationDetail(queryClient, dailyCalculationId),
+      queryClient.invalidateQueries({ queryKey: dailyCalculationKeys.lists() }),
+    ])
   }, [dailyCalculationId, queryClient, refreshFn])
 }
 
@@ -161,7 +172,7 @@ export function useDeleteDailyCalculation() {
     onSuccess: async () => {
       await Promise.all([
         refetchDailyCalculationLists(queryClient),
-        queryClient.invalidateQueries({ queryKey: mainCalculationKeys.all }),
+        refetchMainCalculationLists(queryClient),
       ])
       toast.add({
         title: 'Daily Calculation deleted successfully',

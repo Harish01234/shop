@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { listPaginationSchema } from '#/lib/pagination'
 import { DEFAULT_JINISCHARA_PERCENTAGE } from './jinischara.utils'
 
 export const createJinisCharaSchema = z.object({
@@ -52,6 +53,7 @@ export const listJinisCharaSchema = z.object({
   date: z.string().trim().optional(),
   from: z.string().trim().optional(),
   to: z.string().trim().optional(),
+  ...listPaginationSchema.shape,
 })
 
 export const jinisCharaSearchSchema = z.object({
@@ -67,6 +69,7 @@ export const jinisCharaSearchSchema = z.object({
   date: z.string().trim().optional(),
   from: z.string().trim().optional(),
   to: z.string().trim().optional(),
+  page: z.coerce.number().int().positive().optional(),
 })
 
 export const settleJinisCharaSchema = z.object({

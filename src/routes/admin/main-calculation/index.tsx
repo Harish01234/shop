@@ -29,6 +29,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
+import { ListPagination } from '@/components/list-pagination'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/admin/main-calculation/')({
@@ -36,7 +37,7 @@ export const Route = createFileRoute('/admin/main-calculation/')({
   loader: ({ context, deps }) => {
     const filters = filtersFromSearch(deps)
     return context.queryClient.ensureQueryData(
-      mainCalculationListQueryOptions(deps.view, filters),
+      mainCalculationListQueryOptions(deps.view, filters, deps.page),
     )
   },
   pendingComponent: MainCalculationListPending,
@@ -78,8 +79,9 @@ function AdminMainCalculationPage() {
   const search = Route.useSearch()
   const currentView: MainCalculationView = search.view
   const filters = filtersFromSearch(search)
+  const page = search.page ?? 1
   const navigate = useNavigate({ from: '/admin/main-calculation/' })
-  const listQuery = useMainCalculationList(currentView, filters)
+  const listQuery = useMainCalculationList(currentView, filters, page)
   const deleteMutation = useDeleteMainCalculation()
   const finalizeMutation = useFinalizeMainCalculation()
 
@@ -93,7 +95,7 @@ function AdminMainCalculationPage() {
   const [finalizeTarget, setFinalizeTarget] =
     useState<MainCalculationRecord | null>(null)
 
-  const records = listQuery.data ?? []
+  const records = listQuery.data?.records ?? []
 
   function openCreateModal() {
     setEditingRecord(undefined)
@@ -155,7 +157,7 @@ function AdminMainCalculationPage() {
       <div className="flex flex-wrap gap-1">
         <Link
           to="/admin/main-calculation"
-          search={(prev) => ({ ...prev, view: 'draft' })}
+          search={(prev) => ({ ...prev, view: 'draft', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentView === 'draft' ? 'default' : 'ghost',
@@ -166,7 +168,7 @@ function AdminMainCalculationPage() {
         </Link>
         <Link
           to="/admin/main-calculation"
-          search={(prev) => ({ ...prev, view: 'finalized' })}
+          search={(prev) => ({ ...prev, view: 'finalized', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentView === 'finalized' ? 'default' : 'ghost',
@@ -177,7 +179,7 @@ function AdminMainCalculationPage() {
         </Link>
         <Link
           to="/admin/main-calculation"
-          search={(prev) => ({ ...prev, view: 'all' })}
+          search={(prev) => ({ ...prev, view: 'all', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentView === 'all' ? 'default' : 'ghost',
@@ -204,6 +206,17 @@ function AdminMainCalculationPage() {
         onFinalize={setFinalizeTarget}
         onDelete={setDeleteTarget}
         finalizingId={finalizeMutation.isPending ? finalizeTarget?.id : null}
+      />
+
+      <ListPagination
+        page={listQuery.data?.page ?? page}
+        pageSize={listQuery.data?.pageSize ?? 50}
+        total={listQuery.data?.total ?? 0}
+        onPageChange={(nextPage) => {
+          void navigate({
+            search: (prev) => ({ ...prev, page: nextPage }),
+          })
+        }}
       />
 
       <MainCalculationModal

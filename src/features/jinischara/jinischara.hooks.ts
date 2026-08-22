@@ -9,6 +9,7 @@ import {
 import type { JinisCharaFilterValues } from './jinischara.filters'
 import {
   activeJinisCharaTotalQueryOptions,
+  jinisCharaLinkOptionsQueryOptions,
   jinisCharaListQueryOptions,
   refetchJinisCharaLists,
 } from './jinischara.queries'
@@ -18,13 +19,22 @@ import type {
   JinisCharaView,
   UpdateJinisCharaInput,
 } from './jinischara.types'
+import { getErrorMessage } from './jinischara.utils'
 import { toast } from '@/components/ui/toast'
 
 export function useJinisCharaList(
   view: JinisCharaView,
   filters: JinisCharaFilterValues = {},
+  page = 1,
 ) {
-  return useQuery(jinisCharaListQueryOptions(view, filters))
+  return useQuery(jinisCharaListQueryOptions(view, filters, page))
+}
+
+export function useJinisCharaLinkOptions(enabled = true, query = '') {
+  return useQuery({
+    ...jinisCharaLinkOptionsQueryOptions(query),
+    enabled,
+  })
 }
 
 export function useActiveJinisCharaTotal() {
@@ -44,6 +54,13 @@ export function useCreateJinisChara() {
         type: 'success',
       })
     },
+    onError: (error) => {
+      toast.add({
+        title: 'Could not create JinisChara',
+        description: getErrorMessage(error, 'Please try again.'),
+        type: 'error',
+      })
+    },
   })
 }
 
@@ -58,6 +75,13 @@ export function useUpdateJinisChara() {
       toast.add({
         title: 'JinisChara updated successfully',
         type: 'success',
+      })
+    },
+    onError: (error) => {
+      toast.add({
+        title: 'Could not update JinisChara',
+        description: getErrorMessage(error, 'Please try again.'),
+        type: 'error',
       })
     },
   })

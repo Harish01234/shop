@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { AlertCircleIcon, SearchIcon } from 'lucide-react'
 
 import {
@@ -12,8 +12,8 @@ import {
 import type { InterestRecord } from '#/features/interest/interest.types'
 import { getErrorMessage } from '#/features/interest/interest.utils'
 import { formatMoney } from '#/features/dailycalculation/dailycalculation.utils'
-import { useJinisList } from '#/features/jinis/jinis.hooks'
-import { useJinisCharaList } from '#/features/jinischara/jinischara.hooks'
+import { useJinisLinkOptions } from '#/features/jinis/jinis.hooks'
+import { useJinisCharaLinkOptions } from '#/features/jinischara/jinischara.hooks'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -49,6 +49,15 @@ type LinkOption = {
   name: string
 }
 
+function mergeLinkOption(
+  options: LinkOption[],
+  selected?: LinkOption | null,
+) {
+  if (!selected) return options
+  if (options.some((item) => item.id === selected.id)) return options
+  return [selected, ...options]
+}
+
 function formatLinkOption(item: LinkOption) {
   return `#${item.slNo} · ${item.name}`
 }
@@ -79,6 +88,7 @@ function InterestLinkCombobox({
   searchPlaceholder,
   emptyText,
   disabled,
+  onQueryChange,
 }: {
   id: string
   value: string
@@ -88,6 +98,7 @@ function InterestLinkCombobox({
   searchPlaceholder: string
   emptyText: string
   disabled?: boolean
+  onQueryChange?: (query: string) => void
 }) {
   const selected = options.find((item) => item.id === value) ?? null
 
@@ -125,6 +136,7 @@ function InterestLinkCombobox({
           showTrigger={false}
           placeholder={searchPlaceholder}
           aria-label={searchPlaceholder}
+          onChange={(event) => onQueryChange?.(event.currentTarget.value)}
         >
           <InputGroupAddon align="inline-start">
             <SearchIcon />
@@ -179,26 +191,6 @@ export function InterestForm({
   const createMutation = useCreateInterest()
   const updateMutation = useUpdateInterest()
   const saving = createMutation.isPending || updateMutation.isPending
-  const jinisQuery = useJinisList('all')
-  const jinisCharaQuery = useJinisCharaList('all')
-  const jinisOptions = useMemo<LinkOption[]>(
-    () =>
-      (jinisQuery.data ?? []).map((record) => ({
-        id: record.id,
-        slNo: record.slNo,
-        name: record.name,
-      })),
-    [jinisQuery.data],
-  )
-  const jinisCharaOptions = useMemo<LinkOption[]>(
-    () =>
-      (jinisCharaQuery.data ?? []).map((record) => ({
-        id: record.id,
-        slNo: record.slNo,
-        name: record.name,
-      })),
-    [jinisCharaQuery.data],
-  )
 
   const [amount, setAmount] = useState(interest ? String(interest.amount) : '')
   const [date, setDate] = useState(
@@ -213,10 +205,39 @@ export function InterestForm({
   const [personName, setPersonName] = useState(interest?.personName ?? '')
   const [settled, setSettled] = useState(linkTypeFromRecord(interest) === 'jinis')
   const [error, setError] = useState<string | null>(null)
+  const [linkQuery, setLinkQuery] = useState('')
+  const [debouncedLinkQuery, setDebouncedLinkQuery] = useState('')
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedLinkQuery(linkQuery)
+    }, 300)
+
+    return () => window.clearTimeout(timer)
+  }, [linkQuery])
+
+  const jinisQuery = useJinisLinkOptions(
+    !asolContext && linkType === 'jinis',
+    debouncedLinkQuery,
+  )
+  const jinisCharaQuery = useJinisCharaLinkOptions(
+    !asolContext && linkType === 'jinischara',
+    debouncedLinkQuery,
+  )
+  const jinisOptions = mergeLinkOption(
+    jinisQuery.data ?? [],
+    interest?.jinis,
+  )
+  const jinisCharaOptions = mergeLinkOption(
+    jinisCharaQuery.data ?? [],
+    interest?.jinisChara,
+  )
 
   function handleLinkTypeChange(next: LinkType) {
     setLinkType(next)
     setSettled(next === 'jinis')
+    setLinkQuery('')
+    setDebouncedLinkQuery('')
   }
 
   async function handleSubmit(event: FormEvent) {
@@ -347,6 +368,7 @@ export function InterestForm({
                   searchPlaceholder="Search sl no or name"
                   emptyText="No Jinis found."
                   disabled={jinisQuery.isLoading}
+                  onQueryChange={setLinkQuery}
                 />
               </Field>
             ) : null}
@@ -366,6 +388,7 @@ export function InterestForm({
                   searchPlaceholder="Search sl no or name"
                   emptyText="No JinisChara found."
                   disabled={jinisCharaQuery.isLoading}
+                  onQueryChange={setLinkQuery}
                 />
               </Field>
             ) : null}

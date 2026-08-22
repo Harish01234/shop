@@ -15,7 +15,6 @@ import {
   useDailyCalculationDetail,
   useSyncDailyCalculationDetail,
 } from '#/features/dailycalculation/dailycalculation.hooks'
-import { getDailyCalculation } from '#/features/dailycalculation/dailycalculation.functions'
 import type {
   DailyCalculationAsolSudhRow,
   DailyCalculationDeoyaRow,
@@ -203,7 +202,6 @@ export function DailyCalculationDetailView({
   const getJinisFn = useServerFn(getJinis)
   const getJinisCharaFn = useServerFn(getJinisChara)
   const getInterestFn = useServerFn(getInterest)
-  const getDailyCalculationFn = useServerFn(getDailyCalculation)
   const updateJinisFn = useServerFn(updateJinis)
   const updateJinisCharaFn = useServerFn(updateJinisChara)
 
@@ -211,8 +209,6 @@ export function DailyCalculationDetailView({
   const [editingRecord, setEditingRecord] = useState<
     DailyCalculationRecord | undefined
   >()
-  const [loadingDailyCalculationEdit, setLoadingDailyCalculationEdit] =
-    useState(false)
   const [jinisModalOpen, setJinisModalOpen] = useState(false)
   const [jinisCharaModalOpen, setJinisCharaModalOpen] = useState(false)
   const [interestModalOpen, setInterestModalOpen] = useState(false)
@@ -246,16 +242,9 @@ export function DailyCalculationDetailView({
   }
 
   async function openEditDailyCalculation() {
-    setLoadingDailyCalculationEdit(true)
-    try {
-      const record = (await getDailyCalculationFn({
-        data: { id: dailyCalculationId },
-      })) as DailyCalculationRecord
-      setEditingRecord(record)
-      setEditModalOpen(true)
-    } finally {
-      setLoadingDailyCalculationEdit(false)
-    }
+    if (!detail) return
+    setEditingRecord(detail)
+    setEditModalOpen(true)
   }
 
   function openCreateJinis() {
@@ -437,14 +426,9 @@ export function DailyCalculationDetailView({
               variant="outline"
               size="sm"
               className="gap-1.5 bg-background"
-              disabled={loadingDailyCalculationEdit}
-              onClick={() => void openEditDailyCalculation()}
+              onClick={() => openEditDailyCalculation()}
             >
-              {loadingDailyCalculationEdit ? (
-                <Spinner />
-              ) : (
-                <PencilIcon className="size-4" />
-              )}
+              <PencilIcon className="size-4" />
               Edit
             </Button>
           </div>

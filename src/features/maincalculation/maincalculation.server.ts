@@ -1,5 +1,6 @@
 import { prisma } from '#/db'
 import type { MainCalculationWhereInput } from '#/generated/prisma/models/MainCalculation'
+import { paginationArgs } from '#/lib/pagination'
 import { sumPersonMoneyTotal } from '#/features/dailycalculation/dailycalculation.utils'
 import { sumActiveJinisCredit } from '#/features/jinis/jinis.server'
 
@@ -201,23 +202,42 @@ export async function listMainCalculationRecords(
     })
   }
 
-  const records = await prisma.mainCalculation.findMany({
-    where: filters.length ? { AND: filters } : undefined,
-    orderBy: [{ calculationDate: 'desc' }, { createdAt: 'desc' }],
-    include: relatedInclude,
-  })
+  const where = filters.length ? { AND: filters } : undefined
+  const { page, pageSize, skip, take } = paginationArgs(data.page, data.pageSize)
 
-  await Promise.all(
-    records.map((record) =>
-      refreshMainCalculationTotalsRecord({ id: record.id }),
-    ),
-  )
+  const [records, total] = await Promise.all([
+    prisma.mainCalculation.findMany({
+      where,
+      orderBy: [{ calculationDate: 'desc' }, { createdAt: 'desc' }],
+      skip,
+      take,
+      select: {
+        id: true,
+        calculationDate: true,
+        totalTabil: true,
+        dailyCalculationId: true,
+        interest: true,
+        bandak: true,
+        jinisChara: true,
+        cash: true,
+        leftTotal: true,
+        rightTotal: true,
+        difference: true,
+        balanceStatus: true,
+        recordStatus: true,
+        finalizedAt: true,
+        createdById: true,
+        createdAt: true,
+        updatedAt: true,
+        lastEditedById: true,
+        lastEditedAt: true,
+        dailyCalculation: relatedInclude.dailyCalculation,
+      },
+    }),
+    prisma.mainCalculation.count({ where }),
+  ])
 
-  return prisma.mainCalculation.findMany({
-    where: filters.length ? { AND: filters } : undefined,
-    orderBy: [{ calculationDate: 'desc' }, { createdAt: 'desc' }],
-    include: relatedInclude,
-  })
+  return { records, total, page, pageSize }
 }
 
 export async function refreshMainCalculationTotalsRecord(
@@ -262,7 +282,10 @@ export async function refreshMainCalculationTotalsRecord(
 }
 
 export async function getMainCalculationRecord(data: MainCalculationIdInput) {
-  return refreshMainCalculationTotalsRecord(data)
+  return prisma.mainCalculation.findUnique({
+    where: { id: data.id },
+    include: relatedInclude,
+  })
 }
 
 export async function listAvailableDailyCalculations(

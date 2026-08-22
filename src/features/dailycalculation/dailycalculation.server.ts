@@ -1,5 +1,6 @@
 import { prisma } from '#/db'
 import type { DailyCalculationWhereInput } from '#/generated/prisma/models/DailyCalculation'
+import { paginationArgs } from '#/lib/pagination'
 
 import type {
   CloseDailyCalculationInput,
@@ -17,10 +18,7 @@ import {
   sumPersonMoneyTotal,
 } from './dailycalculation.utils'
 
-const relatedInclude = {
-  personMoneyEntries: {
-    orderBy: { createdAt: 'asc' as const },
-  },
+const relatedUserSelect = {
   createdBy: {
     select: {
       id: true,
@@ -33,6 +31,13 @@ const relatedInclude = {
       name: true,
     },
   },
+} as const
+
+const relatedInclude = {
+  personMoneyEntries: {
+    orderBy: { createdAt: 'asc' as const },
+  },
+  ...relatedUserSelect,
 }
 
 function toDayString(value: Date) {
@@ -96,59 +101,18 @@ async function computeAsolForPeriod(periodStart: Date, periodEnd: Date) {
     lte: periodEnd,
   }
 
-  const [settledInPeriodJinis, settledInPeriodJinisChara, periodInterests] =
-    await Promise.all([
-      prisma.jinis.findMany({
-        where: { settledAt: inPeriod },
-        select: { id: true, credit: true },
-      }),
-      prisma.jinisChara.findMany({
-        where: { settledAt: inPeriod },
-        select: { id: true, credit: true },
-      }),
-      prisma.interest.findMany({
-        where: {
-          date: inPeriod,
-          OR: [{ jinisId: { not: null } }, { jinisCharaId: { not: null } }],
-        },
-        select: {
-          jinis: { select: { id: true, credit: true, settledAt: true } },
-          jinisChara: {
-            select: { id: true, credit: true, settledAt: true },
-          },
-        },
-      }),
-    ])
+  const [settledJinis, settledJinisChara] = await Promise.all([
+    prisma.jinis.aggregate({
+      where: { settledAt: inPeriod },
+      _sum: { credit: true },
+    }),
+    prisma.jinisChara.aggregate({
+      where: { settledAt: inPeriod },
+      _sum: { credit: true },
+    }),
+  ])
 
-  const jinisCredits = new Map<string, number>()
-  const jinisCharaCredits = new Map<string, number>()
-
-  for (const row of settledInPeriodJinis) {
-    jinisCredits.set(row.id, row.credit)
-  }
-
-  for (const row of settledInPeriodJinisChara) {
-    jinisCharaCredits.set(row.id, row.credit)
-  }
-
-  for (const interest of periodInterests) {
-    if (interest.jinis?.settledAt && !jinisCredits.has(interest.jinis.id)) {
-      jinisCredits.set(interest.jinis.id, interest.jinis.credit)
-    }
-
-    if (
-      interest.jinisChara?.settledAt &&
-      !jinisCharaCredits.has(interest.jinisChara.id)
-    ) {
-      jinisCharaCredits.set(interest.jinisChara.id, interest.jinisChara.credit)
-    }
-  }
-
-  let asol = 0
-  for (const credit of jinisCredits.values()) asol += credit
-  for (const credit of jinisCharaCredits.values()) asol += credit
-
-  return asol
+  return (settledJinis._sum.credit ?? 0) + (settledJinisChara._sum.credit ?? 0)
 }
 
 async function computePeriodTotals(input: {
@@ -242,11 +206,39 @@ export async function listDailyCalculationRecords(
     })
   }
 
-  return prisma.dailyCalculation.findMany({
-    where: filters.length ? { AND: filters } : undefined,
-    include: relatedInclude,
-    orderBy: [{ periodStart: 'desc' }, { createdAt: 'desc' }],
-  })
+  const where = filters.length ? { AND: filters } : undefined
+  const { page, pageSize, skip, take } = paginationArgs(data.page, data.pageSize)
+
+  const [records, total] = await Promise.all([
+    prisma.dailyCalculation.findMany({
+      where,
+      select: {
+        id: true,
+        periodStart: true,
+        periodEnd: true,
+        tabil: true,
+        cashInHome: true,
+        cashInShop: true,
+        asol: true,
+        sudh: true,
+        deoya: true,
+        personMoneyTotal: true,
+        leftTotal: true,
+        rightTotal: true,
+        difference: true,
+        balanceStatus: true,
+        recordStatus: true,
+        openedAt: true,
+        closedAt: true,
+      },
+      orderBy: [{ periodStart: 'desc' }, { createdAt: 'desc' }],
+      skip,
+      take,
+    }),
+    prisma.dailyCalculation.count({ where }),
+  ])
+
+  return { records, total, page, pageSize }
 }
 
 export async function getDailyCalculationRecord(data: DailyCalculationIdInput) {
@@ -472,7 +464,38 @@ function buildAsolSudhRows(
 export async function getDailyCalculationDetailRecord(
   data: DailyCalculationIdInput,
 ) {
-  const record = await refreshDailyCalculationTotalsRecord(data)
+  const record = await prisma.dailyCalculation.findUnique({
+    where: { id: data.id },
+    select: {
+      id: true,
+      periodStart: true,
+      periodEnd: true,
+      recordStatus: true,
+      openedAt: true,
+      closedAt: true,
+      tabil: true,
+      cashInHome: true,
+      cashInShop: true,
+      asol: true,
+      sudh: true,
+      deoya: true,
+      personMoneyTotal: true,
+      leftTotal: true,
+      rightTotal: true,
+      difference: true,
+      balanceStatus: true,
+      personMoneyEntries: {
+        orderBy: { createdAt: 'asc' },
+        select: {
+          id: true,
+          personName: true,
+          amount: true,
+          remarks: true,
+          dailyCalculationId: true,
+        },
+      },
+    },
+  })
 
   if (!record) {
     return null

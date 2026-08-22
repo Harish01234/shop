@@ -16,7 +16,10 @@ import {
 } from '#/features/jinis/jinis.hooks'
 import { JinisModal } from '#/features/jinis/component/jinis-modal'
 import { JinisTable } from '#/features/jinis/component/jinis-table'
-import { jinisKeys, jinisListQueryOptions } from '#/features/jinis/jinis.queries'
+import {
+  jinisKeys,
+  jinisListQueryOptions,
+} from '#/features/jinis/jinis.queries'
 import type { JinisRecord, JinisView } from '#/features/jinis/jinis.types'
 import {
   AlertDialog,
@@ -31,6 +34,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
+import { ListPagination } from '@/components/list-pagination'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/jinis/')({
@@ -38,14 +42,9 @@ export const Route = createFileRoute('/jinis/')({
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) => {
     const filters = filtersFromSearch(deps)
-    return Promise.all([
-      context.queryClient.ensureQueryData(
-        jinisListQueryOptions(deps.view, filters),
-      ),
-      context.queryClient.ensureQueryData(
-        jinisListQueryOptions('all', filters),
-      ),
-    ])
+    return context.queryClient.ensureQueryData(
+      jinisListQueryOptions(deps.view, filters, deps.page),
+    )
   },
   pendingComponent: JinisListPending,
   errorComponent: JinisListError,
@@ -107,9 +106,9 @@ function JinisListPage() {
   const search = Route.useSearch()
   const currentView: JinisView = search.view
   const filters = filtersFromSearch(search)
+  const page = search.page ?? 1
   const navigate = useNavigate({ from: '/jinis/' })
-  const jinisQuery = useJinisList(currentView, filters)
-  const rangeQuery = useJinisList('all', filters)
+  const jinisQuery = useJinisList(currentView, filters, page)
   const deleteJinisMutation = useDeleteJinis()
   const toggleJinisMutation = useToggleJinis()
 
@@ -117,8 +116,9 @@ function JinisListPage() {
   const [editingRecord, setEditingRecord] = useState<JinisRecord | undefined>()
   const [deleteTarget, setDeleteTarget] = useState<JinisRecord | null>(null)
 
-  const records = jinisQuery.data ?? []
-  const rangeRecords = rangeQuery.data ?? []
+  const records = jinisQuery.data?.records ?? []
+  const totalCount = jinisQuery.data?.allCount ?? 0
+  const activeCount = jinisQuery.data?.activeCount ?? 0
   const togglingId = toggleJinisMutation.isPending
     ? (toggleJinisMutation.variables?.record.id ?? null)
     : null
@@ -130,6 +130,7 @@ function JinisListPage() {
         search: {
           view: currentView,
           ...nextFilters,
+          page: 1,
         },
       })
     },
@@ -180,7 +181,7 @@ function JinisListPage() {
       <div className="flex flex-wrap gap-1">
         <Link
           to="/jinis"
-          search={(prev) => ({ ...prev, view: 'open' })}
+          search={(prev) => ({ ...prev, view: 'open', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentView === 'open' ? 'default' : 'ghost',
@@ -191,7 +192,7 @@ function JinisListPage() {
         </Link>
         <Link
           to="/jinis"
-          search={(prev) => ({ ...prev, view: 'settled' })}
+          search={(prev) => ({ ...prev, view: 'settled', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentView === 'settled' ? 'default' : 'ghost',
@@ -202,7 +203,7 @@ function JinisListPage() {
         </Link>
         <Link
           to="/jinis"
-          search={(prev) => ({ ...prev, view: 'all' })}
+          search={(prev) => ({ ...prev, view: 'all', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentView === 'all' ? 'default' : 'ghost',
@@ -216,8 +217,8 @@ function JinisListPage() {
       <AdvanceSearchFilter
         filters={filters}
         onChange={handleFiltersChange}
-        totalCount={rangeRecords.length}
-        activeCount={rangeRecords.filter((record) => record.active).length}
+        totalCount={totalCount}
+        activeCount={activeCount}
       />
 
       {jinisQuery.isError && records.length === 0 ? (
@@ -237,6 +238,17 @@ function JinisListPage() {
         onDelete={setDeleteTarget}
         onToggleActive={handleToggleActive}
         togglingId={togglingId}
+      />
+
+      <ListPagination
+        page={jinisQuery.data?.page ?? page}
+        pageSize={jinisQuery.data?.pageSize ?? 50}
+        total={jinisQuery.data?.total ?? 0}
+        onPageChange={(nextPage) => {
+          void navigate({
+            search: (prev) => ({ ...prev, page: nextPage }),
+          })
+        }}
       />
 
       <JinisModal

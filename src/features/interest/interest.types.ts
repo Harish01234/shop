@@ -1,5 +1,7 @@
 import type { z } from 'zod'
 
+import type { PaginatedList } from '#/lib/pagination'
+
 import {
   createInterestSchema,
   interestIdSchema,
@@ -38,3 +40,5 @@ export type InterestRecord = {
     name: string
   } | null
 }
+
+export type InterestListResult = PaginatedList<InterestRecord>

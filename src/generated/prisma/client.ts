@@ -96,8 +96,9 @@ export type DailyCalculationPersonMoney = Prisma.DailyCalculationPersonMoneyMode
 /**
  * Model MainCalculation
  * App-layer validation (not enforceable in schema):
- * - dailyCalculationId must reference a DailyCalculation with recordStatus === CLOSED
- * - bandak / jinisChara must use outstanding credit as of calculationDate (historical state),
+ * - dailyCalculationId must reference a DailyCalculation with recordStatus === OPEN
+ * - bandak uses the same total as Total Active Jinis Credit (SUM credit where active)
+ * - jinisChara must use outstanding credit as of calculationDate (historical state),
  * not simply today's active field — see the calculation service
  */
 export type MainCalculation = Prisma.MainCalculationModel

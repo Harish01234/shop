@@ -37,6 +37,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Spinner } from '@/components/ui/spinner'
+import { ListPagination } from '@/components/list-pagination'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/admin/daily-calculation/')({
@@ -44,7 +45,7 @@ export const Route = createFileRoute('/admin/daily-calculation/')({
   loader: ({ context, deps }) => {
     const filters = filtersFromSearch(deps)
     return context.queryClient.ensureQueryData(
-      dailyCalculationListQueryOptions(deps.view, filters),
+      dailyCalculationListQueryOptions(deps.view, filters, deps.page),
     )
   },
   pendingComponent: DailyCalculationListPending,
@@ -109,8 +110,9 @@ function AdminDailyCalculationPage() {
   const search = Route.useSearch()
   const currentView: DailyCalculationView = search.view
   const filters = filtersFromSearch(search)
+  const page = search.page ?? 1
   const navigate = useNavigate({ from: '/admin/daily-calculation/' })
-  const listQuery = useDailyCalculationList(currentView, filters)
+  const listQuery = useDailyCalculationList(currentView, filters, page)
   const deleteMutation = useDeleteDailyCalculation()
   const closeMutation = useCloseDailyCalculation()
 
@@ -125,7 +127,7 @@ function AdminDailyCalculationPage() {
     null,
   )
 
-  const records = listQuery.data ?? []
+  const records = listQuery.data?.records ?? []
 
   const handleFiltersChange = useCallback(
     (nextFilters: DailyCalculationFilterValues) => {
@@ -134,6 +136,7 @@ function AdminDailyCalculationPage() {
         search: {
           view: currentView,
           ...nextFilters,
+          page: 1,
         },
       })
     },
@@ -199,7 +202,7 @@ function AdminDailyCalculationPage() {
       <div className="flex flex-wrap gap-1">
         <Link
           to="/admin/daily-calculation"
-          search={(prev) => ({ ...prev, view: 'open' })}
+          search={(prev) => ({ ...prev, view: 'open', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentView === 'open' ? 'default' : 'ghost',
@@ -210,7 +213,7 @@ function AdminDailyCalculationPage() {
         </Link>
         <Link
           to="/admin/daily-calculation"
-          search={(prev) => ({ ...prev, view: 'closed' })}
+          search={(prev) => ({ ...prev, view: 'closed', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentView === 'closed' ? 'default' : 'ghost',
@@ -221,7 +224,7 @@ function AdminDailyCalculationPage() {
         </Link>
         <Link
           to="/admin/daily-calculation"
-          search={(prev) => ({ ...prev, view: 'all' })}
+          search={(prev) => ({ ...prev, view: 'all', page: 1 })}
           className={cn(
             buttonVariants({
               variant: currentView === 'all' ? 'default' : 'ghost',
@@ -235,7 +238,7 @@ function AdminDailyCalculationPage() {
       <AdvanceSearchFilter
         filters={filters}
         onChange={handleFiltersChange}
-        totalCount={records.length}
+        totalCount={listQuery.data?.total ?? 0}
       />
 
       {listQuery.isError && records.length === 0 ? (
@@ -254,6 +257,17 @@ function AdminDailyCalculationPage() {
         onClose={setCloseTarget}
         onDelete={setDeleteTarget}
         closingId={closeMutation.isPending ? closeTarget?.id : null}
+      />
+
+      <ListPagination
+        page={listQuery.data?.page ?? page}
+        pageSize={listQuery.data?.pageSize ?? 50}
+        total={listQuery.data?.total ?? 0}
+        onPageChange={(nextPage) => {
+          void navigate({
+            search: (prev) => ({ ...prev, page: nextPage }),
+          })
+        }}
       />
 
       <DailyCalculationModal

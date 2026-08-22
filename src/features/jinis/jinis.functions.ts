@@ -1,8 +1,8 @@
-import { notFound, redirect } from '@tanstack/react-router'
+import { notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { getRequestHeaders } from '@tanstack/react-start/server'
 
-import { auth } from '#/lib/auth'
+import { requireUserMiddleware } from '#/lib/auth-middleware'
+import { linkOptionsQuerySchema } from '#/lib/pagination'
 import {
   createJinisSchema,
   jinisIdSchema,
@@ -14,42 +14,31 @@ import {
   createJinisRecord,
   deleteJinisRecord,
   getJinisRecord,
+  listJinisLinkOptions,
   listJinisRecords,
   settleJinisRecord,
   sumActiveJinisCredit,
   updateJinisRecord,
 } from './jinis.server'
 
-async function requireUser() {
-  const headers = getRequestHeaders()
-  const session = await auth.api.getSession({ headers })
-
-  if (!session) {
-    throw redirect({ to: '/signin' })
-  }
-
-  return session.user
-}
-
 export const listJinis = createServerFn({ method: 'GET' })
+  .middleware([requireUserMiddleware])
   .validator(listJinisSchema)
-  .handler(async ({ data }) => {
-    await requireUser()
-    return listJinisRecords(data)
-  })
+  .handler(async ({ data }) => listJinisRecords(data))
 
-export const getActiveJinisTotal = createServerFn({ method: 'GET' }).handler(
-  async () => {
-    await requireUser()
-    return sumActiveJinisCredit()
-  },
-)
+export const listJinisOptions = createServerFn({ method: 'GET' })
+  .middleware([requireUserMiddleware])
+  .validator(linkOptionsQuerySchema)
+  .handler(async ({ data }) => listJinisLinkOptions(data.query))
+
+export const getActiveJinisTotal = createServerFn({ method: 'GET' })
+  .middleware([requireUserMiddleware])
+  .handler(async () => sumActiveJinisCredit())
 
 export const getJinis = createServerFn({ method: 'GET' })
+  .middleware([requireUserMiddleware])
   .validator(jinisIdSchema)
   .handler(async ({ data }) => {
-    await requireUser()
-
     const jinis = await getJinisRecord(data)
 
     if (!jinis) {
@@ -60,17 +49,16 @@ export const getJinis = createServerFn({ method: 'GET' })
   })
 
 export const createJinis = createServerFn({ method: 'POST' })
+  .middleware([requireUserMiddleware])
   .validator(createJinisSchema)
-  .handler(async ({ data }) => {
-    const user = await requireUser()
-    return createJinisRecord(data, user.id)
-  })
+  .handler(async ({ data, context }) =>
+    createJinisRecord(data, context.session.user.id),
+  )
 
 export const updateJinis = createServerFn({ method: 'POST' })
+  .middleware([requireUserMiddleware])
   .validator(updateJinisSchema)
   .handler(async ({ data }) => {
-    await requireUser()
-
     const jinis = await updateJinisRecord(data)
 
     if (!jinis) {
@@ -81,10 +69,9 @@ export const updateJinis = createServerFn({ method: 'POST' })
   })
 
 export const settleJinis = createServerFn({ method: 'POST' })
+  .middleware([requireUserMiddleware])
   .validator(settleJinisSchema)
   .handler(async ({ data }) => {
-    await requireUser()
-
     const jinis = await settleJinisRecord(data)
 
     if (!jinis) {
@@ -95,10 +82,9 @@ export const settleJinis = createServerFn({ method: 'POST' })
   })
 
 export const deleteJinis = createServerFn({ method: 'POST' })
+  .middleware([requireUserMiddleware])
   .validator(jinisIdSchema)
   .handler(async ({ data }) => {
-    await requireUser()
-
     const result = await deleteJinisRecord(data)
 
     if (!result) {

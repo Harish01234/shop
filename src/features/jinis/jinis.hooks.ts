@@ -8,7 +8,9 @@ import {
 } from './jinis.functions'
 import {
   activeJinisTotalQueryOptions,
+  jinisLinkOptionsQueryOptions,
   jinisListQueryOptions,
+  jinisRecordQueryOptions,
   refetchJinisLists,
 } from './jinis.queries'
 import type { JinisFilterValues } from './jinis.filters'
@@ -18,13 +20,29 @@ import type {
   JinisView,
   UpdateJinisInput,
 } from './jinis.types'
+import { getErrorMessage } from './jinis.utils'
 import { toast } from '@/components/ui/toast'
 
 export function useJinisList(
   view: JinisView,
   filters: JinisFilterValues = {},
+  page = 1,
 ) {
-  return useQuery(jinisListQueryOptions(view, filters))
+  return useQuery(jinisListQueryOptions(view, filters, page))
+}
+
+export function useJinisLinkOptions(enabled = true, query = '') {
+  return useQuery({
+    ...jinisLinkOptionsQueryOptions(query),
+    enabled,
+  })
+}
+
+export function useJinisRecord(id: string | undefined, enabled = true) {
+  return useQuery({
+    ...jinisRecordQueryOptions(id ?? ''),
+    enabled: enabled && Boolean(id),
+  })
 }
 
 export function useActiveJinisTotal() {
@@ -44,6 +62,13 @@ export function useCreateJinis() {
         type: 'success',
       })
     },
+    onError: (error) => {
+      toast.add({
+        title: 'Could not create Jinis',
+        description: getErrorMessage(error, 'Please try again.'),
+        type: 'error',
+      })
+    },
   })
 }
 
@@ -58,6 +83,13 @@ export function useUpdateJinis() {
       toast.add({
         title: 'Jinis updated successfully',
         type: 'success',
+      })
+    },
+    onError: (error) => {
+      toast.add({
+        title: 'Could not update Jinis',
+        description: getErrorMessage(error, 'Please try again.'),
+        type: 'error',
       })
     },
   })

@@ -1,5 +1,7 @@
 import { DailyCalculationForm } from './dailycalculation-form'
+import { useDailyCalculationRecord } from '#/features/dailycalculation/dailycalculation.hooks'
 import type { DailyCalculationRecord } from '#/features/dailycalculation/dailycalculation.types'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
   Dialog,
   DialogContent,
@@ -7,6 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Spinner } from '@/components/ui/spinner'
+import { AlertCircleIcon } from 'lucide-react'
 
 type DailyCalculationModalProps = {
   open: boolean
@@ -22,6 +26,13 @@ export function DailyCalculationModal({
   onSuccess,
 }: DailyCalculationModalProps) {
   const isEdit = Boolean(record)
+  const hasPersonMoney = record?.personMoneyEntries != null
+  const recordQuery = useDailyCalculationRecord(
+    record?.id,
+    open && isEdit && !hasPersonMoney,
+  )
+  const formRecord = hasPersonMoney ? record : recordQuery.data
+  const ready = !isEdit || formRecord?.personMoneyEntries != null
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -35,15 +46,29 @@ export function DailyCalculationModal({
             from the selected period.
           </DialogDescription>
         </DialogHeader>
-        <DailyCalculationForm
-          key={record?.id ?? 'new'}
-          record={record}
-          onCancel={() => onOpenChange(false)}
-          onSuccess={() => {
-            onSuccess()
-            onOpenChange(false)
-          }}
-        />
+        {open && isEdit && recordQuery.isError ? (
+          <Alert variant="destructive">
+            <AlertCircleIcon />
+            <AlertTitle>Could not load Daily Calculation</AlertTitle>
+            <AlertDescription>{recordQuery.error.message}</AlertDescription>
+          </Alert>
+        ) : null}
+        {open && isEdit && !ready && !recordQuery.isError ? (
+          <div className="flex justify-center py-10">
+            <Spinner className="size-6" />
+          </div>
+        ) : null}
+        {open && ready ? (
+          <DailyCalculationForm
+            key={formRecord?.id ?? 'new'}
+            record={formRecord}
+            onCancel={() => onOpenChange(false)}
+            onSuccess={() => {
+              onSuccess()
+              onOpenChange(false)
+            }}
+          />
+        ) : null}
       </DialogContent>
     </Dialog>
   )

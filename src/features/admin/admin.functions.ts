@@ -1,9 +1,6 @@
-import { redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { getRequestHeaders } from '@tanstack/react-start/server'
 
-import { auth } from '#/lib/auth'
-import { isAdminRole } from '#/lib/admin-role'
+import { requireAdminMiddleware } from '#/lib/auth-middleware'
 import {
   adminDeleteAllJinisSchema,
   adminDeleteAllJinisCharaSchema,
@@ -23,39 +20,22 @@ import {
   revokeAdminSession,
 } from './admin.server'
 
-async function requireAdmin() {
-  const headers = getRequestHeaders()
-  const session = await auth.api.getSession({ headers })
+export const getAdminDashboard = createServerFn({ method: 'GET' })
+  .middleware([requireAdminMiddleware])
+  .handler(async ({ context }) =>
+    getAdminOverview(context.session.session.id),
+  )
 
-  if (!session) {
-    throw redirect({ to: '/signin' })
-  }
-
-  if (!isAdminRole(session.user.role)) {
-    throw redirect({ to: '/' })
-  }
-
-  return session
-}
-
-export const getAdminDashboard = createServerFn({ method: 'GET' }).handler(
-  async () => {
-    const session = await requireAdmin()
-    return getAdminOverview(session.session.id)
-  },
-)
-
-export const listSessions = createServerFn({ method: 'GET' }).handler(
-  async () => {
-    const session = await requireAdmin()
-    return listAdminSessions(session.session.id)
-  },
-)
+export const listSessions = createServerFn({ method: 'GET' })
+  .middleware([requireAdminMiddleware])
+  .handler(async ({ context }) =>
+    listAdminSessions(context.session.session.id),
+  )
 
 export const revokeSession = createServerFn({ method: 'POST' })
+  .middleware([requireAdminMiddleware])
   .validator(adminSessionIdSchema)
   .handler(async ({ data }) => {
-    await requireAdmin()
     const result = await revokeAdminSession(data.id)
 
     if (!result) {
@@ -66,36 +46,30 @@ export const revokeSession = createServerFn({ method: 'POST' })
   })
 
 export const importJinis = createServerFn({ method: 'POST' })
+  .middleware([requireAdminMiddleware])
   .validator(adminJinisImportSchema)
-  .handler(async ({ data }) => {
-    const session = await requireAdmin()
-    return importJinisCsv(data, session.user.id)
-  })
+  .handler(async ({ data, context }) =>
+    importJinisCsv(data, context.session.user.id),
+  )
 
 export const deleteAllJinis = createServerFn({ method: 'POST' })
+  .middleware([requireAdminMiddleware])
   .validator(adminDeleteAllJinisSchema)
-  .handler(async () => {
-    await requireAdmin()
-    return deleteAllJinisRecords()
-  })
+  .handler(async () => deleteAllJinisRecords())
 
 export const importJinisChara = createServerFn({ method: 'POST' })
+  .middleware([requireAdminMiddleware])
   .validator(adminJinisCharaImportSchema)
-  .handler(async ({ data }) => {
-    const session = await requireAdmin()
-    return importJinisCharaCsv(data, session.user.id)
-  })
+  .handler(async ({ data, context }) =>
+    importJinisCharaCsv(data, context.session.user.id),
+  )
 
 export const deleteAllJinisChara = createServerFn({ method: 'POST' })
+  .middleware([requireAdminMiddleware])
   .validator(adminDeleteAllJinisCharaSchema)
-  .handler(async () => {
-    await requireAdmin()
-    return deleteAllJinisCharaRecords()
-  })
+  .handler(async () => deleteAllJinisCharaRecords())
 
 export const exportData = createServerFn({ method: 'POST' })
+  .middleware([requireAdminMiddleware])
   .validator(adminExportSchema)
-  .handler(async ({ data }) => {
-    await requireAdmin()
-    return exportAdminData(data)
-  })
+  .handler(async ({ data }) => exportAdminData(data))

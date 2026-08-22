@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { listPaginationSchema } from '#/lib/pagination'
+
 export const mainCalculationRecordStatusSchema = z.enum(['DRAFT', 'FINALIZED'])
 
 export const mainCalculationBalanceStatusSchema = z.enum(['CORRECT', 'INCORRECT'])
@@ -42,6 +44,7 @@ export const listMainCalculationSchema = z
     balanceStatus: mainCalculationBalanceStatusSchema.optional(),
     from: z.string().trim().optional(),
     to: z.string().trim().optional(),
+    ...listPaginationSchema.shape,
   })
   .default({})
 
@@ -50,4 +53,5 @@ export const mainCalculationSearchSchema = z.object({
   balanceStatus: mainCalculationBalanceStatusSchema.optional(),
   from: z.string().trim().optional(),
   to: z.string().trim().optional(),
+  page: z.coerce.number().int().positive().optional(),
 })
