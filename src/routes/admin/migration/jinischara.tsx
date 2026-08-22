@@ -83,9 +83,12 @@ function AdminJinisCharaMigrationPage() {
           fatherName: row.fatherName,
           phoneNo: row.phoneNo,
           credit: row.credit as number,
-          percentage: row.percentage ?? undefined,
-          description: row.description,
+          ...(row.percentage != null ? { percentage: row.percentage } : {}),
+          description: row.description ?? undefined,
           date: new Date(`${row.date}T00:00:00`),
+          settledAt: row.settledAt
+            ? new Date(`${row.settledAt}T00:00:00`)
+            : null,
         })),
       })
       if (result.imported > 0) {

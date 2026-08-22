@@ -5,6 +5,7 @@ import { useServerFn } from '@tanstack/react-start'
 import { refetchInterestLists } from '#/features/interest/interest.queries'
 import { refetchJinisLists } from '#/features/jinis/jinis.queries'
 import { refetchJinisCharaLists } from '#/features/jinischara/jinischara.queries'
+import { mainCalculationKeys } from '#/features/maincalculation/maincalculation.queries'
 import {
   closeDailyCalculation,
   createDailyCalculation,
@@ -158,16 +159,19 @@ export function useDeleteDailyCalculation() {
     mutationFn: (record: DailyCalculationRecord) =>
       deleteFn({ data: { id: record.id } }),
     onSuccess: async () => {
-      await refetchDailyCalculationLists(queryClient)
+      await Promise.all([
+        refetchDailyCalculationLists(queryClient),
+        queryClient.invalidateQueries({ queryKey: mainCalculationKeys.all }),
+      ])
       toast.add({
         title: 'Daily Calculation deleted successfully',
         type: 'success',
       })
     },
-    onError: () => {
+    onError: (error) => {
       toast.add({
         title: 'Could not delete Daily Calculation',
-        description: 'Please try again.',
+        description: getErrorMessage(error, 'Please try again.'),
         type: 'error',
       })
     },

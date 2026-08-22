@@ -237,6 +237,8 @@ export type UserWhereInput = {
   interests?: Prisma.InterestListRelationFilter
   dailyCalculations?: Prisma.DailyCalculationListRelationFilter
   dailyCalculationsEditedBy?: Prisma.DailyCalculationListRelationFilter
+  mainCalculations?: Prisma.MainCalculationListRelationFilter
+  mainCalculationsEditedBy?: Prisma.MainCalculationListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -258,6 +260,8 @@ export type UserOrderByWithRelationInput = {
   interests?: Prisma.InterestOrderByRelationAggregateInput
   dailyCalculations?: Prisma.DailyCalculationOrderByRelationAggregateInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationOrderByRelationAggregateInput
+  mainCalculations?: Prisma.MainCalculationOrderByRelationAggregateInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -282,6 +286,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   interests?: Prisma.InterestListRelationFilter
   dailyCalculations?: Prisma.DailyCalculationListRelationFilter
   dailyCalculationsEditedBy?: Prisma.DailyCalculationListRelationFilter
+  mainCalculations?: Prisma.MainCalculationListRelationFilter
+  mainCalculationsEditedBy?: Prisma.MainCalculationListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -337,6 +343,8 @@ export type UserCreateInput = {
   interests?: Prisma.InterestCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -358,6 +366,8 @@ export type UserUncheckedCreateInput = {
   interests?: Prisma.InterestUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserUpdateInput = {
@@ -379,6 +389,8 @@ export type UserUpdateInput = {
   interests?: Prisma.InterestUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -400,6 +412,8 @@ export type UserUncheckedUpdateInput = {
   interests?: Prisma.InterestUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -620,6 +634,36 @@ export type UserUpdateOneWithoutDailyCalculationsEditedByNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDailyCalculationsEditedByInput, Prisma.UserUpdateWithoutDailyCalculationsEditedByInput>, Prisma.UserUncheckedUpdateWithoutDailyCalculationsEditedByInput>
 }
 
+export type UserCreateNestedOneWithoutMainCalculationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMainCalculationsInput, Prisma.UserUncheckedCreateWithoutMainCalculationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMainCalculationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutMainCalculationsEditedByInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMainCalculationsEditedByInput, Prisma.UserUncheckedCreateWithoutMainCalculationsEditedByInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMainCalculationsEditedByInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutMainCalculationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMainCalculationsInput, Prisma.UserUncheckedCreateWithoutMainCalculationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMainCalculationsInput
+  upsert?: Prisma.UserUpsertWithoutMainCalculationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMainCalculationsInput, Prisma.UserUpdateWithoutMainCalculationsInput>, Prisma.UserUncheckedUpdateWithoutMainCalculationsInput>
+}
+
+export type UserUpdateOneWithoutMainCalculationsEditedByNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMainCalculationsEditedByInput, Prisma.UserUncheckedCreateWithoutMainCalculationsEditedByInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMainCalculationsEditedByInput
+  upsert?: Prisma.UserUpsertWithoutMainCalculationsEditedByInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMainCalculationsEditedByInput, Prisma.UserUpdateWithoutMainCalculationsEditedByInput>, Prisma.UserUncheckedUpdateWithoutMainCalculationsEditedByInput>
+}
+
 export type UserCreateWithoutSessionsInput = {
   id: string
   name: string
@@ -638,6 +682,8 @@ export type UserCreateWithoutSessionsInput = {
   interests?: Prisma.InterestCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -658,6 +704,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   interests?: Prisma.InterestUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -694,6 +742,8 @@ export type UserUpdateWithoutSessionsInput = {
   interests?: Prisma.InterestUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -714,6 +764,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   interests?: Prisma.InterestUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -734,6 +786,8 @@ export type UserCreateWithoutAccountsInput = {
   interests?: Prisma.InterestCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -754,6 +808,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   interests?: Prisma.InterestUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -790,6 +846,8 @@ export type UserUpdateWithoutAccountsInput = {
   interests?: Prisma.InterestUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -810,6 +868,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   interests?: Prisma.InterestUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserCreateWithoutJinisInput = {
@@ -830,6 +890,8 @@ export type UserCreateWithoutJinisInput = {
   interests?: Prisma.InterestCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserUncheckedCreateWithoutJinisInput = {
@@ -850,6 +912,8 @@ export type UserUncheckedCreateWithoutJinisInput = {
   interests?: Prisma.InterestUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserCreateOrConnectWithoutJinisInput = {
@@ -886,6 +950,8 @@ export type UserUpdateWithoutJinisInput = {
   interests?: Prisma.InterestUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutJinisInput = {
@@ -906,6 +972,8 @@ export type UserUncheckedUpdateWithoutJinisInput = {
   interests?: Prisma.InterestUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserCreateWithoutJinisCharasInput = {
@@ -926,6 +994,8 @@ export type UserCreateWithoutJinisCharasInput = {
   interests?: Prisma.InterestCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserUncheckedCreateWithoutJinisCharasInput = {
@@ -946,6 +1016,8 @@ export type UserUncheckedCreateWithoutJinisCharasInput = {
   interests?: Prisma.InterestUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserCreateOrConnectWithoutJinisCharasInput = {
@@ -982,6 +1054,8 @@ export type UserUpdateWithoutJinisCharasInput = {
   interests?: Prisma.InterestUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutJinisCharasInput = {
@@ -1002,6 +1076,8 @@ export type UserUncheckedUpdateWithoutJinisCharasInput = {
   interests?: Prisma.InterestUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserCreateWithoutInterestsInput = {
@@ -1022,6 +1098,8 @@ export type UserCreateWithoutInterestsInput = {
   jinisCharas?: Prisma.JinisCharaCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserUncheckedCreateWithoutInterestsInput = {
@@ -1042,6 +1120,8 @@ export type UserUncheckedCreateWithoutInterestsInput = {
   jinisCharas?: Prisma.JinisCharaUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserCreateOrConnectWithoutInterestsInput = {
@@ -1078,6 +1158,8 @@ export type UserUpdateWithoutInterestsInput = {
   jinisCharas?: Prisma.JinisCharaUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInterestsInput = {
@@ -1098,6 +1180,8 @@ export type UserUncheckedUpdateWithoutInterestsInput = {
   jinisCharas?: Prisma.JinisCharaUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserCreateWithoutDailyCalculationsInput = {
@@ -1118,6 +1202,8 @@ export type UserCreateWithoutDailyCalculationsInput = {
   jinisCharas?: Prisma.JinisCharaCreateNestedManyWithoutCreatedByInput
   interests?: Prisma.InterestCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserUncheckedCreateWithoutDailyCalculationsInput = {
@@ -1138,6 +1224,8 @@ export type UserUncheckedCreateWithoutDailyCalculationsInput = {
   jinisCharas?: Prisma.JinisCharaUncheckedCreateNestedManyWithoutCreatedByInput
   interests?: Prisma.InterestUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserCreateOrConnectWithoutDailyCalculationsInput = {
@@ -1163,6 +1251,8 @@ export type UserCreateWithoutDailyCalculationsEditedByInput = {
   jinisCharas?: Prisma.JinisCharaCreateNestedManyWithoutCreatedByInput
   interests?: Prisma.InterestCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationCreateNestedManyWithoutCreatedByInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserUncheckedCreateWithoutDailyCalculationsEditedByInput = {
@@ -1183,6 +1273,8 @@ export type UserUncheckedCreateWithoutDailyCalculationsEditedByInput = {
   jinisCharas?: Prisma.JinisCharaUncheckedCreateNestedManyWithoutCreatedByInput
   interests?: Prisma.InterestUncheckedCreateNestedManyWithoutCreatedByInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutCreatedByInput
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutCreatedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
 }
 
 export type UserCreateOrConnectWithoutDailyCalculationsEditedByInput = {
@@ -1219,6 +1311,8 @@ export type UserUpdateWithoutDailyCalculationsInput = {
   jinisCharas?: Prisma.JinisCharaUpdateManyWithoutCreatedByNestedInput
   interests?: Prisma.InterestUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDailyCalculationsInput = {
@@ -1239,6 +1333,8 @@ export type UserUncheckedUpdateWithoutDailyCalculationsInput = {
   jinisCharas?: Prisma.JinisCharaUncheckedUpdateManyWithoutCreatedByNestedInput
   interests?: Prisma.InterestUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserUpsertWithoutDailyCalculationsEditedByInput = {
@@ -1270,6 +1366,8 @@ export type UserUpdateWithoutDailyCalculationsEditedByInput = {
   jinisCharas?: Prisma.JinisCharaUpdateManyWithoutCreatedByNestedInput
   interests?: Prisma.InterestUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUpdateManyWithoutCreatedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUpdateManyWithoutLastEditedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDailyCalculationsEditedByInput = {
@@ -1290,6 +1388,216 @@ export type UserUncheckedUpdateWithoutDailyCalculationsEditedByInput = {
   jinisCharas?: Prisma.JinisCharaUncheckedUpdateManyWithoutCreatedByNestedInput
   interests?: Prisma.InterestUncheckedUpdateManyWithoutCreatedByNestedInput
   dailyCalculations?: Prisma.DailyCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
+}
+
+export type UserCreateWithoutMainCalculationsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  jinis?: Prisma.JinisCreateNestedManyWithoutCreatedByInput
+  jinisCharas?: Prisma.JinisCharaCreateNestedManyWithoutCreatedByInput
+  interests?: Prisma.InterestCreateNestedManyWithoutCreatedByInput
+  dailyCalculations?: Prisma.DailyCalculationCreateNestedManyWithoutCreatedByInput
+  dailyCalculationsEditedBy?: Prisma.DailyCalculationCreateNestedManyWithoutLastEditedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationCreateNestedManyWithoutLastEditedByInput
+}
+
+export type UserUncheckedCreateWithoutMainCalculationsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  jinis?: Prisma.JinisUncheckedCreateNestedManyWithoutCreatedByInput
+  jinisCharas?: Prisma.JinisCharaUncheckedCreateNestedManyWithoutCreatedByInput
+  interests?: Prisma.InterestUncheckedCreateNestedManyWithoutCreatedByInput
+  dailyCalculations?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutCreatedByInput
+  dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
+}
+
+export type UserCreateOrConnectWithoutMainCalculationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutMainCalculationsInput, Prisma.UserUncheckedCreateWithoutMainCalculationsInput>
+}
+
+export type UserCreateWithoutMainCalculationsEditedByInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  jinis?: Prisma.JinisCreateNestedManyWithoutCreatedByInput
+  jinisCharas?: Prisma.JinisCharaCreateNestedManyWithoutCreatedByInput
+  interests?: Prisma.InterestCreateNestedManyWithoutCreatedByInput
+  dailyCalculations?: Prisma.DailyCalculationCreateNestedManyWithoutCreatedByInput
+  dailyCalculationsEditedBy?: Prisma.DailyCalculationCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutMainCalculationsEditedByInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  jinis?: Prisma.JinisUncheckedCreateNestedManyWithoutCreatedByInput
+  jinisCharas?: Prisma.JinisCharaUncheckedCreateNestedManyWithoutCreatedByInput
+  interests?: Prisma.InterestUncheckedCreateNestedManyWithoutCreatedByInput
+  dailyCalculations?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutCreatedByInput
+  dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedCreateNestedManyWithoutLastEditedByInput
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutMainCalculationsEditedByInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutMainCalculationsEditedByInput, Prisma.UserUncheckedCreateWithoutMainCalculationsEditedByInput>
+}
+
+export type UserUpsertWithoutMainCalculationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutMainCalculationsInput, Prisma.UserUncheckedUpdateWithoutMainCalculationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutMainCalculationsInput, Prisma.UserUncheckedCreateWithoutMainCalculationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutMainCalculationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutMainCalculationsInput, Prisma.UserUncheckedUpdateWithoutMainCalculationsInput>
+}
+
+export type UserUpdateWithoutMainCalculationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  jinis?: Prisma.JinisUpdateManyWithoutCreatedByNestedInput
+  jinisCharas?: Prisma.JinisCharaUpdateManyWithoutCreatedByNestedInput
+  interests?: Prisma.InterestUpdateManyWithoutCreatedByNestedInput
+  dailyCalculations?: Prisma.DailyCalculationUpdateManyWithoutCreatedByNestedInput
+  dailyCalculationsEditedBy?: Prisma.DailyCalculationUpdateManyWithoutLastEditedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUpdateManyWithoutLastEditedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutMainCalculationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  jinis?: Prisma.JinisUncheckedUpdateManyWithoutCreatedByNestedInput
+  jinisCharas?: Prisma.JinisCharaUncheckedUpdateManyWithoutCreatedByNestedInput
+  interests?: Prisma.InterestUncheckedUpdateManyWithoutCreatedByNestedInput
+  dailyCalculations?: Prisma.DailyCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
+  dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
+  mainCalculationsEditedBy?: Prisma.MainCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
+}
+
+export type UserUpsertWithoutMainCalculationsEditedByInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutMainCalculationsEditedByInput, Prisma.UserUncheckedUpdateWithoutMainCalculationsEditedByInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutMainCalculationsEditedByInput, Prisma.UserUncheckedCreateWithoutMainCalculationsEditedByInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutMainCalculationsEditedByInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutMainCalculationsEditedByInput, Prisma.UserUncheckedUpdateWithoutMainCalculationsEditedByInput>
+}
+
+export type UserUpdateWithoutMainCalculationsEditedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  jinis?: Prisma.JinisUpdateManyWithoutCreatedByNestedInput
+  jinisCharas?: Prisma.JinisCharaUpdateManyWithoutCreatedByNestedInput
+  interests?: Prisma.InterestUpdateManyWithoutCreatedByNestedInput
+  dailyCalculations?: Prisma.DailyCalculationUpdateManyWithoutCreatedByNestedInput
+  dailyCalculationsEditedBy?: Prisma.DailyCalculationUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutMainCalculationsEditedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  jinis?: Prisma.JinisUncheckedUpdateManyWithoutCreatedByNestedInput
+  jinisCharas?: Prisma.JinisCharaUncheckedUpdateManyWithoutCreatedByNestedInput
+  interests?: Prisma.InterestUncheckedUpdateManyWithoutCreatedByNestedInput
+  dailyCalculations?: Prisma.DailyCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
+  dailyCalculationsEditedBy?: Prisma.DailyCalculationUncheckedUpdateManyWithoutLastEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 
@@ -1305,6 +1613,8 @@ export type UserCountOutputType = {
   interests: number
   dailyCalculations: number
   dailyCalculationsEditedBy: number
+  mainCalculations: number
+  mainCalculationsEditedBy: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1315,6 +1625,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   interests?: boolean | UserCountOutputTypeCountInterestsArgs
   dailyCalculations?: boolean | UserCountOutputTypeCountDailyCalculationsArgs
   dailyCalculationsEditedBy?: boolean | UserCountOutputTypeCountDailyCalculationsEditedByArgs
+  mainCalculations?: boolean | UserCountOutputTypeCountMainCalculationsArgs
+  mainCalculationsEditedBy?: boolean | UserCountOutputTypeCountMainCalculationsEditedByArgs
 }
 
 /**
@@ -1376,6 +1688,20 @@ export type UserCountOutputTypeCountDailyCalculationsEditedByArgs<ExtArgs extend
   where?: Prisma.DailyCalculationWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountMainCalculationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MainCalculationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountMainCalculationsEditedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MainCalculationWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1396,6 +1722,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   interests?: boolean | Prisma.User$interestsArgs<ExtArgs>
   dailyCalculations?: boolean | Prisma.User$dailyCalculationsArgs<ExtArgs>
   dailyCalculationsEditedBy?: boolean | Prisma.User$dailyCalculationsEditedByArgs<ExtArgs>
+  mainCalculations?: boolean | Prisma.User$mainCalculationsArgs<ExtArgs>
+  mainCalculationsEditedBy?: boolean | Prisma.User$mainCalculationsEditedByArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1450,6 +1778,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   interests?: boolean | Prisma.User$interestsArgs<ExtArgs>
   dailyCalculations?: boolean | Prisma.User$dailyCalculationsArgs<ExtArgs>
   dailyCalculationsEditedBy?: boolean | Prisma.User$dailyCalculationsEditedByArgs<ExtArgs>
+  mainCalculations?: boolean | Prisma.User$mainCalculationsArgs<ExtArgs>
+  mainCalculationsEditedBy?: boolean | Prisma.User$mainCalculationsEditedByArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1465,6 +1795,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     interests: Prisma.$InterestPayload<ExtArgs>[]
     dailyCalculations: Prisma.$DailyCalculationPayload<ExtArgs>[]
     dailyCalculationsEditedBy: Prisma.$DailyCalculationPayload<ExtArgs>[]
+    mainCalculations: Prisma.$MainCalculationPayload<ExtArgs>[]
+    mainCalculationsEditedBy: Prisma.$MainCalculationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1879,6 +2211,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   interests<T extends Prisma.User$interestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$interestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InterestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dailyCalculations<T extends Prisma.User$dailyCalculationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$dailyCalculationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DailyCalculationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dailyCalculationsEditedBy<T extends Prisma.User$dailyCalculationsEditedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$dailyCalculationsEditedByArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DailyCalculationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  mainCalculations<T extends Prisma.User$mainCalculationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mainCalculationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MainCalculationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  mainCalculationsEditedBy<T extends Prisma.User$mainCalculationsEditedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mainCalculationsEditedByArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MainCalculationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2477,6 +2811,54 @@ export type User$dailyCalculationsEditedByArgs<ExtArgs extends runtime.Types.Ext
   take?: number
   skip?: number
   distinct?: Prisma.DailyCalculationScalarFieldEnum | Prisma.DailyCalculationScalarFieldEnum[]
+}
+
+/**
+ * User.mainCalculations
+ */
+export type User$mainCalculationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MainCalculation
+   */
+  select?: Prisma.MainCalculationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MainCalculation
+   */
+  omit?: Prisma.MainCalculationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MainCalculationInclude<ExtArgs> | null
+  where?: Prisma.MainCalculationWhereInput
+  orderBy?: Prisma.MainCalculationOrderByWithRelationInput | Prisma.MainCalculationOrderByWithRelationInput[]
+  cursor?: Prisma.MainCalculationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MainCalculationScalarFieldEnum | Prisma.MainCalculationScalarFieldEnum[]
+}
+
+/**
+ * User.mainCalculationsEditedBy
+ */
+export type User$mainCalculationsEditedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MainCalculation
+   */
+  select?: Prisma.MainCalculationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MainCalculation
+   */
+  omit?: Prisma.MainCalculationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MainCalculationInclude<ExtArgs> | null
+  where?: Prisma.MainCalculationWhereInput
+  orderBy?: Prisma.MainCalculationOrderByWithRelationInput | Prisma.MainCalculationOrderByWithRelationInput[]
+  cursor?: Prisma.MainCalculationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MainCalculationScalarFieldEnum | Prisma.MainCalculationScalarFieldEnum[]
 }
 
 /**

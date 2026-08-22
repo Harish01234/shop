@@ -26,6 +26,8 @@ model User {
   interests                 Interest[]
   dailyCalculations         DailyCalculation[]
   dailyCalculationsEditedBy DailyCalculation[] @relation("DailyCalculationLastEditedBy")
+  mainCalculations          MainCalculation[]
+  mainCalculationsEditedBy  MainCalculation[]  @relation("MainCalculationLastEditedBy")
 
   @@unique([email])
   @@map("user")
@@ -230,6 +232,7 @@ model DailyCalculation {
   lastEditedAt   DateTime?
 
   personMoneyEntries DailyCalculationPersonMoney[]
+  mainCalculations   MainCalculation[]
 
   @@index([periodStart])
   @@index([periodEnd])
@@ -248,4 +251,50 @@ model DailyCalculationPersonMoney {
   updatedAt          DateTime         @updatedAt
 
   @@index([dailyCalculationId])
+}
+
+enum MainCalculationRecordStatus {
+  DRAFT
+  FINALIZED
+}
+
+/// App-layer validation (not enforceable in schema):
+/// - dailyCalculationId must reference a DailyCalculation with recordStatus === OPEN
+/// - bandak uses the same total as Total Active Jinis Credit (SUM credit where active)
+/// - jinisChara must use outstanding credit as of calculationDate (historical state),
+///   not simply today's active field — see the calculation service
+model MainCalculation {
+  id String @id @default(cuid())
+
+  calculationDate DateTime
+  totalTabil      Int
+
+  dailyCalculationId String           @unique
+  dailyCalculation   DailyCalculation @relation(fields: [dailyCalculationId], references: [id], onDelete: Restrict)
+
+  // Automatic fields (server-calculated only — never accept from the client)
+  interest      Int
+  bandak        Int
+  jinisChara    Int
+  cash          Int
+  leftTotal     Int
+  rightTotal    Int
+  difference    Int
+  balanceStatus DailyCalculationBalanceStatus
+
+  recordStatus MainCalculationRecordStatus @default(DRAFT)
+  finalizedAt  DateTime?
+
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lastEditedById String?
+  lastEditedBy   User?     @relation("MainCalculationLastEditedBy", fields: [lastEditedById], references: [id], onDelete: SetNull)
+  lastEditedAt   DateTime?
+
+  @@index([calculationDate])
+  @@index([recordStatus])
+  @@index([balanceStatus])
 }

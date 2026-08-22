@@ -32,11 +32,11 @@ import { getInterest } from '#/features/interest/interest.functions'
 import { useDeleteInterest } from '#/features/interest/interest.hooks'
 import type { InterestRecord } from '#/features/interest/interest.types'
 import { JinisModal } from '#/features/jinis/component/jinis-modal'
-import { getJinis } from '#/features/jinis/jinis.functions'
+import { getJinis, updateJinis } from '#/features/jinis/jinis.functions'
 import { useDeleteJinis } from '#/features/jinis/jinis.hooks'
 import type { JinisRecord } from '#/features/jinis/jinis.types'
 import { JinisCharaModal } from '#/features/jinischara/component/jinischara-modal'
-import { getJinisChara } from '#/features/jinischara/jinischara.functions'
+import { getJinisChara, updateJinisChara } from '#/features/jinischara/jinischara.functions'
 import { useDeleteJinisChara } from '#/features/jinischara/jinischara.hooks'
 import type { JinisCharaRecord } from '#/features/jinischara/jinischara.types'
 import {
@@ -121,6 +121,33 @@ function rowKey(prefix: string, row: { recordId: string; interestId?: string | n
   return `${prefix}-${row.recordId}-${row.interestId ?? 'none'}-${formatDetailDate(row.date)}`
 }
 
+function canDeleteAsolSudhRow(row: DailyCalculationAsolSudhRow) {
+  if (row.source === 'Person') return Boolean(row.interestId)
+  return Boolean(row.interestId) || row.amount > 0
+}
+
+function asolSudhDeleteTitle(row: DailyCalculationAsolSudhRow) {
+  if (row.source !== 'Person' && row.amount > 0) {
+    return row.interestId
+      ? `Remove interest and reopen ${row.source} #${row.slNo}?`
+      : `Reopen settled ${row.source} #${row.slNo}?`
+  }
+  return 'Delete this Interest?'
+}
+
+function asolSudhDeleteDescription(row: DailyCalculationAsolSudhRow) {
+  if (row.source === 'Person') {
+    return `${formatMoney(row.sudh)} interest will be removed permanently.`
+  }
+  if (row.amount > 0 && row.interestId) {
+    return `${formatMoney(row.sudh)} interest will be removed and ${formatMoney(row.amount)} settled credit will be cleared. ${row.source} #${row.slNo} will be marked active again.`
+  }
+  if (row.amount > 0) {
+    return `${formatMoney(row.amount)} settled credit will be cleared and ${row.source} #${row.slNo} will be marked active again.`
+  }
+  return `${formatMoney(row.sudh)} interest will be removed permanently. The loan record will stay open.`
+}
+
 function SummaryLine({
   label,
   value,
@@ -177,6 +204,8 @@ export function DailyCalculationDetailView({
   const getJinisCharaFn = useServerFn(getJinisChara)
   const getInterestFn = useServerFn(getInterest)
   const getDailyCalculationFn = useServerFn(getDailyCalculation)
+  const updateJinisFn = useServerFn(updateJinis)
+  const updateJinisCharaFn = useServerFn(updateJinisChara)
 
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [editingRecord, setEditingRecord] = useState<
@@ -203,10 +232,11 @@ export function DailyCalculationDetailView({
   >()
   const [deleteDeoyaTarget, setDeleteDeoyaTarget] =
     useState<DailyCalculationDeoyaRow | null>(null)
-  const [deleteInterestTarget, setDeleteInterestTarget] = useState<{
-    id: string
-    amount: number
-  } | null>(null)
+  const [deleteAsolSudhTarget, setDeleteAsolSudhTarget] =
+    useState<DailyCalculationAsolSudhRow | null>(null)
+  const [deletingAsolSudhKey, setDeletingAsolSudhKey] = useState<string | null>(
+    null,
+  )
   const [loadingEditId, setLoadingEditId] = useState<string | null>(null)
 
   const detail = detailQuery.data
@@ -311,18 +341,37 @@ export function DailyCalculationDetailView({
     }
   }
 
-  async function confirmDeleteInterest() {
-    if (!deleteInterestTarget) return
+  async function confirmDeleteAsolSudh() {
+    if (!deleteAsolSudhTarget) return
+
+    const row = deleteAsolSudhTarget
+    const rowDeleteKey = rowKey('asol', row)
+    setDeletingAsolSudhKey(rowDeleteKey)
 
     try {
-      await deleteInterestMutation.mutateAsync({
-        id: deleteInterestTarget.id,
-        amount: deleteInterestTarget.amount,
-      } as InterestRecord)
-      setDeleteInterestTarget(null)
+      if (row.interestId) {
+        await deleteInterestMutation.mutateAsync({
+          id: row.interestId,
+          amount: row.sudh,
+        } as InterestRecord)
+      }
+
+      if (row.source === 'Jinis' && row.amount > 0) {
+        await updateJinisFn({
+          data: { id: row.recordId, active: true, settledAt: null },
+        })
+      } else if (row.source === 'JinisChara' && row.amount > 0) {
+        await updateJinisCharaFn({
+          data: { id: row.recordId, active: true, settledAt: null },
+        })
+      }
+
+      setDeleteAsolSudhTarget(null)
       await handleMutationSuccess()
     } catch {
       // Toast handled by mutation hooks.
+    } finally {
+      setDeletingAsolSudhKey(null)
     }
   }
 
@@ -655,18 +704,18 @@ export function DailyCalculationDetailView({
                             type="button"
                             variant="ghost"
                             size="icon-sm"
-                            aria-label="Delete interest"
-                            disabled={!row.interestId}
-                            onClick={() =>
-                              row.interestId
-                                ? setDeleteInterestTarget({
-                                    id: row.interestId,
-                                    amount: row.sudh,
-                                  })
-                                : undefined
+                            aria-label="Delete Asol + Sudh row"
+                            disabled={
+                              !canDeleteAsolSudhRow(row) ||
+                              deletingAsolSudhKey === rowKey('asol', row)
                             }
+                            onClick={() => setDeleteAsolSudhTarget(row)}
                           >
-                            <Trash2Icon />
+                            {deletingAsolSudhKey === rowKey('asol', row) ? (
+                              <Spinner />
+                            ) : (
+                              <Trash2Icon />
+                            )}
                           </Button>
                         </div>
                       </TableCell>
@@ -804,19 +853,23 @@ export function DailyCalculationDetailView({
       </AlertDialog>
 
       <AlertDialog
-        open={deleteInterestTarget !== null}
+        open={deleteAsolSudhTarget !== null}
         onOpenChange={(open) => {
-          if (!open && !deleteInterestMutation.isPending) {
-            setDeleteInterestTarget(null)
+          if (!open && !deletingAsolSudhKey) {
+            setDeleteAsolSudhTarget(null)
           }
         }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this Interest?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {deleteAsolSudhTarget
+                ? asolSudhDeleteTitle(deleteAsolSudhTarget)
+                : 'Delete this row?'}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {deleteInterestTarget
-                ? `${formatMoney(deleteInterestTarget.amount)} will be removed permanently. The underlying loan record will stay.`
+              {deleteAsolSudhTarget
+                ? asolSudhDeleteDescription(deleteAsolSudhTarget)
                 : 'This action cannot be undone.'}
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -826,17 +879,17 @@ export function DailyCalculationDetailView({
                 buttonVariants({ variant: 'outline' }),
                 'bg-background',
               )}
-              disabled={deleteInterestMutation.isPending}
+              disabled={Boolean(deletingAsolSudhKey)}
             >
               Cancel
             </AlertDialogCancel>
             <Button
               type="button"
               variant="destructive"
-              disabled={deleteInterestMutation.isPending}
-              onClick={() => void confirmDeleteInterest()}
+              disabled={Boolean(deletingAsolSudhKey)}
+              onClick={() => void confirmDeleteAsolSudh()}
             >
-              {deleteInterestMutation.isPending ? <Spinner /> : null}
+              {deletingAsolSudhKey ? <Spinner /> : null}
               Delete
             </Button>
           </AlertDialogFooter>

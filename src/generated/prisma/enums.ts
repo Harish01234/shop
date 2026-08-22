@@ -41,3 +41,11 @@ export const DailyCalculationBalanceStatus = {
 } as const
 
 export type DailyCalculationBalanceStatus = (typeof DailyCalculationBalanceStatus)[keyof typeof DailyCalculationBalanceStatus]
+
+
+export const MainCalculationRecordStatus = {
+  DRAFT: 'DRAFT',
+  FINALIZED: 'FINALIZED'
+} as const
+
+export type MainCalculationRecordStatus = (typeof MainCalculationRecordStatus)[keyof typeof MainCalculationRecordStatus]

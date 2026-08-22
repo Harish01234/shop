@@ -393,6 +393,7 @@ export type DailyCalculationWhereInput = {
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   lastEditedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyListRelationFilter
+  mainCalculations?: Prisma.MainCalculationListRelationFilter
 }
 
 export type DailyCalculationOrderByWithRelationInput = {
@@ -421,6 +422,7 @@ export type DailyCalculationOrderByWithRelationInput = {
   createdBy?: Prisma.UserOrderByWithRelationInput
   lastEditedBy?: Prisma.UserOrderByWithRelationInput
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyOrderByRelationAggregateInput
+  mainCalculations?: Prisma.MainCalculationOrderByRelationAggregateInput
 }
 
 export type DailyCalculationWhereUniqueInput = Prisma.AtLeast<{
@@ -452,6 +454,7 @@ export type DailyCalculationWhereUniqueInput = Prisma.AtLeast<{
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   lastEditedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyListRelationFilter
+  mainCalculations?: Prisma.MainCalculationListRelationFilter
 }, "id">
 
 export type DailyCalculationOrderByWithAggregationInput = {
@@ -536,6 +539,7 @@ export type DailyCalculationCreateInput = {
   createdBy: Prisma.UserCreateNestedOneWithoutDailyCalculationsInput
   lastEditedBy?: Prisma.UserCreateNestedOneWithoutDailyCalculationsEditedByInput
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyCreateNestedManyWithoutDailyCalculationInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutDailyCalculationInput
 }
 
 export type DailyCalculationUncheckedCreateInput = {
@@ -562,6 +566,7 @@ export type DailyCalculationUncheckedCreateInput = {
   lastEditedById?: string | null
   lastEditedAt?: Date | string | null
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyUncheckedCreateNestedManyWithoutDailyCalculationInput
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutDailyCalculationInput
 }
 
 export type DailyCalculationUpdateInput = {
@@ -588,6 +593,7 @@ export type DailyCalculationUpdateInput = {
   createdBy?: Prisma.UserUpdateOneRequiredWithoutDailyCalculationsNestedInput
   lastEditedBy?: Prisma.UserUpdateOneWithoutDailyCalculationsEditedByNestedInput
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyUpdateManyWithoutDailyCalculationNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutDailyCalculationNestedInput
 }
 
 export type DailyCalculationUncheckedUpdateInput = {
@@ -614,6 +620,7 @@ export type DailyCalculationUncheckedUpdateInput = {
   lastEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyUncheckedUpdateManyWithoutDailyCalculationNestedInput
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutDailyCalculationNestedInput
 }
 
 export type DailyCalculationCreateManyInput = {
@@ -911,6 +918,20 @@ export type DailyCalculationUpdateOneRequiredWithoutPersonMoneyEntriesNestedInpu
   update?: Prisma.XOR<Prisma.XOR<Prisma.DailyCalculationUpdateToOneWithWhereWithoutPersonMoneyEntriesInput, Prisma.DailyCalculationUpdateWithoutPersonMoneyEntriesInput>, Prisma.DailyCalculationUncheckedUpdateWithoutPersonMoneyEntriesInput>
 }
 
+export type DailyCalculationCreateNestedOneWithoutMainCalculationsInput = {
+  create?: Prisma.XOR<Prisma.DailyCalculationCreateWithoutMainCalculationsInput, Prisma.DailyCalculationUncheckedCreateWithoutMainCalculationsInput>
+  connectOrCreate?: Prisma.DailyCalculationCreateOrConnectWithoutMainCalculationsInput
+  connect?: Prisma.DailyCalculationWhereUniqueInput
+}
+
+export type DailyCalculationUpdateOneRequiredWithoutMainCalculationsNestedInput = {
+  create?: Prisma.XOR<Prisma.DailyCalculationCreateWithoutMainCalculationsInput, Prisma.DailyCalculationUncheckedCreateWithoutMainCalculationsInput>
+  connectOrCreate?: Prisma.DailyCalculationCreateOrConnectWithoutMainCalculationsInput
+  upsert?: Prisma.DailyCalculationUpsertWithoutMainCalculationsInput
+  connect?: Prisma.DailyCalculationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DailyCalculationUpdateToOneWithWhereWithoutMainCalculationsInput, Prisma.DailyCalculationUpdateWithoutMainCalculationsInput>, Prisma.DailyCalculationUncheckedUpdateWithoutMainCalculationsInput>
+}
+
 export type DailyCalculationCreateWithoutCreatedByInput = {
   id?: string
   periodStart: Date | string
@@ -934,6 +955,7 @@ export type DailyCalculationCreateWithoutCreatedByInput = {
   lastEditedAt?: Date | string | null
   lastEditedBy?: Prisma.UserCreateNestedOneWithoutDailyCalculationsEditedByInput
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyCreateNestedManyWithoutDailyCalculationInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutDailyCalculationInput
 }
 
 export type DailyCalculationUncheckedCreateWithoutCreatedByInput = {
@@ -959,6 +981,7 @@ export type DailyCalculationUncheckedCreateWithoutCreatedByInput = {
   lastEditedById?: string | null
   lastEditedAt?: Date | string | null
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyUncheckedCreateNestedManyWithoutDailyCalculationInput
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutDailyCalculationInput
 }
 
 export type DailyCalculationCreateOrConnectWithoutCreatedByInput = {
@@ -994,6 +1017,7 @@ export type DailyCalculationCreateWithoutLastEditedByInput = {
   lastEditedAt?: Date | string | null
   createdBy: Prisma.UserCreateNestedOneWithoutDailyCalculationsInput
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyCreateNestedManyWithoutDailyCalculationInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutDailyCalculationInput
 }
 
 export type DailyCalculationUncheckedCreateWithoutLastEditedByInput = {
@@ -1019,6 +1043,7 @@ export type DailyCalculationUncheckedCreateWithoutLastEditedByInput = {
   updatedAt?: Date | string
   lastEditedAt?: Date | string | null
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyUncheckedCreateNestedManyWithoutDailyCalculationInput
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutDailyCalculationInput
 }
 
 export type DailyCalculationCreateOrConnectWithoutLastEditedByInput = {
@@ -1114,6 +1139,7 @@ export type DailyCalculationCreateWithoutPersonMoneyEntriesInput = {
   lastEditedAt?: Date | string | null
   createdBy: Prisma.UserCreateNestedOneWithoutDailyCalculationsInput
   lastEditedBy?: Prisma.UserCreateNestedOneWithoutDailyCalculationsEditedByInput
+  mainCalculations?: Prisma.MainCalculationCreateNestedManyWithoutDailyCalculationInput
 }
 
 export type DailyCalculationUncheckedCreateWithoutPersonMoneyEntriesInput = {
@@ -1139,6 +1165,7 @@ export type DailyCalculationUncheckedCreateWithoutPersonMoneyEntriesInput = {
   updatedAt?: Date | string
   lastEditedById?: string | null
   lastEditedAt?: Date | string | null
+  mainCalculations?: Prisma.MainCalculationUncheckedCreateNestedManyWithoutDailyCalculationInput
 }
 
 export type DailyCalculationCreateOrConnectWithoutPersonMoneyEntriesInput = {
@@ -1180,6 +1207,7 @@ export type DailyCalculationUpdateWithoutPersonMoneyEntriesInput = {
   lastEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdBy?: Prisma.UserUpdateOneRequiredWithoutDailyCalculationsNestedInput
   lastEditedBy?: Prisma.UserUpdateOneWithoutDailyCalculationsEditedByNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutDailyCalculationNestedInput
 }
 
 export type DailyCalculationUncheckedUpdateWithoutPersonMoneyEntriesInput = {
@@ -1205,6 +1233,127 @@ export type DailyCalculationUncheckedUpdateWithoutPersonMoneyEntriesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutDailyCalculationNestedInput
+}
+
+export type DailyCalculationCreateWithoutMainCalculationsInput = {
+  id?: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  tabil: number
+  cashInHome: number
+  cashInShop: number
+  asol: number
+  sudh: number
+  deoya: number
+  personMoneyTotal: number
+  leftTotal: number
+  rightTotal: number
+  difference: number
+  balanceStatus: $Enums.DailyCalculationBalanceStatus
+  recordStatus?: $Enums.DailyCalculationRecordStatus
+  openedAt?: Date | string
+  closedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastEditedAt?: Date | string | null
+  createdBy: Prisma.UserCreateNestedOneWithoutDailyCalculationsInput
+  lastEditedBy?: Prisma.UserCreateNestedOneWithoutDailyCalculationsEditedByInput
+  personMoneyEntries?: Prisma.DailyCalculationPersonMoneyCreateNestedManyWithoutDailyCalculationInput
+}
+
+export type DailyCalculationUncheckedCreateWithoutMainCalculationsInput = {
+  id?: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  tabil: number
+  cashInHome: number
+  cashInShop: number
+  asol: number
+  sudh: number
+  deoya: number
+  personMoneyTotal: number
+  leftTotal: number
+  rightTotal: number
+  difference: number
+  balanceStatus: $Enums.DailyCalculationBalanceStatus
+  recordStatus?: $Enums.DailyCalculationRecordStatus
+  openedAt?: Date | string
+  closedAt?: Date | string | null
+  createdById: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastEditedById?: string | null
+  lastEditedAt?: Date | string | null
+  personMoneyEntries?: Prisma.DailyCalculationPersonMoneyUncheckedCreateNestedManyWithoutDailyCalculationInput
+}
+
+export type DailyCalculationCreateOrConnectWithoutMainCalculationsInput = {
+  where: Prisma.DailyCalculationWhereUniqueInput
+  create: Prisma.XOR<Prisma.DailyCalculationCreateWithoutMainCalculationsInput, Prisma.DailyCalculationUncheckedCreateWithoutMainCalculationsInput>
+}
+
+export type DailyCalculationUpsertWithoutMainCalculationsInput = {
+  update: Prisma.XOR<Prisma.DailyCalculationUpdateWithoutMainCalculationsInput, Prisma.DailyCalculationUncheckedUpdateWithoutMainCalculationsInput>
+  create: Prisma.XOR<Prisma.DailyCalculationCreateWithoutMainCalculationsInput, Prisma.DailyCalculationUncheckedCreateWithoutMainCalculationsInput>
+  where?: Prisma.DailyCalculationWhereInput
+}
+
+export type DailyCalculationUpdateToOneWithWhereWithoutMainCalculationsInput = {
+  where?: Prisma.DailyCalculationWhereInput
+  data: Prisma.XOR<Prisma.DailyCalculationUpdateWithoutMainCalculationsInput, Prisma.DailyCalculationUncheckedUpdateWithoutMainCalculationsInput>
+}
+
+export type DailyCalculationUpdateWithoutMainCalculationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tabil?: Prisma.IntFieldUpdateOperationsInput | number
+  cashInHome?: Prisma.IntFieldUpdateOperationsInput | number
+  cashInShop?: Prisma.IntFieldUpdateOperationsInput | number
+  asol?: Prisma.IntFieldUpdateOperationsInput | number
+  sudh?: Prisma.IntFieldUpdateOperationsInput | number
+  deoya?: Prisma.IntFieldUpdateOperationsInput | number
+  personMoneyTotal?: Prisma.IntFieldUpdateOperationsInput | number
+  leftTotal?: Prisma.IntFieldUpdateOperationsInput | number
+  rightTotal?: Prisma.IntFieldUpdateOperationsInput | number
+  difference?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceStatus?: Prisma.EnumDailyCalculationBalanceStatusFieldUpdateOperationsInput | $Enums.DailyCalculationBalanceStatus
+  recordStatus?: Prisma.EnumDailyCalculationRecordStatusFieldUpdateOperationsInput | $Enums.DailyCalculationRecordStatus
+  openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutDailyCalculationsNestedInput
+  lastEditedBy?: Prisma.UserUpdateOneWithoutDailyCalculationsEditedByNestedInput
+  personMoneyEntries?: Prisma.DailyCalculationPersonMoneyUpdateManyWithoutDailyCalculationNestedInput
+}
+
+export type DailyCalculationUncheckedUpdateWithoutMainCalculationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tabil?: Prisma.IntFieldUpdateOperationsInput | number
+  cashInHome?: Prisma.IntFieldUpdateOperationsInput | number
+  cashInShop?: Prisma.IntFieldUpdateOperationsInput | number
+  asol?: Prisma.IntFieldUpdateOperationsInput | number
+  sudh?: Prisma.IntFieldUpdateOperationsInput | number
+  deoya?: Prisma.IntFieldUpdateOperationsInput | number
+  personMoneyTotal?: Prisma.IntFieldUpdateOperationsInput | number
+  leftTotal?: Prisma.IntFieldUpdateOperationsInput | number
+  rightTotal?: Prisma.IntFieldUpdateOperationsInput | number
+  difference?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceStatus?: Prisma.EnumDailyCalculationBalanceStatusFieldUpdateOperationsInput | $Enums.DailyCalculationBalanceStatus
+  recordStatus?: Prisma.EnumDailyCalculationRecordStatusFieldUpdateOperationsInput | $Enums.DailyCalculationRecordStatus
+  openedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  personMoneyEntries?: Prisma.DailyCalculationPersonMoneyUncheckedUpdateManyWithoutDailyCalculationNestedInput
 }
 
 export type DailyCalculationCreateManyCreatedByInput = {
@@ -1278,6 +1427,7 @@ export type DailyCalculationUpdateWithoutCreatedByInput = {
   lastEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastEditedBy?: Prisma.UserUpdateOneWithoutDailyCalculationsEditedByNestedInput
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyUpdateManyWithoutDailyCalculationNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutDailyCalculationNestedInput
 }
 
 export type DailyCalculationUncheckedUpdateWithoutCreatedByInput = {
@@ -1303,6 +1453,7 @@ export type DailyCalculationUncheckedUpdateWithoutCreatedByInput = {
   lastEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyUncheckedUpdateManyWithoutDailyCalculationNestedInput
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutDailyCalculationNestedInput
 }
 
 export type DailyCalculationUncheckedUpdateManyWithoutCreatedByInput = {
@@ -1352,6 +1503,7 @@ export type DailyCalculationUpdateWithoutLastEditedByInput = {
   lastEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdBy?: Prisma.UserUpdateOneRequiredWithoutDailyCalculationsNestedInput
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyUpdateManyWithoutDailyCalculationNestedInput
+  mainCalculations?: Prisma.MainCalculationUpdateManyWithoutDailyCalculationNestedInput
 }
 
 export type DailyCalculationUncheckedUpdateWithoutLastEditedByInput = {
@@ -1377,6 +1529,7 @@ export type DailyCalculationUncheckedUpdateWithoutLastEditedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   personMoneyEntries?: Prisma.DailyCalculationPersonMoneyUncheckedUpdateManyWithoutDailyCalculationNestedInput
+  mainCalculations?: Prisma.MainCalculationUncheckedUpdateManyWithoutDailyCalculationNestedInput
 }
 
 export type DailyCalculationUncheckedUpdateManyWithoutLastEditedByInput = {
@@ -1410,10 +1563,12 @@ export type DailyCalculationUncheckedUpdateManyWithoutLastEditedByInput = {
 
 export type DailyCalculationCountOutputType = {
   personMoneyEntries: number
+  mainCalculations: number
 }
 
 export type DailyCalculationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   personMoneyEntries?: boolean | DailyCalculationCountOutputTypeCountPersonMoneyEntriesArgs
+  mainCalculations?: boolean | DailyCalculationCountOutputTypeCountMainCalculationsArgs
 }
 
 /**
@@ -1431,6 +1586,13 @@ export type DailyCalculationCountOutputTypeDefaultArgs<ExtArgs extends runtime.T
  */
 export type DailyCalculationCountOutputTypeCountPersonMoneyEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.DailyCalculationPersonMoneyWhereInput
+}
+
+/**
+ * DailyCalculationCountOutputType without action
+ */
+export type DailyCalculationCountOutputTypeCountMainCalculationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MainCalculationWhereInput
 }
 
 
@@ -1460,6 +1622,7 @@ export type DailyCalculationSelect<ExtArgs extends runtime.Types.Extensions.Inte
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   lastEditedBy?: boolean | Prisma.DailyCalculation$lastEditedByArgs<ExtArgs>
   personMoneyEntries?: boolean | Prisma.DailyCalculation$personMoneyEntriesArgs<ExtArgs>
+  mainCalculations?: boolean | Prisma.DailyCalculation$mainCalculationsArgs<ExtArgs>
   _count?: boolean | Prisma.DailyCalculationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dailyCalculation"]>
 
@@ -1547,6 +1710,7 @@ export type DailyCalculationInclude<ExtArgs extends runtime.Types.Extensions.Int
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   lastEditedBy?: boolean | Prisma.DailyCalculation$lastEditedByArgs<ExtArgs>
   personMoneyEntries?: boolean | Prisma.DailyCalculation$personMoneyEntriesArgs<ExtArgs>
+  mainCalculations?: boolean | Prisma.DailyCalculation$mainCalculationsArgs<ExtArgs>
   _count?: boolean | Prisma.DailyCalculationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DailyCalculationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1564,6 +1728,7 @@ export type $DailyCalculationPayload<ExtArgs extends runtime.Types.Extensions.In
     createdBy: Prisma.$UserPayload<ExtArgs>
     lastEditedBy: Prisma.$UserPayload<ExtArgs> | null
     personMoneyEntries: Prisma.$DailyCalculationPersonMoneyPayload<ExtArgs>[]
+    mainCalculations: Prisma.$MainCalculationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1985,6 +2150,7 @@ export interface Prisma__DailyCalculationClient<T, Null = never, ExtArgs extends
   createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   lastEditedBy<T extends Prisma.DailyCalculation$lastEditedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DailyCalculation$lastEditedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   personMoneyEntries<T extends Prisma.DailyCalculation$personMoneyEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DailyCalculation$personMoneyEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DailyCalculationPersonMoneyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  mainCalculations<T extends Prisma.DailyCalculation$mainCalculationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DailyCalculation$mainCalculationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MainCalculationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2477,6 +2643,30 @@ export type DailyCalculation$personMoneyEntriesArgs<ExtArgs extends runtime.Type
   take?: number
   skip?: number
   distinct?: Prisma.DailyCalculationPersonMoneyScalarFieldEnum | Prisma.DailyCalculationPersonMoneyScalarFieldEnum[]
+}
+
+/**
+ * DailyCalculation.mainCalculations
+ */
+export type DailyCalculation$mainCalculationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MainCalculation
+   */
+  select?: Prisma.MainCalculationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MainCalculation
+   */
+  omit?: Prisma.MainCalculationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MainCalculationInclude<ExtArgs> | null
+  where?: Prisma.MainCalculationWhereInput
+  orderBy?: Prisma.MainCalculationOrderByWithRelationInput | Prisma.MainCalculationOrderByWithRelationInput[]
+  cursor?: Prisma.MainCalculationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MainCalculationScalarFieldEnum | Prisma.MainCalculationScalarFieldEnum[]
 }
 
 /**

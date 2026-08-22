@@ -6,6 +6,7 @@ import {
   DownloadIcon,
   LayoutDashboardIcon,
   MonitorIcon,
+  ScaleIcon,
 } from 'lucide-react'
 
 import BetterAuthHeader from '#/integrations/better-auth/header-user'
@@ -51,6 +52,12 @@ const adminNav = [
     title: 'Daily Calculation',
     to: '/admin/daily-calculation' as const,
     icon: CalculatorIcon,
+    exact: false,
+  },
+  {
+    title: 'Main Calculation',
+    to: '/admin/main-calculation' as const,
+    icon: ScaleIcon,
     exact: false,
   },
   {
